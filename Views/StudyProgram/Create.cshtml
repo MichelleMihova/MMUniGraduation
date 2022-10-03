@@ -1,0 +1,56 @@
+﻿@model MMUniGraduation.Models.StudyProgram
+
+<style>
+    .btn {
+        border: none;
+        color: white;
+        padding: 14px 28px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .success {
+        background-color: #04AA6D;
+    }
+        /* Green */
+        .success:hover {
+            background-color: #46a049;
+        }
+
+    .info {
+        background-color: #2196F3;
+    }
+        /* Blue */
+        .info:hover {
+            background: #0b7dda;
+        }
+</style>
+
+<h1 style="padding-top:25px; text-align:center;">Create Program</h1>
+
+<div>
+    <form asp-action="Create" asp-controller="StudyProgram">
+        <h4>Study program information</h4>
+        <br />
+
+        <label>Program Name</label>
+        <input asp-for="Name" class="form-control" type="text" placeholder="Program name">
+        <br />
+
+        <label>Program descroption</label>
+        <textarea asp-for="Description" class="form-control" type="text" placeholder="Program desc"></textarea>
+        <br /><hr /><br />
+
+        <button class="btn info">Create</button>
+
+    </form>
+
+    <div>
+        <a asp-controller="Home" asp-action="Index">Back to Home</a>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
