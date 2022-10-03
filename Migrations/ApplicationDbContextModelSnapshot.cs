@@ -47,8 +47,8 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("NextCourseSignature")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ParetntID")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ParetntId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Signature")
                         .HasColumnType("nvarchar(max)");
@@ -88,8 +88,8 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ParetntID")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ParetntId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Signature")
                         .HasColumnType("nvarchar(max)");
@@ -198,11 +198,11 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("NextLectureSignature")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("NextLectureId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("ParetntLectureSignature")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ParetntLectureId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

@@ -3,10 +3,29 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MMUniGraduation.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "CreateCourse",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Signature = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StudyProgramId = table.Column<int>(type: "int", nullable: false),
+                    ParetntId = table.Column<int>(type: "int", nullable: false),
+                    CourseStartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SkipCoursEndDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CreateCourse", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Lectors",
                 columns: table => new
@@ -51,27 +70,6 @@ namespace MMUniGraduation.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SkippingAssignment",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Signature = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ParetntID = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NexrCourseSignature = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NextSkippingSignature = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Assignment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Grade = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    IsPassed = table.Column<bool>(type: "bit", nullable: false),
-                    CourseId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SkippingAssignment", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -177,33 +175,26 @@ namespace MMUniGraduation.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Signature = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ParetntID = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ParetntId = table.Column<int>(type: "int", nullable: false),
                     NextCourseSignature = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SkippingCourseSignature = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SkipCourse = table.Column<bool>(type: "bit", nullable: false),
-                    CourseStartDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SkipCoursEndDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StudyProgramId = table.Column<int>(type: "int", nullable: true),
+                    CourseStartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SkipCoursEndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StudyProgramId = table.Column<int>(type: "int", nullable: false),
                     Exam = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ExamGrade = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    FinalHomeworkGrade = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    LectorID = table.Column<int>(type: "int", nullable: true)
+                    FinalHomeworkGrade = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Courses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Courses_Lectors_LectorID",
-                        column: x => x.LectorID,
-                        principalTable: "Lectors",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Courses_StudyPrograms_StudyProgramId",
                         column: x => x.StudyProgramId,
                         principalTable: "StudyPrograms",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -240,10 +231,11 @@ namespace MMUniGraduation.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Assignments = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AssignmentGrade = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CourseId = table.Column<int>(type: "int", nullable: true),
-                    ParetntLectureSignature = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NextLectureSignature = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LectorID = table.Column<int>(type: "int", nullable: true)
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    ParetntLectureId = table.Column<int>(type: "int", nullable: false),
+                    NextLectureId = table.Column<int>(type: "int", nullable: false),
+                    DateTimeToShow = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDateTimeForHW = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -253,12 +245,25 @@ namespace MMUniGraduation.Migrations
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RestrictAccess",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CourseId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RestrictAccess", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Lectures_Lectors_LectorID",
-                        column: x => x.LectorID,
-                        principalTable: "Lectors",
-                        principalColumn: "ID",
+                        name: "FK_RestrictAccess_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -309,39 +314,6 @@ namespace MMUniGraduation.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RestrictAccess",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    StudentId = table.Column<int>(type: "int", nullable: true),
-                    CourseId = table.Column<int>(type: "int", nullable: true),
-                    SkippingAssignmentId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RestrictAccess", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RestrictAccess_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RestrictAccess_SkippingAssignment_SkippingAssignmentId",
-                        column: x => x.SkippingAssignmentId,
-                        principalTable: "SkippingAssignment",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RestrictAccess_Students_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Students",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "StudentStudyProgram",
                 columns: table => new
                 {
@@ -366,11 +338,6 @@ namespace MMUniGraduation.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Courses_LectorID",
-                table: "Courses",
-                column: "LectorID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Courses_StudyProgramId",
                 table: "Courses",
                 column: "StudyProgramId");
@@ -391,24 +358,9 @@ namespace MMUniGraduation.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Lectures_LectorID",
-                table: "Lectures",
-                column: "LectorID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RestrictAccess_CourseId",
                 table: "RestrictAccess",
                 column: "CourseId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RestrictAccess_SkippingAssignmentId",
-                table: "RestrictAccess",
-                column: "SkippingAssignmentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RestrictAccess_StudentId",
-                table: "RestrictAccess",
-                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Students_CurrentCourseId",
@@ -423,6 +375,9 @@ namespace MMUniGraduation.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CreateCourse");
+
             migrationBuilder.DropTable(
                 name: "LearningObjects");
 
@@ -460,16 +415,13 @@ namespace MMUniGraduation.Migrations
                 name: "Lectures");
 
             migrationBuilder.DropTable(
-                name: "SkippingAssignment");
+                name: "Lectors");
 
             migrationBuilder.DropTable(
                 name: "Students");
 
             migrationBuilder.DropTable(
                 name: "Courses");
-
-            migrationBuilder.DropTable(
-                name: "Lectors");
 
             migrationBuilder.DropTable(
                 name: "StudyPrograms");

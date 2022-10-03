@@ -23,7 +23,8 @@ namespace MMUniGraduation.Services
                 Name = input.Name,
                 Signature = _db.StudyPrograms.FirstOrDefault(x => x.Id == input.StudyProgramId).Name,
                 Description = input.Description,
-                ParetntID = input.ParetntID,
+                StudyProgramId = input.StudyProgramId,
+                ParetntId = input.ParetntId,
                // NextCourseSignature = input,
                 CourseStartDate = input.CourseStartDate,
                 SkipCoursEndDate = input.SkipCoursEndDate

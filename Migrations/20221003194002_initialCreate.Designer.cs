@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MMUniGraduation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221003181540_changedDB1")]
-    partial class changedDB1
+    [Migration("20221003194002_initialCreate")]
+    partial class initialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,8 +49,8 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("NextCourseSignature")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ParetntID")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ParetntId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Signature")
                         .HasColumnType("nvarchar(max)");
@@ -90,8 +90,8 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ParetntID")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ParetntId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Signature")
                         .HasColumnType("nvarchar(max)");
@@ -200,11 +200,11 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("NextLectureSignature")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("NextLectureId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("ParetntLectureSignature")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ParetntLectureId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

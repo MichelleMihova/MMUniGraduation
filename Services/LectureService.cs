@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MMUniGraduation.Services
 {
-    public class LectureService: ILectureService
+    public class LectureService : ILectureService
     {
         private readonly ApplicationDbContext _db;
         public LectureService(ApplicationDbContext db)
@@ -23,7 +23,7 @@ namespace MMUniGraduation.Services
                 Name = input.Name,
                 Description = input.Description,
                 CourseId = input.CourseId,
-                ParetntLectureSignature = input.ParetntLectureSignature,
+                ParetntLectureId = input.ParetntLectureId,
                 //NextLectureSignature = nextLectureSignature,
                 DateTimeToShow = input.DateTimeToShow,
                 EndDateTimeForHW = input.EndDateTimeForHW
@@ -31,7 +31,18 @@ namespace MMUniGraduation.Services
             };
             await _db.Lectures.AddAsync(lecture);
             await _db.SaveChangesAsync();
+
+            SetNextLectureId(input, lecture);
         }
+
+        private async void SetNextLectureId(CreateLecture input, Lecture lecture)
+        {
+            //_db.Lectures - all lectures
+            var parentLecture = _db.Lectures.FirstOrDefault(x => x.Id == input.ParetntLectureId);
+            parentLecture.NextLectureId = lecture.Id;
+            await _db.SaveChangesAsync();
+        }
+
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs()
         {
             return this._db.Lectures.Select(x => new
@@ -43,5 +54,6 @@ namespace MMUniGraduation.Services
                 .ToList()
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name));
         }
+       
     }
 }

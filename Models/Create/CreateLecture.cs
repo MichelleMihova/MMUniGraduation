@@ -13,7 +13,7 @@ namespace MMUniGraduation.Models.Create
         public string Description { get; set; }
         public int CourseId { get; set; }
 
-        public string ParetntLectureSignature { get; set; }
+        public int ParetntLectureId { get; set; }
         //public string NextLectureSignature { get; set; }
 
         [DataType(DataType.DateTime)]
