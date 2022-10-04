@@ -3,6 +3,8 @@
 @{
     var studyPrograms = Model.StudyPrograms
         .Select(x => new SelectListItem(x.Value, x.Key));
+    var courses = Model.Courses
+        .Select(x => new SelectListItem(x.Value, x.Key));
 }
 
 <style>
@@ -19,7 +21,7 @@
     }
         /* Green */
         .success:hover {
-            background-color: #46a049;
+        background-color: #46a049;
         }
 
     .info {
@@ -27,7 +29,7 @@
     }
         /* Blue */
         .info:hover {
-            background: #0b7dda;
+    background: #0b7dda;
         }
 </style>
 <script>
@@ -41,7 +43,7 @@
     alert(JSON.stringify(dateTime));
     $.ajax({
 
-        url: "/CourseController/Create",
+    url: "/CourseController/Create",
         type: "POST",
 
         data: { model: dateTime },
@@ -77,8 +79,13 @@
 
         <h4>Course inheritance</h4>
         <div>
-            <input asp-for="ParetntId" class="form-control" type="text" placeholder="Paretnt Couse Signature"><br />
-            @*<input asp-for="NextCourseSignature" class="form-control" type="text" placeholder="Next Course Signature"><br />*@
+            @*<input asp-for="ParetntId" class="form-control" type="text" placeholder="Paretnt Couse Signature"><br />*@
+            @*<input asp-for="NextCourseId" class="form-control" type="text" placeholder="Next Course Signature"><br />*@
+            <label>Select parent lecture</label>
+            <select asp-for="ParetntId" class="form-control" asp-items="courses">
+                <option asp-for="ParetntId" value="0" >No inheritance</option>
+            </select>
+
         </div>
         <hr /><br />
 

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MMUniGraduation.Migrations
 {
-    public partial class initialCreate : Migration
+    public partial class typeChanges : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -176,7 +176,7 @@ namespace MMUniGraduation.Migrations
                     Signature = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ParetntId = table.Column<int>(type: "int", nullable: false),
-                    NextCourseSignature = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NextCourseId = table.Column<int>(type: "int", nullable: false),
                     SkippingCourseSignature = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SkipCourse = table.Column<bool>(type: "bit", nullable: false),
                     CourseStartDate = table.Column<DateTime>(type: "datetime2", nullable: false),

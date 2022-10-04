@@ -20,6 +20,7 @@ namespace MMUniGraduation.Models.Create
         [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime DateTimeToShow { get; set; }
         [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime EndDateTimeForHW { get; set; }
 
         [NotMapped]

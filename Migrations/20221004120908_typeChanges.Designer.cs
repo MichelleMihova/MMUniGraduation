@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MMUniGraduation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221003194002_initialCreate")]
-    partial class initialCreate
+    [Migration("20221004120908_typeChanges")]
+    partial class typeChanges
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -46,8 +46,8 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("NextCourseSignature")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("NextCourseId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ParetntId")
                         .HasColumnType("int");

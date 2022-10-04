@@ -18,9 +18,12 @@ namespace MMUniGraduation.Models.Create
         [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
         public DateTime CourseStartDate { get; set; }
         [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
         public DateTime SkipCoursEndDate { get; set; }
        
         [NotMapped]
         public IEnumerable<KeyValuePair<string, string>> StudyPrograms { get; set; }
+        [NotMapped]
+        public IEnumerable<KeyValuePair<string, string>> Courses { get; set; }
     }
 }

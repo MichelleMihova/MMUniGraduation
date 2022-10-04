@@ -19,13 +19,14 @@ namespace MMUniGraduation.Models
         public string Signature { get; set; }
         public string Description { get; set; }
         public int ParetntId { get; set; }
-        public string NextCourseSignature { get; set; }
+        public int NextCourseId { get; set; }
         public string SkippingCourseSignature { get; set; }
         public bool SkipCourse { get; set; }
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
         public DateTime CourseStartDate { get; set; }
         [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
         public DateTime SkipCoursEndDate { get; set; }
 
         [ForeignKey("StudyProgram")]

@@ -38,7 +38,6 @@
     <div>
         <h4>Lecture information</h4>
         <input asp-for="Name" class="form-control" type="text" placeholder="Lecture name"><br />
-        @*<input asp-for="Description" class="form-control" type="text" placeholder="Lecture Signature"><br />*@
         @*<input class="form-control" type="text" placeholder="Course Signature"><br />*@
         @*<input asp-for="Description" class="form-control" type="text" placeholder="Lector Name/ID"><br />*@
         @*<textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Lecture Description..."></textarea>*@
@@ -47,20 +46,13 @@
 
         <br /><br />
         <h4>Lecture inheritance</h4>
-        <div>
-            @*@foreach (var lectures in Model.Name)
-            {
-                <select asp-for="ParetntLectureSignature" class="form-control" >@lectures.Name</select>
-            }
-            @*<input asp-for="ParetntLectureSignature" class="form-control" type="text" placeholder="Paretnt Lecture Signature"><br />*@
-            @*<input asp-for="NextLectureSignature" class="form-control" type="text" placeholder="Next Lecture Signature"><br />*@
-        </div>
-        <hr />
         <label>Select parent course</label>
         <select asp-for="CourseId" class="form-control" asp-items="courses"></select>
         <br />
         <label>Select parent lecture</label>
-        <select asp-for="ParetntLectureId" class="form-control" asp-items="lectures"></select>
+        <select asp-for="ParetntLectureId" class="form-control" asp-items="lectures">
+            <option asp-for="ParetntId" value="0">No inheritance</option>
+        </select>
 
         <br />
         @*<select asp-for="CourseId" class="form-control" asp-items="courses"></select>*@

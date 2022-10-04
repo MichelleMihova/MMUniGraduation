@@ -25,25 +25,37 @@ namespace MMUniGraduation.Services
                 Description = input.Description,
                 StudyProgramId = input.StudyProgramId,
                 ParetntId = input.ParetntId,
-               // NextCourseSignature = input,
+               // NextCourseId = input,
                 CourseStartDate = input.CourseStartDate,
                 SkipCoursEndDate = input.SkipCoursEndDate
 
             };
             await _db.Courses.AddAsync(course);
             await _db.SaveChangesAsync();
-        }
 
+            if (input.ParetntId != 0)
+            {
+                SetNextCourseId(input, course);
+            }
+        }
+        private async void SetNextCourseId(CreateCourse input, Course course)
+        {
+            //_db.Lectures - all lectures
+            var parentCourse = _db.Courses.FirstOrDefault(x => x.Id == input.ParetntId);
+            parentCourse.NextCourseId = course.Id;
+            await _db.SaveChangesAsync();
+        }
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs()
         {
             return this._db.Courses.Select(x => new
             {
                 x.Id,
                 x.Name,
+                x.Signature
             })
                 .OrderBy(x => x.Name)
                 .ToList()
-                .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name));
+                .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Signature + " "+ x.Name));
         }
     }
 }

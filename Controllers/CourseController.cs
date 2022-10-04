@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Data;
+using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MMUniGraduation.Controllers
@@ -20,15 +23,32 @@ namespace MMUniGraduation.Controllers
             _studyProgramService = studyProgramService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int courseId)
         {
-            return View();
+            var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
+            currentCourse.Lectures = await _context.Lectures.Where(l => l.CourseId == courseId).ToListAsync();
+            //var viewModel1 = _context.Courses.Where(c => c.Id == courseId);
+
+            //var viewModel = new Course
+            //{
+            //    //Courses = _courseService.GetAllAsKeyValuePairs()
+            //    Lectures = await _context.Lectures.Where(l => l.CourseId == courseId).ToListAsync()
+            //    //await _context.Courses.Where(c => c.Id == courseId).ToListAsync()
+            //};
+            //return View(await _context.Courses.Where(c => c.Id == courseId).ToListAsync());
+            //await _context.Courses.Where(c => c.Id == courseId).ToListAsync()
+            return View(currentCourse);
+            //return View(await _context.Lectures.Where(l => l.CourseId == courseId).ToListAsync());
+            //return View(viewModel);
+            //return View();
+            //await _context.StudyPrograms.ToListAsync()
         }
         public IActionResult Create()
         {
             var viewModel = new CreateCourse
             {
-                StudyPrograms = _studyProgramService.GetAllAsKeyValuePairs()
+                StudyPrograms = _studyProgramService.GetAllAsKeyValuePairs(),
+                Courses = _courseService.GetAllAsKeyValuePairs()
             };
 
             return this.View(viewModel);
@@ -54,5 +74,12 @@ namespace MMUniGraduation.Controllers
             //await _studyProgramService.CreateAsync(input, user.Id);
 
         }
+        //public async Task<IActionResult> AllCourses(int input)
+        public async Task<IActionResult> AllCourses(int studyProgramId)
+        {
+            return View(await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync());
+            //return View(await _context.Courses.Where(c => c.StudyProgramId == 1).ToListAsync());
+        }
+
     }
 }

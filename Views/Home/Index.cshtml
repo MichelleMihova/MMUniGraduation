@@ -1,8 +1,41 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@model IEnumerable<MMUniGraduation.Models.StudyProgram>
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome to MMUNI</h1>
+    @*<p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+        <img src="/img/accurate.id-Coding-adalah-keterampilan-yang-saat-ini-banyak-diperlukan-dalam-dunia-Teknologi.jpg" class="img-fluid" style="padding-bottom: 100px" alt="Responsive image">*@
+</div>
+<br />
+<br />
+@*<h3 style="text-align:center; padding-bottom: 1em; ">Main Programs</h3>*@
+<div class="card-deck">
+    @foreach (var program in Model)
+    {
+        <div class="card">
+            <img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">@program.Name</h5>
+                <p class="card-text">@program.Description</p>
+            </div>
+            <div class="card-footer">
+                <div class="card-footer">
+                    <small class="text-muted">Last updated 3 mins ago</small>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<br />
+
+<div class="col text-center">
+
+    <a href="/Identity/Account/Login">
+        @*<button type="button" class="btn btn-success">Запиши своя първи курс !</button>
+            <br />*@
+        <br />
+        <button type="button" class="btn btn-info">Запиши се още сега!</button>
+    </a>
 </div>

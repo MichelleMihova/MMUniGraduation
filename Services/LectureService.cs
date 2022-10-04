@@ -32,7 +32,10 @@ namespace MMUniGraduation.Services
             await _db.Lectures.AddAsync(lecture);
             await _db.SaveChangesAsync();
 
-            SetNextLectureId(input, lecture);
+            if (input.ParetntLectureId != 0)
+            {
+                SetNextLectureId(input, lecture);
+            }
         }
 
         private async void SetNextLectureId(CreateLecture input, Lecture lecture)
@@ -48,11 +51,12 @@ namespace MMUniGraduation.Services
             return this._db.Lectures.Select(x => new
             {
                 x.Id,
-                x.Name,
+                x.Name
             })
                 .OrderBy(x => x.Name)
                 .ToList()
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name));
+
         }
        
     }

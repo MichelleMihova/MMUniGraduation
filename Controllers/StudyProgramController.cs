@@ -21,6 +21,11 @@ namespace MMUniGraduation.Controllers
             return View();
         }
 
+        // GET: StudyPrograms
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.StudyPrograms.ToListAsync());
+        }
         public IActionResult Create()
         {
             return View();
@@ -40,12 +45,6 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Index","Home");
             //return Content($" Name: {Name}, Desc: {Description}");
             //return View();
-        }
-
-        // GET: StudyPrograms
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.StudyPrograms.ToListAsync());
         }
     }
 }

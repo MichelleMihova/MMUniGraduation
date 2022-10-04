@@ -44,8 +44,8 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("NextCourseSignature")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("NextCourseId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ParetntId")
                         .HasColumnType("int");
