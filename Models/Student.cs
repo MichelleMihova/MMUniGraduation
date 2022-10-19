@@ -11,6 +11,7 @@ namespace MMUniGraduation.Models
         {
             this.CompleatedStudyPrograms = new List<StudentStudyProgram>();
             //this.StudentCourses = new List<StudentCourse>();
+            this.PassedCourses = new List<Course>();
         }
 
         public int Id { get; set; }
@@ -21,6 +22,8 @@ namespace MMUniGraduation.Models
         public string Email { get; set; }
         public string Town { get; set; }
         public DateTime DateOfBirth { get; set; }
+        public string Photo { get; set; }
+
         //[ForeignKey("Course")]
         //public int CurrenCourseId { get; set; }
         public Course CurrentCourse { get; set; }
@@ -28,5 +31,10 @@ namespace MMUniGraduation.Models
         //Many to many relation
         public ICollection<StudentStudyProgram> CompleatedStudyPrograms { get; set; }
         //public ICollection<StudentCourse> StudentCourses { get; set; }
+
+        //new - all passed student courses
+        [NotMapped]
+        public ICollection<Course> PassedCourses { get; set; }
+
     }
 }

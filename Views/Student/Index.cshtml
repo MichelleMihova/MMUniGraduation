@@ -3,6 +3,7 @@
 *@
 @{
 }
+@model MMUniGraduation.Models.Student
 @{
     ViewData["Title"] = "Test Profile Page";
 }
@@ -110,6 +111,24 @@
         <div class="tab-pane fade text-center" id="saved">
 
             <p class="lead"><span class="text-danger"><i class="far fa-frown-open"></i></span> Nothing saved yet.</p>
+
+            <div class="card">
+                @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
+                <div class="card-body">
+                    <h5 class="card-title">CurrentCourse.Name</h5>
+                    <p class="card-text">CurrentCourse.Description</p>
+                </div>
+                <div class="card-footer">
+                    <div class="card-footer">
+                        @*<small class="text-muted">Last updated 3 mins ago</small>*@
+                        <a class="nav-link text-dark" asp-route-courseId="2" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
+
+                        @*<div>
+                        <a class="btn btn-outline-info" asp-route-courseId="@program.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">View course information</a>
+                    </div>*@
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="tab-pane fade text-center" id="tagged">
             <p class="lead">Help people tag you.</p>

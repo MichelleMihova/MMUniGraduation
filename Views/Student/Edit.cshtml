@@ -1,0 +1,34 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model MMUniGraduation.Models.Student
+
+<h2>Upload photo</h2>
+<div class="input-group">
+    <div class="custom-file">
+        <!--
+        <input type="file" class="custom-file-input" id="inputGroupFile">
+        <label class="custom-file-label" for="inputGroupFile04">Enter Video Lecture url</label>
+            -->
+        <input class="form-control" type="text" placeholder="Select photo"><br />
+
+    </div>
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button">Upload</button>
+    </div>
+</div>
+
+Photo
+<form asp-controller="Course" asp-action="Create" enctype="multipart/form-data">
+    <div class="input-group">
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="inputGroupFile04">
+            <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+        </div>
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button">Upload</button>
+        </div>
+    </div>
+</form>

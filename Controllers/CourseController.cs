@@ -27,6 +27,10 @@ namespace MMUniGraduation.Controllers
         {
             var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
             currentCourse.Lectures = await _context.Lectures.Where(l => l.CourseId == courseId).ToListAsync();
+
+            //TO DO...
+            // When upload file button is clicked -> to show in assesment page 
+
             //var viewModel1 = _context.Courses.Where(c => c.Id == courseId);
 
             //var viewModel = new Course
