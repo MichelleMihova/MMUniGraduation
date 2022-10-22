@@ -67,8 +67,6 @@ namespace MMUniGraduation.Services
                 var dbImage = new Image
                 {
                     Extension = extension,
-                    //StudyProgramId = studyProgram.Id,
-                    //StudyProgram = studyProgram
                 };
 
                 studyProgram.Images.Add(dbImage);

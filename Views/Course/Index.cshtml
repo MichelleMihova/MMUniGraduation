@@ -26,7 +26,7 @@
     }
 
     // Set the date we're counting down to
-    var countDownDate = new Date("Jan 5, 2024 15:37:25").getTime();
+    var countDownDate = new Date("Jan 5, 2023 15:37:25").getTime();
 
     // Update the count down every 1 second
     var x = setInterval(function () {
@@ -47,7 +47,7 @@
         document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
             + minutes + "m " + seconds + "s ";
 
-        // If the count down is over, write some text 
+        // If the count down is over, write some text
         if (distance < 0) {
             clearInterval(x);
             document.getElementById("countdown").innerHTML = "EXPIRED";
@@ -57,7 +57,7 @@
     //var yourDateToGo = new Date(); //here you're making new Date object
     //yourDateToGo.setDate(yourDateToGo.getDate() + 2); //your're setting date in this object 1 day more from now
     ////you can change number of days to go by putting any number in place of 1
-    
+
     //var timing = setInterval( // you're making an interval - a thing, that is updating content after number of miliseconds, that you're writing after comma as second parameter
     //    function () {
 

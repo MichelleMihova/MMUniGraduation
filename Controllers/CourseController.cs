@@ -58,6 +58,11 @@ namespace MMUniGraduation.Controllers
             return this.View(viewModel);
         }
 
+        public IActionResult Edit()
+        {
+            return this.View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateCourse input)
         {

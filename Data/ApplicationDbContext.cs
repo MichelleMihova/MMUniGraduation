@@ -2,11 +2,10 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Models;
-using MMUniGraduation.Models.Create;
 
 namespace MMUniGraduation.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -18,13 +17,13 @@ namespace MMUniGraduation.Data
         public DbSet<Lecture> Lectures { get; set; }
         public DbSet<LearningObject> LearningObjects { get; set; }
         public DbSet<RestrictAccess> RestrictAccess { get; set; }
-        //public DbSet<SkippingAssignment> SkippingAssignments { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Lector> Lectors { get; set; }
         public DbSet<StudentStudyProgram> StudentStudyProgram { get; set; }
         public DbSet<LectorStudyProgram> LectorStudyProgram { get; set; }
-        //public DbSet<StudentCourse> StudentCourses { get; set; }
 
+        //public DbSet<StudentCourse> StudentCourses { get; set; }
+        //public DbSet<SkippingAssignment> SkippingAssignments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -34,20 +33,6 @@ namespace MMUniGraduation.Data
                 .HasKey(x => x.UserId);
             builder.Entity<IdentityUserToken<string>>()
                 .HasKey(x => x.UserId);
-
-            /*
-            builder.Entity<StudentCourse>()
-                .HasKey(slo => new { slo.CourseId, slo.StudentId });
-            builder.Entity<StudentCourse>()
-                .HasOne(slo => slo.Student)
-                .WithMany(s => s.StudentCourses)
-                .HasForeignKey(slo => slo.StudentId);
-            builder.Entity<StudentCourse>()
-                .HasOne(slo => slo.Course)
-                .WithMany(lo => lo.StudentCourses)
-                .HasForeignKey(slo => slo.CourseId);
-            */
-
             
             builder.Entity<StudentStudyProgram>()
                 .HasKey(sc => new { sc.StudentId, sc.StudyProgramId });
@@ -72,6 +57,19 @@ namespace MMUniGraduation.Data
                 .HasForeignKey(sc => sc.StudyProgramId);
 
             /*
+           builder.Entity<StudentCourse>()
+               .HasKey(slo => new { slo.CourseId, slo.StudentId });
+           builder.Entity<StudentCourse>()
+               .HasOne(slo => slo.Student)
+               .WithMany(s => s.StudentCourses)
+               .HasForeignKey(slo => slo.StudentId);
+           builder.Entity<StudentCourse>()
+               .HasOne(slo => slo.Course)
+               .WithMany(lo => lo.StudentCourses)
+               .HasForeignKey(slo => slo.CourseId);
+           */
+
+            /*
             builder.Entity<ProgramCourse>()
                 .HasKey(sc => new { sc.CourseID, sc.ProgramId });
             builder.Entity<ProgramCourse>()
@@ -85,9 +83,6 @@ namespace MMUniGraduation.Data
             */
 
         }
-        //public DbSet<StudentCourse> StudentCourses { get; set; }
-
-
         public DbSet<MMUniGraduation.Models.Create.CreateCourse> CreateCourse { get; set; }
     }
 }
