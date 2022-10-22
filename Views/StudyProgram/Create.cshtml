@@ -1,4 +1,4 @@
-﻿@model MMUniGraduation.Models.StudyProgram
+﻿@model MMUniGraduation.Models.Create.CreateStudyProgram
 
 <style>
     .btn {
@@ -29,7 +29,7 @@
 <h1 style="padding-top:25px; text-align:center;">Create Program</h1>
 
 <div>
-    <form asp-action="Create" asp-controller="StudyProgram">
+    <form asp-action="Create" asp-controller="StudyProgram" enctype="multipart/form-data">
         <h4>Study program information</h4>
         <br />
 
@@ -39,7 +39,11 @@
 
         <label>Program descroption</label>
         <textarea asp-for="Description" class="form-control" type="text" placeholder="Program desc"></textarea>
-        <br /><hr /><br />
+        <br />
+
+        <label>Image</label>
+        <input asp-for="Images" class="form-control" />
+        <br />
 
         <button class="btn info">Create</button>
 

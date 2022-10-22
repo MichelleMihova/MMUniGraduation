@@ -9,6 +9,8 @@ using MMUniGraduation.Data;
 using MMUniGraduation.Models;
 using MMUniGraduation.Services;
 using MMUniGraduation.Services.Interfaces;
+using SmartProfil.AutoMapper;
+using System.Reflection;
 
 namespace MMUniGraduation
 {
@@ -41,6 +43,8 @@ namespace MMUniGraduation
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).GetTypeInfo().Assembly);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

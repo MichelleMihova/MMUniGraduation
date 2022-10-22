@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Data;
+using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
 using System.Threading.Tasks;
 
@@ -32,13 +33,13 @@ namespace MMUniGraduation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(string Name, string Description)
+        public async Task<IActionResult> Create(CreateStudyProgram model)
         {
             this.TempData["Message"] = "Try to create program.";
 
             //var user = await _userManager.GetUserAsync(this.User);
             //await _studyProgramService.CreateAsync(input, user.Id);
-            await _studyProgramService.CreateAsync(Name, Description);
+            await _studyProgramService.CreateAsync(model);
 
             this.TempData["Message"] = "Program created successfully!";
 

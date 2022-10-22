@@ -4,11 +4,13 @@ using Microsoft.Extensions.Logging;
 using MMUniGraduation.Data;
 using MMUniGraduation.Models;
 using MMUniGraduation.Services.Interfaces;
+using MMUniGraduation.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using ErrorViewModel = MMUniGraduation.Models.ErrorViewModel;
 
 namespace MMUniGraduation.Controllers
 {
@@ -30,9 +32,15 @@ namespace MMUniGraduation.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.StudyPrograms.ToListAsync());
+            var viewModel = new IndexViewModel()
+            {
+                StudyPrograms = _studyProgramService.GetPrograms<IndexStudyProgramViewModel>(3)
+            };
+
+            return View(viewModel);
+            //return View(await _context.StudyPrograms.ToListAsync());
         }
 
         public IActionResult Privacy()
