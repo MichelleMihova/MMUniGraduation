@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Data;
-using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -47,6 +46,8 @@ namespace MMUniGraduation.Controllers
             //return View();
             //await _context.StudyPrograms.ToListAsync()
         }
+
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             var viewModel = new CreateCourse
@@ -58,11 +59,7 @@ namespace MMUniGraduation.Controllers
             return this.View(viewModel);
         }
 
-        public IActionResult Edit()
-        {
-            return this.View();
-        }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateCourse input)
         {
@@ -75,7 +72,7 @@ namespace MMUniGraduation.Controllers
 
             await _courseService.CreateCourseAsync(input);
 
-            this.TempData["Message"] = "Program created successfully!";
+            this.TempData["Message"] = "Course created successfully!";
 
             return RedirectToAction("Index", "Home");
 
@@ -88,6 +85,11 @@ namespace MMUniGraduation.Controllers
         {
             return View(await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync());
             //return View(await _context.Courses.Where(c => c.StudyProgramId == 1).ToListAsync());
+        }
+
+        public IActionResult Edit()
+        {
+            return this.View();
         }
 
     }

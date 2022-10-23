@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Data;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MMUniGraduation.Controllers
@@ -25,6 +23,8 @@ namespace MMUniGraduation.Controllers
         {
             return View();
         }
+
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             //var courses = _context.Courses.Include(c => c.Name);
@@ -39,8 +39,9 @@ namespace MMUniGraduation.Controllers
 
             return this.View(viewModel);
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        //public async Task<IActionResult> Create(string Name, string Description, string ParetntLectureSignature, string NextLectureSignature, DateTime DateTimeToShow, DateTime EndDateTimeForHW)
         public async Task<IActionResult> Create(CreateLecture input)
         {
             if (!ModelState.IsValid)
@@ -49,14 +50,12 @@ namespace MMUniGraduation.Controllers
                 input.AllLectures = _lectureService.GetAllAsKeyValuePairs();
             }
             //var user = await _userManager.GetUserAsync(this.User);
-            //await _studyProgramService.CreateAsync(input, user.Id);
-            //await _lectureService.CreateAsync(Name, Description, ParetntLectureSignature, NextLectureSignature, DateTimeToShow, EndDateTimeForHW);
+          
             await _lectureService.CreateLectureAsync(input);
+
             this.TempData["Message"] = "Lecture created successfully!";
 
             return RedirectToAction("Index", "Home");
-            //return Content($" Name: {Name}, Desc: {Description}");
-            //return View();
         }
         // GET: Course
         public async Task<IActionResult> Index1()

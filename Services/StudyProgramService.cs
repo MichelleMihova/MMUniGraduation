@@ -37,11 +37,21 @@ namespace MMUniGraduation.Services
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name));
         }
 
-        public IEnumerable<T> GetPrograms<T>(int count)
+        public IEnumerable<T> GetRandomPrograms<T>(int count)
         {
             return _db.StudyPrograms
                 .OrderBy(x => Guid.NewGuid())
                 .Take(count)
+                .To<T>()
+                .ToList();
+        }
+        public IEnumerable<T> GetAllPrograms<T>()
+        {
+            var allProgramsCouint = _db.StudyPrograms.Count();
+
+            return _db.StudyPrograms
+                .OrderBy(x => x.Name)
+                .Take(allProgramsCouint)
                 .To<T>()
                 .ToList();
         }
