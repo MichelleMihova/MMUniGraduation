@@ -7,7 +7,6 @@ using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -41,19 +40,20 @@ namespace MMUniGraduation.Controllers
         {
             var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
             currentCourse.Lectures = await _context.Lectures.Where(l => l.CourseId == courseId).ToListAsync();
-           
+
             var textMaterial = new List<LectureFile>();
 
             foreach (var lecture in currentCourse.Lectures)
             {
                 textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
-               
+
                 foreach (var file in textMaterial)
                 {
                     lecture.TextMaterials.Add(file);
                 }
             }
 
+            return View(currentCourse);
 
             //await _context.LectureFiles.Where(l => l.LectureId == courseId).ToListAsync()
 
@@ -77,7 +77,7 @@ namespace MMUniGraduation.Controllers
             //};
             //return View(await _context.Courses.Where(c => c.Id == courseId).ToListAsync());
             //await _context.Courses.Where(c => c.Id == courseId).ToListAsync()
-            return View(currentCourse);
+
             //return View(await _context.Lectures.Where(l => l.CourseId == courseId).ToListAsync());
             //return View(viewModel);
             //return View();
