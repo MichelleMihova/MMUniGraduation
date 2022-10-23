@@ -72,39 +72,6 @@ namespace MMUniGraduation.Migrations
                     b.ToTable("Courses");
                 });
 
-            modelBuilder.Entity("MMUniGraduation.Models.Create.CreateCourse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CourseStartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ParetntId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Signature")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("SkipCoursEndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("StudyProgramId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CreateCourse");
-                });
-
             modelBuilder.Entity("MMUniGraduation.Models.Image", b =>
                 {
                     b.Property<string>("Id")
@@ -120,7 +87,7 @@ namespace MMUniGraduation.Migrations
 
                     b.HasIndex("StudyProgramId");
 
-                    b.ToTable("Image");
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.LearningObject", b =>
@@ -132,9 +99,6 @@ namespace MMUniGraduation.Migrations
 
                     b.Property<int?>("LectureId")
                         .HasColumnType("int");
-
-                    b.Property<string>("TextMaterial")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VideoMaterial")
                         .HasColumnType("nvarchar(max)");
@@ -227,6 +191,30 @@ namespace MMUniGraduation.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("Lectures");
+                });
+
+            modelBuilder.Entity("MMUniGraduation.Models.LectureFile", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Extension")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("LectureId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LectureId");
+
+                    b.ToTable("LectureFiles");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.RestrictAccess", b =>
@@ -538,6 +526,15 @@ namespace MMUniGraduation.Migrations
                     b.Navigation("Course");
                 });
 
+            modelBuilder.Entity("MMUniGraduation.Models.LectureFile", b =>
+                {
+                    b.HasOne("MMUniGraduation.Models.Lecture", "Lecture")
+                        .WithMany("TextMaterials")
+                        .HasForeignKey("LectureId");
+
+                    b.Navigation("Lecture");
+                });
+
             modelBuilder.Entity("MMUniGraduation.Models.RestrictAccess", b =>
                 {
                     b.HasOne("MMUniGraduation.Models.Course", "Course")
@@ -587,6 +584,8 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Lecture", b =>
                 {
+                    b.Navigation("TextMaterials");
+
                     b.Navigation("VideoMaterials");
                 });
 

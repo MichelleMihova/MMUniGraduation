@@ -1,8 +1,11 @@
-﻿using MMUniGraduation.Data;
+﻿using Microsoft.AspNetCore.Hosting;
+using MMUniGraduation.Data;
 using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,10 +13,14 @@ namespace MMUniGraduation.Services
 {
     public class LectureService : ILectureService
     {
+        private readonly string[] allowedExtensions = new[] { "doc", "docx", "txt", "pptx", "pptm", "pdf" };
+
         private readonly ApplicationDbContext _db;
-        public LectureService(ApplicationDbContext db)
+        private readonly IWebHostEnvironment _webHost;
+        public LectureService(ApplicationDbContext db, IWebHostEnvironment webHost)
         {
             _db = db;
+            _webHost = webHost;
         }
         public async Task CreateLectureAsync(CreateLecture input)
         {
@@ -23,11 +30,33 @@ namespace MMUniGraduation.Services
                 Description = input.Description,
                 CourseId = input.CourseId,
                 ParetntLectureId = input.ParetntLectureId,
-                //NextLectureSignature = nextLectureSignature,
                 DateTimeToShow = input.DateTimeToShow,
-                EndDateTimeForHW = input.EndDateTimeForHW
-
+                EndDateTimeForHW = input.EndDateTimeForHW,
             };
+
+            foreach (var file in input.Files)
+            {
+                var extension = Path.GetExtension(file.FileName).TrimStart('.');
+                var wwwrootPath = _webHost.WebRootPath;
+
+                if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+                {
+                    throw new Exception($"Invalid file extension {extension} !");
+                }
+
+                var lectureFile = new LectureFile
+                {
+                    Extension = extension,
+                    FileName = file.FileName
+                };
+
+                lecture.TextMaterials.Add(lectureFile);
+
+                var physicalPath = $"{wwwrootPath}/files/{lectureFile.Id}.{extension}";
+                await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
+                await file.CopyToAsync(fileStream);
+            }
+
             await _db.Lectures.AddAsync(lecture);
             await _db.SaveChangesAsync();
 
