@@ -7,6 +7,7 @@ using MMUniGraduation.Data;
 using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
+using MMUniGraduation.ViewModels;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -94,9 +95,18 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Authorize]
         public async Task<IActionResult> AllCourses(int studyProgramId)
         {
-            return View(await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync());
+            var user = await _userManager.GetUserAsync(this.User);
+            var viewModel = new AllCoursesViewModel
+            {
+                NextCourseName = _courseService.GetNextCourseSuggestion(user),
+                //Signature = _context.Courses.FirstOrDefault().Signature,
+                AllCourses = await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync()
+            };
+            return View(viewModel);
+            //return View(await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync());
         }
 
         [Authorize]

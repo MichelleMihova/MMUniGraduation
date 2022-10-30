@@ -55,41 +55,48 @@
         <br />
         <hr />
         <br />
-     
+
         <h4>Lecture materials..</h4>
         <label>Files</label>
         <input asp-for="Files" class="form-control" />
         <br />
 
+        <div class="input-group">
+            <div class="custom-file form-control">
+                <input asp-for="Files" class="custom-file-input form-control" id="inputGroupFile04">
+                <label class="custom-file-label form-control" for="inputGroupFile04">Choose lecture materials</label>
+            </div>
+        </div>
+
         <div>
             <!--
-    <div class="custom-file mb-3">
-            <input class="form-control" type="text" placeholder="Video"><br />
-        <input type="file" class="custom-file-input" id="customFile" name="filename">
-        <label class="custom-file-label" for="customFile">Upload video lecture</label>
-    </div>
-    <br />
-    <div class="custom-file mb-3">
-        <input type="file" class="custom-file-input" id="customFile" name="filename">
-        <label class="custom-file-label" for="customFile">Upload word lecture</label>
-    </div>
-    <br />
-    <div class="custom-file mb-3">
-        <input type="file" class="custom-file-input" id="customFile" name="filename">
-        <label class="custom-file-label" for="customFile">Upload homework file</label>
-    </div>
-    <br />
-    <div class="custom-file mb-3">
-        <input type="file" class="custom-file-input" id="customFile" name="filename">
-        <label class="custom-file-label" for="customFile">Upload advanced homework file</label>
-    </div>
-    -->
+            <div class="custom-file mb-3">
+                    <input class="form-control" type="text" placeholder="Video"><br />
+                <input type="file" class="custom-file-input" id="customFile" name="filename">
+                <label class="custom-file-label" for="customFile">Upload video lecture</label>
+            </div>
+            <br />
+            <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input" id="customFile" name="filename">
+                <label class="custom-file-label" for="customFile">Upload word lecture</label>
+            </div>
+            <br />
+            <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input" id="customFile" name="filename">
+                <label class="custom-file-label" for="customFile">Upload homework file</label>
+            </div>
+            <br />
+            <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input" id="customFile" name="filename">
+                <label class="custom-file-label" for="customFile">Upload advanced homework file</label>
+            </div>
+            -->
             <!--
 
-    <input class="form-control" type="text" placeholder="word"><br />
-    <input class="form-control" type="text" placeholder="homework"><br />
-    <input class="form-control" type="text" placeholder="advanced homework"><br />
-    -->
+            <input class="form-control" type="text" placeholder="word"><br />
+            <input class="form-control" type="text" placeholder="homework"><br />
+            <input class="form-control" type="text" placeholder="advanced homework"><br />
+            -->
         </div>
         <hr />
         <br />
@@ -108,19 +115,19 @@
             </div>
 
             @*<input class="form-control" type="text" placeholder="Criterias"><br />
-            <label for="party">Enter a date and time on which the lecture will be available:</label><br />
-            <input asp-for="DateTimeToShow" type="datetime-local" id="lecture-time"
-                   name="lecture-time" value="2018-06-12T19:30">
-            <br />
-            <br /><label for="party">Enter end date and time of homewokr submittion. If the homework is submitted before this date/time then the lecture will be available:</label><br />
-            <input asp-for="EndDateTimeForHW" type="datetime-local" id="lecture-time"
-                   name="lecture-time" value="2018-06-12T19:30"
-                   min="2018-06-07T00:00">
-            <br />*@
+                <label for="party">Enter a date and time on which the lecture will be available:</label><br />
+                <input asp-for="DateTimeToShow" type="datetime-local" id="lecture-time"
+                       name="lecture-time" value="2018-06-12T19:30">
+                <br />
+                <br /><label for="party">Enter end date and time of homewokr submittion. If the homework is submitted before this date/time then the lecture will be available:</label><br />
+                <input asp-for="EndDateTimeForHW" type="datetime-local" id="lecture-time"
+                       name="lecture-time" value="2018-06-12T19:30"
+                       min="2018-06-07T00:00">
+                <br />*@
             <br />
             @*<input class="form-control" type="text" placeholder="Select students who can see the course"><br />
-            <input class="form-control" type="text" placeholder="Enter min grade to be shown"><br />
-            <input class="form-control" type="text" placeholder="Enter min count of submitted HW"><br />*@
+                <input class="form-control" type="text" placeholder="Enter min grade to be shown"><br />
+                <input class="form-control" type="text" placeholder="Enter min count of submitted HW"><br />*@
 
         </div>
 

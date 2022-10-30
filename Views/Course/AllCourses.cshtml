@@ -1,4 +1,5 @@
-﻿@model IEnumerable<MMUniGraduation.Models.Course>
+﻿@*@model IEnumerable<MMUniGraduation.Models.Course>*@
+@model  MMUniGraduation.ViewModels.AllCoursesViewModel
 <style>
     .img-box {
         width: 100%;
@@ -16,7 +17,16 @@
 
 <h2 style="text-align: center; padding-top: 1em; ">Our Courses</h2>
 <hr />
-@foreach (var course in Model)
+@if (User.Identity.IsAuthenticated)
+{
+    <div style="text-align: center; padding-top: 1em; ">
+        <h4>Course suggestions</h4>
+        <p>The more appropriate course for you is @Model.NextCourseName </p>
+    </div>
+    <hr />
+}
+
+@foreach (var course in Model.AllCourses)
 {
     <div class="row">
         <div class="col" asp-route-id="@course.Id">

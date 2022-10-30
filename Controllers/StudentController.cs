@@ -3,6 +3,9 @@ using MMUniGraduation.Data;
 using MMUniGraduation.Models;
 using System.Linq;
 using MMUniGraduation.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace MMUniGraduation.Controllers
 {
@@ -10,13 +13,16 @@ namespace MMUniGraduation.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ICourseService _courseService;
-        public StudentController(ApplicationDbContext context, ICourseService courseService)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public StudentController(ApplicationDbContext context, ICourseService courseService, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _courseService = courseService;
+            _userManager = userManager;
         }
-        
-        public IActionResult Index()
+
+        //public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             //display image
             //var content = db.Contents.Select(s => new
@@ -37,12 +43,15 @@ namespace MMUniGraduation.Controllers
             //}).ToList();
             //return View(contentModel);
 
+            var user = await _userManager.GetUserAsync(this.User);
+
             var viewModel = new Student
             {
-                CurrentCourse = _context.Courses.FirstOrDefault(c => c.Id == 2)
+                CurrentCourse = _context.Courses.FirstOrDefault(c => c.Id == user.CurrentCourseId),
+                PassedCourses = await _context.Courses.Where(c => c.StudyProgramId == 1).ToListAsync()
             };
 
-            return View();
+            return View(viewModel);
         }
         public IActionResult Edit()
         {

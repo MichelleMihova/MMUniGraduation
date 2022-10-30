@@ -22,17 +22,20 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<RegisterModel> logger,
+            RoleManager<IdentityRole> roleManager,
+        ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _logger = logger;
             _emailSender = emailSender;
         }
@@ -61,6 +64,10 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [DataType(DataType.Password)]
+            [Display(Name = "Teacher Token")]
+            public string TeacherToken { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -75,8 +82,23 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email };
+                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, TeacherToken = Input.TeacherToken };
                 var result = await _userManager.CreateAsync(user, Input.Password);
+
+                if (user.TeacherToken != null)
+                {
+                    if (!await _roleManager.RoleExistsAsync("Teacher"))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole
+                        {
+                            Name = "Teacher"
+                        });
+                    }
+
+                    await _userManager.AddToRoleAsync(user, "Teacher");
+                }
+
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");

@@ -28,11 +28,12 @@
             <div class="card-footer">
                 <div class="card-footer">
                     @*<small class="text-muted">Last updated 3 mins ago</small>*@
-                    <a class="nav-link text-dark" asp-route-courseId="@program.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">View course information</a>
+                    @*<a class="nav-link text-dark" asp-route-courseId="@program.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">View course information</a>*@
+                    <a class="nav-link text-dark" asp-route-studyProgramId="@program.Id" asp-controller="Course" asp-action="AllCourses" style="text-decoration: none;">View all @program.Name courses</a>
 
                     @*<div>
-                            <a class="btn btn-outline-info" asp-route-courseId="@program.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">View course information</a>
-                        </div>*@
+            <a class="btn btn-outline-info" asp-route-courseId="@program.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">View course information</a>
+        </div>*@
                 </div>
             </div>
         </div>

@@ -15,5 +15,7 @@ namespace MMUniGraduation.Models
         //}
 
         public int CurrentCourseId { get; set; }
+
+        public string TeacherToken { get; set; }
     }
 }

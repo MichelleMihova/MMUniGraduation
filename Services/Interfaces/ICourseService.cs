@@ -1,4 +1,5 @@
-﻿using MMUniGraduation.Models.Create;
+﻿using MMUniGraduation.Models;
+using MMUniGraduation.Models.Create;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,5 +9,6 @@ namespace MMUniGraduation.Services.Interfaces
     {
         public Task CreateCourseAsync(CreateCourse input);
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs();
+        public string GetNextCourseSuggestion(ApplicationUser user);
     }
 }
