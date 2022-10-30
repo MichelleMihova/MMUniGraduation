@@ -54,34 +54,6 @@ namespace MMUniGraduation.Controllers
             }
 
             return View(currentCourse);
-
-            //await _context.LectureFiles.Where(l => l.LectureId == courseId).ToListAsync()
-
-
-            //foreach (var item in currentCourse.Lectures)
-            //{
-
-            //}
-
-
-            //TO DO...
-            // When upload file button is clicked -> to show in assesment page 
-
-            //var viewModel1 = _context.Courses.Where(c => c.Id == courseId);
-
-            //var viewModel = new Course
-            //{
-            //    //Courses = _courseService.GetAllAsKeyValuePairs()
-            //    Lectures = await _context.Lectures.Where(l => l.CourseId == courseId).ToListAsync()
-            //    //await _context.Courses.Where(c => c.Id == courseId).ToListAsync()
-            //};
-            //return View(await _context.Courses.Where(c => c.Id == courseId).ToListAsync());
-            //await _context.Courses.Where(c => c.Id == courseId).ToListAsync()
-
-            //return View(await _context.Lectures.Where(l => l.CourseId == courseId).ToListAsync());
-            //return View(viewModel);
-            //return View();
-            //await _context.StudyPrograms.ToListAsync()
         }
 
         [Authorize(Roles = "Admin")]
@@ -125,6 +97,5 @@ namespace MMUniGraduation.Controllers
         {
             return this.View();
         }
-
     }
 }

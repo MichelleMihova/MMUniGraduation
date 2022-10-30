@@ -47,11 +47,11 @@ namespace MMUniGraduation.Services
         }
         public IEnumerable<T> GetAllPrograms<T>()
         {
-            var allProgramsCouint = _db.StudyPrograms.Count();
+            var allProgramsCount = _db.StudyPrograms.Count();
 
             return _db.StudyPrograms
                 .OrderBy(x => x.Name)
-                .Take(allProgramsCouint)
+                .Take(allProgramsCount)
                 .To<T>()
                 .ToList();
         }

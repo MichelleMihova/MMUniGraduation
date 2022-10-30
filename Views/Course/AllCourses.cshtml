@@ -1,9 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model IEnumerable<MMUniGraduation.Models.Course>
+﻿@model IEnumerable<MMUniGraduation.Models.Course>
 <style>
     .img-box {
         width: 100%;
@@ -25,11 +20,8 @@
 {
     <div class="row">
         <div class="col" asp-route-id="@course.Id">
-            @*<h5>Course Name</h5>*@
             <h5>@course.Signature @course.Name</h5>
-            @*<p class="p-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec quam malesuada, tincidunt nisi eget, venenatis nulla. Pellentesque laoreet luctus porttitor. Phasellus mauris tortor, lacinia vel porta ac, tincidunt vel urna. Mauris vitae eros in mauris viverra ornare. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur dignissim nisl sed lacus laoreet vulputate. Curabitur a feugiat orci. Proin et quam sed libero efficitur maximus. Nulla vitae dolor eleifend, fermentum massa quis, blandit dui. Donec finibus interdum volutpat. Etiam convallis, urna non egestas consequat, libero libero gravida nibh, eget mollis ipsum lacus id felis. Fusce velit magna, congue vitae lectus ut, egestas dignissim dui. Integer condimentum dolor ex, vitae bibendum eros congue non. Aliquam rhoncus blandit posuere. Integer pellentesque varius libero.</p>*@
             <p class="p-desc">@course.Description</p>
-            @*<button type="button" class="btn btn-outline-info" onclick="parent.location='/Course'">Започни сега!</button>*@
             <div>
                 <a class="btn btn-outline-info" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Започни сега!</a>
             </div>

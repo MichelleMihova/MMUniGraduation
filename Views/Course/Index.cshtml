@@ -1,10 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@*@model IEnumerable<MMUniGraduation.Models.Course>*@
-@model   MMUniGraduation.Models.Course
+﻿@model   MMUniGraduation.Models.Course
 
 <style>
     .embed-responsive {
@@ -53,89 +47,12 @@
             document.getElementById("countdown").innerHTML = "EXPIRED";
         }
     }, 1000);
-
-    //var yourDateToGo = new Date(); //here you're making new Date object
-    //yourDateToGo.setDate(yourDateToGo.getDate() + 2); //your're setting date in this object 1 day more from now
-    ////you can change number of days to go by putting any number in place of 1
-
-    //var timing = setInterval( // you're making an interval - a thing, that is updating content after number of miliseconds, that you're writing after comma as second parameter
-    //    function () {
-
-    //        var currentDate = new Date().getTime(); //same thing as above
-    //        var timeLeft = yourDateToGo - currentDate; //difference between time you set and now in miliseconds
-
-    //        var days = Math.floor(timeLeft / (1000 * 60 * 60 * 24)); //conversion miliseconds on days
-    //        if (days < 10) days = "0" + days; //if number of days is below 10, programm is writing "0" before 9, that's why you see "09" instead of "9"
-    //        var hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); //conversion miliseconds on hours
-    //        if (hours < 10) hours = "0" + hours;
-    //        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)); //conversion miliseconds on minutes
-    //        if (minutes < 10) minutes = "0" + minutes;
-    //        var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);//conversion miliseconds on seconds
-    //        if (seconds < 10) seconds = "0" + seconds;
-
-    //        document.getElementById("countdown").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s"; // putting number of days, hours, minutes and seconds in div,
-    //        //which id is countdown
-
-    //        if (timeLeft <= 0) {
-    //            clearInterval(timing);
-    //            document.getElementById("countdown").innerHTML = "It's over"; //if there's no time left, programm in this 2 lines is clearing interval (nothing is counting now)
-    //            //and you see "It's over" instead of time left
-    //        }
-    //    }, 1000);
-
-    //function firstExample() {
-
-    //    for (; ;) {
-    //        var x = prompt("Enter number of days");
-    //        x = parseInt(x);
-    //        if (x > 0 && x < 30) break;
-    //        else alert("Enter number between 0 and 30")
-    //    }
-
-    //    var yourDateToGo2 = new Date();
-    //    yourDateToGo2.setDate(yourDateToGo2.getDate() + x);
-
-    //    var timing2 = setInterval(
-    //        function () {
-
-    //            var currentDate2 = new Date().getTime();
-    //            var timeLeft2 = yourDateToGo2 - currentDate2;
-
-    //            var days2 = Math.floor(timeLeft2 / (1000 * 60 * 60 * 24));
-    //            if (days2 < 10) days2 = "0" + days2;
-    //            var hours2 = Math.floor((timeLeft2 % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    //            if (hours2 < 10) hours2 = "0" + hours2;
-    //            var minutes2 = Math.floor((timeLeft2 % (1000 * 60 * 60)) / (1000 * 60));
-    //            if (minutes2 < 10) minutes2 = "0" + minutes2;
-    //            var seconds2 = Math.floor((timeLeft2 % (1000 * 60)) / 1000);
-    //            if (seconds2 < 10) seconds2 = "0" + seconds2;
-
-    //            document.getElementById("countdown2").innerHTML = days2 + "d " + hours2 + "h " + minutes2 + "m " + seconds2 + "s";
-
-    //            if (timeLeft2 <= 0) {
-    //                clearInterval(timing2);
-    //                document.getElementById("countdown2").innerHTML = "It's over";
-
-    //            }
-    //        }, 1000);
-
-    //}
-    //document.getElementById('btnId').addEventListener('click', firstExample);
-
-    //$(function () {
-    //    $('[data-toggle="popover"]').popover()
-    //})
-    //$('.popover-dismiss').popover({
-    //    trigger: 'focus'
-    //})
 </script>
 
 <h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>
 <div style="text-align:center;">
     <h3>@Model.Signature @Model.Name</h3>
     <p>@Model.Description</p>
-    @*<h3>Description</h3>*@
-    @*<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec quam malesuada, tincidunt nisi eget, venenatis nulla. Pellentesque laoreet luctus porttitor.</p>*@
 </div>
 <br />
 <hr />
@@ -148,9 +65,6 @@
                 </svg>
                 <p id="countdown" style="padding-left:1em;"></p>
             </div>
-            <!--
-               <div class="row justify-content-center border rounded-pill" id="countdown"></div>
-            -->
         </div>
         <div class="col">
             <div class="form-check" style="text-align:right;">
@@ -169,84 +83,6 @@
 </div>
 <hr />
 <br />
-
-<!--<div id="accordion">
-    <div class="card">
-        <div class="card-header" id="headingOne">
-            <h5 class="mb-0">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Lecture 1
-                </button>
-            </h5>
-        </div>
-
-        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-            <div class="card-body">
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-            </div>
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <ul>
-                            <li>
-
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16">
-                                    <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
-                                </svg>
-                                <i class="bi bi-youtube" onclick="showVideo()">Lecture</i>
-                                <svg id="show-svg" onclick="closeVideo()" style="display: none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
-                                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                </svg>
-                                <div id="show-video" class="embed-responsive embed-responsive-16by9">
-                                    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" allowfullscreen></iframe>
-                                </div>
-                            </li>
-                            <li>-->
-<!--
-    <a href="path_to_file" download="proposed_file_name">Download</a>
--->
-<!--<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-word-fill" viewBox="0 0 16 16">
-                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM5.485 4.879l1.036 4.144.997-3.655a.5.5 0 0 1 .964 0l.997 3.655 1.036-4.144a.5.5 0 0 1 .97.242l-1.5 6a.5.5 0 0 1-.967.01L8 7.402l-1.018 3.73a.5.5 0 0 1-.967-.01l-1.5-6a.5.5 0 1 1 .97-.242z" />
-            </svg>
-            <i class="bi bi-file-word-fill">Word</i>
-        </li>
-        <li>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
-            </svg>
-            <i class="bi bi-file-earmark-text-fill">Exercises</i>
-        </li>
-        <li>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stars" viewBox="0 0 16 16">
-                <path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828l.645-1.937zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.734 1.734 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.734 1.734 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.734 1.734 0 0 0 3.407 2.31l.387-1.162zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732L9.1 2.137a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L10.863.1z" />
-            </svg>
-            <i class="bi bi-stars">Допълнителни задачи</i>
-        </li>
-    </ul>
-
-
-</div>
-
-<div class="mb-3 col">-->
-<!--<input type="file" id="formFile">-->
-<!--<div class="input-group">
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="inputGroupFile04">
-                            <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
-                        </div>
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button">Upload</button>
-                        </div>
-                    </div>
-                    <p style="text-align:end;">Grade: (5.00)</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</div>-->
-@*dynamicly get course info*@
 
 @{ int i = 0;
     foreach (var lecture in Model.Lectures)
@@ -294,8 +130,6 @@
                                         </div>
                                     </li>
                                     <li>
-                                        @* HOW TO DOWNLOAD FILE *@
-                                        @*<a href="path_to_file" download="proposed_file_name">Download</a>*@
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-word-fill" viewBox="0 0 16 16">
                                             <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM5.485 4.879l1.036 4.144.997-3.655a.5.5 0 0 1 .964 0l.997 3.655 1.036-4.144a.5.5 0 0 1 .97.242l-1.5 6a.5.5 0 0 1-.967.01L8 7.402l-1.018 3.73a.5.5 0 0 1-.967-.01l-1.5-6a.5.5 0 1 1 .97-.242z" />
                                         </svg>
@@ -335,24 +169,6 @@
                 </div>
             </div>
         </div>
-
-        @*<div class="accordion" id="accordionExample_@i">
-                <div class="card">
-                    <div class="card-header" id="headingOne_@i">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne_@i" aria-expanded="False" aria-controls="collapseOne">
-                                @lecture.Name
-                            </button>
-                        </h5>
-                    </div>
-
-                    <div id="collapseOne_@i" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample_@i">
-                        <div class="card-body">
-                            @lecture.Description
-                        </div>
-                    </div>
-                </div>
-            </div>*@
         i++;
     }
 }
