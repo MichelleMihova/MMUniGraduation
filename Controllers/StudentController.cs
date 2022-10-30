@@ -1,12 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MMUniGraduation.Data;
 using MMUniGraduation.Models;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using MMUniGraduation.Services.Interfaces;
 
 namespace MMUniGraduation.Controllers

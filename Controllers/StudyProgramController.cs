@@ -12,8 +12,8 @@ namespace MMUniGraduation.Controllers
     public class StudyProgramController : Controller
     {
         private readonly IStudyProgramService _studyProgramService;
-        private readonly UserManager<IdentityUser> _userManager;
-        public StudyProgramController(IStudyProgramService studyProgramService, UserManager<IdentityUser> userManager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public StudyProgramController(IStudyProgramService studyProgramService, UserManager<ApplicationUser> userManager)
         {
             _studyProgramService = studyProgramService;
             _userManager = userManager;

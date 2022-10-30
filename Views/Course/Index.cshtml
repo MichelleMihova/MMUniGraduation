@@ -1,4 +1,11 @@
-﻿@model   MMUniGraduation.Models.Course
+﻿@model MMUniGraduation.Models.Course
+
+@if (this.TempData.ContainsKey("Message"))
+{
+    <div class="alert alert-heading alert-dismissible" style="color: mediumseagreen; font-weight: bold; text-align: center">
+        @this.TempData["Message"]
+    </div>
+}
 
 <style>
     .embed-responsive {
@@ -112,8 +119,8 @@
                                     @foreach (var file in lecture.TextMaterials)
                                     {
                                         <li>
-                                                @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension })
-                                         </li>
+                                            @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension })
+                                        </li>
                                     }
                                     <li>
 

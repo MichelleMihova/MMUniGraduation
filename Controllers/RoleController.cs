@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MMUniGraduation.Data;
+using MMUniGraduation.Models;
 using System.Threading.Tasks;
 
 namespace MMUniGraduation.Controllers
@@ -10,11 +11,11 @@ namespace MMUniGraduation.Controllers
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _db;
 
         public RoleController(RoleManager<IdentityRole> roleManager,
-            UserManager<IdentityUser> userManager,
+            UserManager<ApplicationUser> userManager,
             ApplicationDbContext db)
         {
             _roleManager = roleManager;

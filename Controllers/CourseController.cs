@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Data;
@@ -19,13 +20,16 @@ namespace MMUniGraduation.Controllers
         private readonly ICourseService _courseService;
         private readonly IStudyProgramService _studyProgramService;
         private readonly IWebHostEnvironment _webHost;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CourseController(ICourseService courseService, IStudyProgramService studyProgramService, ApplicationDbContext context, IWebHostEnvironment webHost)
+        public CourseController(ICourseService courseService, IStudyProgramService studyProgramService,
+            ApplicationDbContext context, IWebHostEnvironment webHost, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _courseService = courseService;
             _studyProgramService = studyProgramService;
             _webHost = webHost;
+            _userManager = userManager;
         }
 
         public FileResult DownloadFile(string fileName)
@@ -52,6 +56,8 @@ namespace MMUniGraduation.Controllers
                     lecture.TextMaterials.Add(file);
                 }
             }
+
+            this.TempData["Message"] = "You have been sucessfully assigned to this course !";
 
             return View(currentCourse);
         }
@@ -91,6 +97,18 @@ namespace MMUniGraduation.Controllers
         public async Task<IActionResult> AllCourses(int studyProgramId)
         {
             return View(await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync());
+        }
+
+        [Authorize]
+        public async Task<IActionResult> AssignUserToCourse(int courseId)
+        {
+            var user = await _userManager.GetUserAsync(this.User);
+
+            user.CurrentCourseId = courseId;
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", new { courseId = courseId });
         }
 
         public IActionResult Edit()

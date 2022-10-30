@@ -18,6 +18,7 @@ namespace MMUniGraduation.Models
         public string Description { get; set; }
         public int ParetntId { get; set; }
         public int NextCourseId { get; set; }
+        public string UserId { get; set; }
 
          //TODO !!!
         public string SkippingCourseSignature { get; set; }
