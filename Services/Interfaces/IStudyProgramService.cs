@@ -7,7 +7,8 @@ namespace MMUniGraduation.Services.Interfaces
     public interface IStudyProgramService
     {
         public Task CreateAsync(CreateStudyProgram model);
-        IEnumerable<T> GetPrograms<T>(int count);
+        IEnumerable<T> GetRandomPrograms<T>(int count);
+        IEnumerable<T> GetAllPrograms<T>();
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs();
     }
 }

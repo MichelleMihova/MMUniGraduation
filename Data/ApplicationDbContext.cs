@@ -16,6 +16,8 @@ namespace MMUniGraduation.Data
         public DbSet<Course> Courses { get; set; }
         public DbSet<Lecture> Lectures { get; set; }
         public DbSet<LearningObject> LearningObjects { get; set; }
+        public DbSet<LectureFile> LectureFiles { get; set; }
+        public DbSet<Image> Images { get; set; }
         public DbSet<RestrictAccess> RestrictAccess { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Lector> Lectors { get; set; }
@@ -83,6 +85,5 @@ namespace MMUniGraduation.Data
             */
 
         }
-        public DbSet<MMUniGraduation.Models.Create.CreateCourse> CreateCourse { get; set; }
     }
 }

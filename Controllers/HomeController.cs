@@ -23,7 +23,7 @@ namespace MMUniGraduation.Controllers
         {
             var viewModel = new IndexViewModel()
             {
-                StudyPrograms = _studyProgramService.GetPrograms<IndexStudyProgramViewModel>(3)
+                StudyPrograms = _studyProgramService.GetRandomPrograms<IndexStudyProgramViewModel>(3)
             };
 
             return View(viewModel);

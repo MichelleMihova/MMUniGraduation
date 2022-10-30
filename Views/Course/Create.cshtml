@@ -32,30 +32,6 @@
     background: #0b7dda;
         }
 </style>
-<script>
-    var dt = $("#datetimepicker1").find("input").val();
-    alert("Current Date and Time: " + dt);
-    var dateTime = {
-        CourseStartDate: dt
-    };
-
-
-    alert(JSON.stringify(dateTime));
-    $.ajax({
-
-    url: "/CourseController/Create",
-        type: "POST",
-
-        data: { model: dateTime },
-
-        success: function (result) {
-            alert(result);
-        },
-        error: function (xhr, exception) {
-            alert("Error");
-        }
-    });
-</script>
 
 <h1 style="padding-top:25px; text-align:center;">Create Course</h1>
 
@@ -79,13 +55,10 @@
 
         <h4>Course inheritance</h4>
         <div>
-            @*<input asp-for="ParetntId" class="form-control" type="text" placeholder="Paretnt Couse Signature"><br />*@
-            @*<input asp-for="NextCourseId" class="form-control" type="text" placeholder="Next Course Signature"><br />*@
             <label>Select parent lecture</label>
             <select asp-for="ParetntId" class="form-control" asp-items="courses">
                 <option asp-for="ParetntId" value="0" >No inheritance</option>
             </select>
-
         </div>
         <hr /><br />
 
@@ -103,13 +76,6 @@
                 <span asp-validation-for="SkipCoursEndDate" class="text-danger"></span>
             </div>
             <br />
-            @*<div id="datetimepicker1" class="date">
-                    <label for="party">Enter a date and time for start of the course:</label><br />
-                    <input data-format="yyyy-MM-dd hh:mm:ss" type="datetime-local">
-                </div>
-                <br />*@
-            @*<input class="form-control" type="text" placeholder="Select students who can see the course"><br />
-                @Html.EditorFor(model => model.CourseStartDate, new { htmlAttributes = new { @class = "datepicker", @style = "height: 30px" } })*@
         </div>
         <br />
         <button class="btn info">Create</button>

@@ -8,6 +8,7 @@
 }
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
     .btn {
         border: none;
@@ -33,20 +34,17 @@
             background: #0b7dda;
         }
 </style>
+
 <h1 style="padding-top:25px; padding-bottom:1em; text-align:center;">@ViewData["Title"]</h1>
 <form asp-action="Create" asp-controller="Lecture" enctype="multipart/form-data">
     <div>
         <h4>Lecture information</h4>
         <input asp-for="Name" class="form-control" type="text" placeholder="Lecture name"><br />
-        @*<input class="form-control" type="text" placeholder="Course Signature"><br />*@
-        @*<input asp-for="Description" class="form-control" type="text" placeholder="Lector Name/ID"><br />*@
-        @*<textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Lecture Description..."></textarea>*@
-        @*<input asp-for="Description" class="form-control" type="text" placeholder="Lecture Description..." />*@
         <textarea asp-for="Description" class="form-control" type="text" placeholder="Lecture Description"></textarea>
 
         <br /><br />
         <h4>Lecture inheritance</h4>
-        <label>Select parent course</label>
+        <label>Select corresponding course</label>
         <select asp-for="CourseId" class="form-control" asp-items="courses"></select>
         <br />
         <label>Select parent lecture</label>
@@ -55,38 +53,43 @@
         </select>
 
         <br />
-        @*<select asp-for="CourseId" class="form-control" asp-items="courses"></select>*@
         <hr />
         <br />
+     
         <h4>Lecture materials..</h4>
+        <label>Files</label>
+        <input asp-for="Files" class="form-control" />
+        <br />
+
         <div>
             <!--
-        <div class="custom-file mb-3">
-            <input type="file" class="custom-file-input" id="customFile" name="filename">
-            <label class="custom-file-label" for="customFile">Upload video lecture</label>
-        </div>
-        <br />
-        <div class="custom-file mb-3">
-            <input type="file" class="custom-file-input" id="customFile" name="filename">
-            <label class="custom-file-label" for="customFile">Upload word lecture</label>
-        </div>
-        <br />
-        <div class="custom-file mb-3">
-            <input type="file" class="custom-file-input" id="customFile" name="filename">
-            <label class="custom-file-label" for="customFile">Upload homework file</label>
-        </div>
-        <br />
-        <div class="custom-file mb-3">
-            <input type="file" class="custom-file-input" id="customFile" name="filename">
-            <label class="custom-file-label" for="customFile">Upload advanced homework file</label>
-        </div>
-        -->
+    <div class="custom-file mb-3">
+            <input class="form-control" type="text" placeholder="Video"><br />
+        <input type="file" class="custom-file-input" id="customFile" name="filename">
+        <label class="custom-file-label" for="customFile">Upload video lecture</label>
+    </div>
+    <br />
+    <div class="custom-file mb-3">
+        <input type="file" class="custom-file-input" id="customFile" name="filename">
+        <label class="custom-file-label" for="customFile">Upload word lecture</label>
+    </div>
+    <br />
+    <div class="custom-file mb-3">
+        <input type="file" class="custom-file-input" id="customFile" name="filename">
+        <label class="custom-file-label" for="customFile">Upload homework file</label>
+    </div>
+    <br />
+    <div class="custom-file mb-3">
+        <input type="file" class="custom-file-input" id="customFile" name="filename">
+        <label class="custom-file-label" for="customFile">Upload advanced homework file</label>
+    </div>
+    -->
             <!--
-        <input class="form-control" type="text" placeholder="Video"><br />
-        <input class="form-control" type="text" placeholder="word"><br />
-        <input class="form-control" type="text" placeholder="homework"><br />
-        <input class="form-control" type="text" placeholder="advanced homework"><br />
-        -->
+
+    <input class="form-control" type="text" placeholder="word"><br />
+    <input class="form-control" type="text" placeholder="homework"><br />
+    <input class="form-control" type="text" placeholder="advanced homework"><br />
+    -->
         </div>
         <hr />
         <br />
