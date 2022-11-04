@@ -4,14 +4,16 @@ using MMUniGraduation.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MMUniGraduation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221031150807_CreateUserRole")]
+    partial class CreateUserRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,41 +138,6 @@ namespace MMUniGraduation.Migrations
                     b.HasIndex("StudyProgramId");
 
                     b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("MMUniGraduation.Models.Homework", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Extension")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Grade")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("HomeworkName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HomeworkTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("LectureId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LectureId");
-
-                    b.ToTable("Homeworks");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Image", b =>
@@ -533,15 +500,6 @@ namespace MMUniGraduation.Migrations
                     b.Navigation("StudyProgram");
                 });
 
-            modelBuilder.Entity("MMUniGraduation.Models.Homework", b =>
-                {
-                    b.HasOne("MMUniGraduation.Models.Lecture", "Lecture")
-                        .WithMany("Homeworks")
-                        .HasForeignKey("LectureId");
-
-                    b.Navigation("Lecture");
-                });
-
             modelBuilder.Entity("MMUniGraduation.Models.Image", b =>
                 {
                     b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
@@ -648,8 +606,6 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Lecture", b =>
                 {
-                    b.Navigation("Homeworks");
-
                     b.Navigation("TextMaterials");
 
                     b.Navigation("VideoMaterials");

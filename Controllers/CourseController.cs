@@ -58,6 +58,23 @@ namespace MMUniGraduation.Controllers
                 }
             }
 
+            //TO DO..
+            //Fill and show current lecture homework for current user and it's grade
+            //await _lectureService.CreateLectureAsync(input);
+            var user = _userManager.GetUserAsync(this.User);
+            var homework = new List<Homework>();
+            foreach (var lecture in currentCourse.Lectures)
+            {
+                homework = _context.Homeworks.Where(l => l.LectureId == lecture.Id).ToList();
+                //homeworks = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
+
+                foreach (var file in homework)
+                {
+                    lecture.Homeworks.Add(file);
+                }
+            }
+
+            //TO DO..
             this.TempData["Message"] = "You have been sucessfully assigned to this course !";
 
             return View(currentCourse);
@@ -114,16 +131,50 @@ namespace MMUniGraduation.Controllers
         {
             var user = await _userManager.GetUserAsync(this.User);
 
-            user.CurrentCourseId = courseId;
-
-            _context.SaveChanges();
-
+            if (user.CurrentCourseId == 0)
+            {
+                user.CurrentCourseId = courseId;
+                _context.SaveChanges();
+            }
+            
             return RedirectToAction("Index", new { courseId = courseId });
         }
 
-        public IActionResult Edit()
+        public async Task<IActionResult> Edit(int courseId)
         {
-            return this.View();
+            //TO DO..
+            //Add homework/new lecture materiad/homework grade
+            //Remove lecture material
+            //Change description/grade/skip course end date/ criterias who and when can see lectures
+
+            var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
+            currentCourse.Lectures = await _context.Lectures.Where(l => l.CourseId == courseId).ToListAsync();
+
+            var textMaterial = new List<LectureFile>();
+
+            foreach (var lecture in currentCourse.Lectures)
+            {
+                textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
+
+                foreach (var file in textMaterial)
+                {
+                    lecture.TextMaterials.Add(file);
+                }
+            }
+
+            return View(currentCourse);
+
+            // this.View();
+        }
+
+        [Authorize(Roles = "Teacher")]
+        public IActionResult Delete(int courseId)
+        {
+            //TO DO..
+            //Remove course
+            //Return message
+            //return this.View();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

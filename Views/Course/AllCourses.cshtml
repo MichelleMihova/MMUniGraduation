@@ -1,5 +1,5 @@
 ﻿@*@model IEnumerable<MMUniGraduation.Models.Course>*@
-@model  MMUniGraduation.ViewModels.AllCoursesViewModel
+@model MMUniGraduation.ViewModels.AllCoursesViewModel
 <style>
     .img-box {
         width: 100%;
@@ -19,10 +19,20 @@
 <hr />
 @if (User.Identity.IsAuthenticated)
 {
-    <div style="text-align: center; padding-top: 1em; ">
-        <h4>Course suggestions</h4>
-        <p>The more appropriate course for you is @Model.NextCourseName </p>
-    </div>
+    if (@Model.NextCourseName != null)
+    {
+        <div style="text-align: center; padding-top: 1em; ">
+            <h4>Course suggestions</h4>
+            <p>The more appropriate course for you is @Model.NextCourseName </p>
+        </div>
+    }
+    else
+    {
+        <div style="text-align: center; padding-top: 1em; ">
+            <h4>Course suggestions</h4>
+            <p>Congrats! You compleated all courses! </p>
+        </div>
+    }
     <hr />
 }
 

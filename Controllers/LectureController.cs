@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Data;
+using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MMUniGraduation.Controllers
@@ -13,11 +17,13 @@ namespace MMUniGraduation.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILectureService _lectureService;
         private readonly ICourseService _courseService;
-        public LectureController(ApplicationDbContext context, ILectureService lectureService, ICourseService courseService)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public LectureController(ApplicationDbContext context, ILectureService lectureService, ICourseService courseService, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _lectureService = lectureService;
             _courseService = courseService;
+            _userManager = userManager;
         }
         public IActionResult Index()
         {
@@ -61,6 +67,30 @@ namespace MMUniGraduation.Controllers
         public async Task<IActionResult> Index1()
         {
             return View(await _context.Lectures.ToListAsync());
+        }
+
+        public async Task<IActionResult> AddHomework(IFormFile file, int lectureId)
+        {
+            var user = await _userManager.GetUserAsync(this.User);
+            var currLecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == lectureId);
+
+            //if (!ModelState.IsValid)
+            //{
+                 
+            //}
+            await _lectureService.AddHomeworkToLecture(lectureId, file, user.Id);
+
+             this.TempData["Message"] = "Homework added successfully!";
+
+            
+            //return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Course", new { courseId = 1 });
+        }
+
+        public async Task<IActionResult> EditHomework(int homeworkId, decimal homeworkGrade, string homeworkComment)
+        {
+            await _lectureService.EditHomework(homeworkId, homeworkGrade, homeworkComment);
+            return RedirectToAction("Assessment", "Lector");
         }
     }
 }

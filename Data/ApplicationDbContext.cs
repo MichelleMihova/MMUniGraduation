@@ -17,6 +17,7 @@ namespace MMUniGraduation.Data
         public DbSet<Lecture> Lectures { get; set; }
         public DbSet<LearningObject> LearningObjects { get; set; }
         public DbSet<LectureFile> LectureFiles { get; set; }
+        public DbSet<Homework> Homeworks { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<RestrictAccess> RestrictAccess { get; set; }
         public DbSet<Student> Students { get; set; }

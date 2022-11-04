@@ -1,36 +1,7 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model MMUniGraduation.Models.Course
 @{
     ViewData["Title"] = "Edit course";
 }
-
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
-
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-<link href="path/to/select2.min.css" rel="stylesheet" />
-<script src="path/to/select2.min.js"></script>
-
-<head>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
-</head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
-
 
 <style>
     .embed-responsive {
@@ -41,35 +12,10 @@
             display: block;
         }
 </style>
-<script>
-
-    $(document).ready(function () {
-        $('.js-example-basic-multiple').select2();
-    });
-
-    $(".js-example-theme-multiple").select2({
-        theme: "classic"
-    });
-
-    $('select').selectpicker();
-
-    $('.ui.dropdown').dropdown();
-
-    $('#multiple-select').mobiscroll().select({
-        inputElement: document.getElementById('my-input'),
-        touchUi: false
-    });
-
-    $(document).ready(function () {
-        //change selectboxes to selectize mode to be searchable
-        $("select").select2();
-    });
-</script>
 
 <h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>
 <div style="text-align:center;">
-    <h3>Description</h3>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec quam malesuada, tincidunt nisi eget, venenatis nulla. Pellentesque laoreet luctus porttitor. Phasellus mauris tortor, lacinia vel porta ac, tincidunt vel urna. Mauris vitae eros in mauris viverra ornare. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur dignissim nisl sed lacus laoreet vulputate. Curabitur a feugiat orci. Proin et quam sed libero efficitur maximus. Nulla vitae dolor eleifend, fermentum massa quis, blandit dui. Donec finibus interdum volutpat. Etiam convallis, urna non egestas consequat, libero libero gravida nibh, eget mollis ipsum lacus id felis. Fusce velit magna, congue vitae lectus ut, egestas dignissim dui. Integer condimentum dolor ex, vitae bibendum eros congue non. Aliquam rhoncus blandit posuere. Integer pellentesque varius libero.</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" style="margin-bottom:1em;" placeholder="Course Description..."></textarea>
 </div>
 <br />
 <hr />
@@ -79,6 +25,90 @@
        min="2018-06-07T00:00">
 <hr />
 <br />
+
+@{ int i = 0;
+    foreach (var lecture in Model.Lectures)
+    {
+        <div class="container">
+            <div class="card">
+                <div class="card-header" id="accordion_@i">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne_@i" aria-expanded="false" aria-controls="collapseOne">
+                            @lecture.Name
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseOne_@i" class="collapse" aria-labelledby="headingOne" data-parent="#accordion_@i">
+                    <div class="card-body" style="text-align:end;">
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="2" style="margin-bottom:1em;" placeholder="Lecture Description...">@lecture.Description</textarea>
+                        <button class="btn btn-outline-secondary btn-outline-info" type="button" style="text-align:end;">Upload</button>
+                    </div>
+                    <div class="card-body">
+                        Date of performance: @lecture.DateTimeToShow
+                        <input type="datetime-local" id="meeting-time"
+                               name="meeting-time" value=@lecture.DateTimeToShow.ToString()>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <ul>
+                                    <li>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16">
+                                            <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
+                                        </svg>
+                                        <i class="bi bi-youtube" onclick="showVideo()">Lecture</i>
+                                        <svg id="show-svg" onclick="closeVideo()" style="display: none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
+                                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                        </svg>
+                                        <div id="show-video" class="embed-responsive embed-responsive-16by9">
+                                            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" allowfullscreen></iframe>
+                                        </div>
+                                    </li>
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="inputGroupFile">
+                                            <label class="custom-file-label" for="inputGroupFile04">Enter Video Lecture url</label>
+                                            <input class="form-control" type="text" placeholder="Enter Lecture Video url"><br />
+                                        </div>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button">Upload</button>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <li>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                                            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+                                        </svg>
+                                        <i class="bi bi-file-earmark-text-fill">Lecture materials:</i>
+                                    </li>
+                                    @foreach (var file in lecture.TextMaterials)
+                                    {
+                                        <ul>
+                                            @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension })
+                                        </ul>
+                                    }
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="inputGroupFile04">
+                                            <label class="custom-file-label" for="inputGroupFile04">Add new materials</label>
+                                        </div>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button">Upload</button>
+                                        </div>
+                                    </div>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        i++;
+    }
+}
+
+<!--
 <div id="accordion">
     <div class="card">
         <div class="card-header" id="headingOne">
@@ -91,180 +121,37 @@
 
         <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body" style="text-align:end;">
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" style="margin-bottom:1em;" placeholder="Anim pariatur cliche reprehenderit, enim eiusmod high life
-                          accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim
-                          keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings
-                          occaecat craft beer farm-to-table, raw denim
-                          aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS."></textarea>
-
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" style="margin-bottom:1em;" placeholder="Lecture Description..."></textarea>
                 <button class="btn btn-outline-secondary btn-outline-info" type="button" style="text-align:end;">Upload</button>
-                <!--<button type="button" class="btn btn-outline-info" style="text-align:right;">Започни сега!</button>-->
             </div>
             <div class="container">
                 <div class="row">
                     <div class="col">
                         <ul>
                             <li>
-
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16">
                                     <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
                                 </svg>
-                                <i class="bi bi-youtube" onclick="showVideo()">Lecture</i>
+                                <i class="bi bi-youtube">Lecture video</i>
                                 <div class="input-group">
                                     <div class="custom-file">
-                                        <!--
-                                        <input type="file" class="custom-file-input" id="inputGroupFile">
-                                        <label class="custom-file-label" for="inputGroupFile04">Enter Video Lecture url</label>
-                                            -->
-                                        <input class="form-control" type="text" placeholder="Enter Video Lecture url"><br />
-
+                                        <input class="form-control" type="text" placeholder="Enter Lecture Video url"><br />
                                     </div>
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary" type="button">Upload</button>
                                     </div>
                                 </div>
                             </li>
-                            <li>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-word-fill" viewBox="0 0 16 16">
-                                    <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM5.485 4.879l1.036 4.144.997-3.655a.5.5 0 0 1 .964 0l.997 3.655 1.036-4.144a.5.5 0 0 1 .97.242l-1.5 6a.5.5 0 0 1-.967.01L8 7.402l-1.018 3.73a.5.5 0 0 1-.967-.01l-1.5-6a.5.5 0 1 1 .97-.242z" />
-                                </svg>
-                                <i class="bi bi-file-word-fill">Word</i>
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#exampleModalLong">
-                                    Criteria
-                                </button>
-
-                                <!-- Modal -->
-                                <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLongTitle">Lecture criteria</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <h3 style="text-align:center;">Lecture criteria</h3>
-                                                <label for="meeting-time">Choose a time for lecture enable:</label>
-
-                                                <input type="datetime-local" id="meeting-time"
-                                                       name="meeting-time" value="2018-06-12T19:30"
-                                                       min="2018-06-07T00:00" max="2018-06-14T00:00">
-                                                <hr />
-                                                <label for="minimal-grade">Choose minimal grade of which students can see:</label>
-                                                <input type="text" class="form-control" id="minGrade" placeholder="insert minimal grade">
-                                                <hr />
-                                                <label for="minimal-homeworks">Choose minimal number of submitted homeworks:</label>
-                                                <input type="text" class="form-control" id="minSubmittedHW" placeholder="insert minimal count">
-                                                <hr />
-                                                <label for="students-list">Select students name who can see this lecture:</label>
-                                                <input type="text" class="form-control" id="the-filter" placeholder="Select student name..." />
-
-                                                <!--
-                                                <select class="js-example-basic-multiple" name="states[]" multiple="multiple">
-                                                    <option value="AL">Alabama</option>
-                                                    ...
-                                                    <option value="WY">Wyoming</option>
-                                                </select>
-                                                <label for="id_label_multiple">
-                                                    Click this to highlight the multiple select element
-                                                    <select class="js-example-basic-multiple js-states form-control" id="id_label_multiple" multiple="multiple"></select>
-                                                </label>
-                                                -->
-                                                <hr />
-                                                <select class="selectpicker" multiple data-live-search="true" title="Select students name...">
-                                                    <option>Mihaela Mihowa</option>
-                                                    <option>Dimitar Kolev</option>
-                                                    <option>Felisha Born</option>
-                                                </select>
-                                                <hr />
-                                                <!--
-                                                <label for="id_label_multiple">
-                                                    Click this to highlight the multiple select element
-
-                                                    <select class="js-example-basic-multiple js-states form-control" id="id_label_multiple" multiple="multiple"></select>
-                                                </label>
-                                                <select class="form-control" multiple="multiple" id="id_label_multiple">
-                                                    <option selected="selected">orange</option>
-                                                    <option>white</option>
-                                                    <option selected="selected">purple</option>
-                                                </select>
-                                                    -->
-                                                <hr />
-                                                <h3>Semantic-UI Dropdown Multiple Search Selection Type</h3>
-                                                <select class="ui fluid search dropdown" multiple="">
-                                                    <option value="">Company Name</option>
-                                                    <option value="AL">GeeksforGeeks</option>
-                                                    <option value="AK">Apple</option>
-                                                    <option value="AZ">Amazon</option>
-                                                </select>
-                                                <hr />
-                                                <label>
-                                                    Multi-select
-                                                    <input mbsc-input id="my-input" data-dropdown="true" data-tags="true" />
-                                                </label>
-                                                <select id="multiple-select" multiple>
-                                                    <option value="1">Books</option>
-                                                    <option value="2">Movies, Music & Games</option>
-                                                    <option value="3">Electronics & Computers</option>
-                                                    <option value="4">Home, Garden & Tools</option>
-                                                    <option value="5">Health & Beauty</option>
-                                                    <option value="6">Toys, Kids & Baby</option>
-                                                    <option value="7">Clothing & Jewelry</option>
-                                                    <option value="8">Sports & Outdoors</option>
-                                                </select>
-                                                <hr />
-                                                <select id="select_page" style="width:200px;" class="operator">
-                                                    <option value="">Select a Page...</option>
-                                                    <option value="alpha">alpha</option>
-                                                    <option value="beta">beta</option>
-                                                    <option value="theta">theta</option>
-                                                    <option value="omega">omega</option>
-                                                </select>
-
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary">Save changes</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="inputGroupFile04">
-                                        <label class="custom-file-label" for="inputGroupFile04">Choose word file</label>
-                                    </div>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button">Upload</button>
-                                    </div>
-                                </div>
-                            </li>
+                            <br />
                             <li>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
                                     <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
                                 </svg>
-                                <i class="bi bi-file-earmark-text-fill">Exercises</i>
+                                <i class="bi bi-file-earmark-text-fill">Lecture materials</i>
                                 <div class="input-group">
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" id="inputGroupFile04">
-                                        <label class="custom-file-label" for="inputGroupFile04">Choose Exercises file</label>
-                                    </div>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button">Upload</button>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stars" viewBox="0 0 16 16">
-                                    <path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828l.645-1.937zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.734 1.734 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.734 1.734 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.734 1.734 0 0 0 3.407 2.31l.387-1.162zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732L9.1 2.137a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L10.863.1z" />
-                                </svg>
-                                <i class="bi bi-stars">Допълнителни задачи</i>
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="inputGroupFile04">
-                                        <label class="custom-file-label" for="inputGroupFile04">Choose Exercises file</label>
+                                        <label class="custom-file-label" for="inputGroupFile04">Add new materials</label>
                                     </div>
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary" type="button">Upload</button>
@@ -272,55 +159,161 @@
                                 </div>
                             </li>
                         </ul>
-
-
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="card">
-        <div class="card-header" id="headingTwo">
-            <h5 class="mb-0">
-                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Lecture 2
-                </button>
-            </h5>
-        </div>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-            <div class="card-body">
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Lecture 2
+                    </button>
+                </h5>
             </div>
-            <!-- <label class="form-label" for="customFile">Default file input example</label> -->
-            <input type="file" class="form-control" id="customFile" /><br />
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header" id="headingThree">
-            <h5 class="mb-0">
-                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    Lecture 3
-                </button>
-            </h5>
-        </div>
-        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-            <div class="card-body">
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                <div class="card-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                </div>
+                <input type="file" class="form-control" id="customFile" /><br />
             </div>
         </div>
-    </div>
-    <div class="card">
-        <div class="card-header" id="headingFour">
-            <h5 class="mb-0">
-                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                    Exam
-                </button>
-            </h5>
+        <div class="card">
+            <div class="card-header" id="headingThree">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Lecture 3
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                <div class="card-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                </div>
+            </div>
         </div>
-        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
-            <div class="card-body">
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+        <div class="card">
+            <div class="card-header" id="headingFour">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        Exam
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                <div class="card-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-outline-secondary btn-outline-info" type="button" style="text-align: end;">SAVE</button>
+    -->
+<!--
+
+LECTURE CRITERIAS
+ <li>
+<button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#exampleModalLong">
+    Criteria
+</button>
+
+
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Lecture criteria</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3 style="text-align:center;">Lecture criteria</h3>
+                <label for="meeting-time">Choose a time for lecture enable:</label>
+
+                <input type="datetime-local" id="meeting-time"
+                       name="meeting-time" value="2018-06-12T19:30"
+                       min="2018-06-07T00:00" max="2018-06-14T00:00">
+                <hr />
+                <label for="minimal-grade">Choose minimal grade of which students can see:</label>
+                <input type="text" class="form-control" id="minGrade" placeholder="insert minimal grade">
+                <hr />
+                <label for="minimal-homeworks">Choose minimal number of submitted homeworks:</label>
+                <input type="text" class="form-control" id="minSubmittedHW" placeholder="insert minimal count">
+                <hr />
+                <label for="students-list">Select students name who can see this lecture:</label>
+                <input type="text" class="form-control" id="the-filter" placeholder="Select student name..." />
+
+                <!--
+                <select class="js-example-basic-multiple" name="states[]" multiple="multiple">
+                    <option value="AL">Alabama</option>
+                    ...
+                    <option value="WY">Wyoming</option>
+                </select>
+                <label for="id_label_multiple">
+                    Click this to highlight the multiple select element
+                    <select class="js-example-basic-multiple js-states form-control" id="id_label_multiple" multiple="multiple"></select>
+                </label>
+                --
+                <hr />
+                <select class="selectpicker" multiple data-live-search="true" title="Select students name...">
+                    <option>Mihaela Mihowa</option>
+                    <option>Dimitar Kolev</option>
+                    <option>Felisha Born</option>
+                </select>
+                <hr />
+                <!--
+                <label for="id_label_multiple">
+                    Click this to highlight the multiple select element
+
+                    <select class="js-example-basic-multiple js-states form-control" id="id_label_multiple" multiple="multiple"></select>
+                </label>
+                <select class="form-control" multiple="multiple" id="id_label_multiple">
+                    <option selected="selected">orange</option>
+                    <option>white</option>
+                    <option selected="selected">purple</option>
+                </select>
+                    --
+                <hr />
+                <h3>Semantic-UI Dropdown Multiple Search Selection Type</h3>
+                <select class="ui fluid search dropdown" multiple="">
+                    <option value="">Company Name</option>
+                    <option value="AL">GeeksforGeeks</option>
+                    <option value="AK">Apple</option>
+                    <option value="AZ">Amazon</option>
+                </select>
+                <hr />
+                <label>
+                    Multi-select
+                    <input mbsc-input id="my-input" data-dropdown="true" data-tags="true" />
+                </label>
+                <select id="multiple-select" multiple>
+                    <option value="1">Books</option>
+                    <option value="2">Movies, Music & Games</option>
+                    <option value="3">Electronics & Computers</option>
+                    <option value="4">Home, Garden & Tools</option>
+                    <option value="5">Health & Beauty</option>
+                    <option value="6">Toys, Kids & Baby</option>
+                    <option value="7">Clothing & Jewelry</option>
+                    <option value="8">Sports & Outdoors</option>
+                </select>
+                <hr />
+                <select id="select_page" style="width:200px;" class="operator">
+                    <option value="">Select a Page...</option>
+                    <option value="alpha">alpha</option>
+                    <option value="beta">beta</option>
+                    <option value="theta">theta</option>
+                    <option value="omega">omega</option>
+                </select>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
 </div>
+                            </li>
+-->

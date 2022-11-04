@@ -7,6 +7,7 @@ namespace MMUniGraduation.Models
         public Lector()
         {
             this.LectorStudyPrograms = new List<LectorStudyProgram>();
+            Courses = new HashSet<Course>();
         }
         public int ID { get; set; }
         public string FirstName { get; set; }
@@ -17,5 +18,6 @@ namespace MMUniGraduation.Models
         //public List<Course> Courses { get; set; }
         //public List<Lecture> Assignments { get; set; }
         public ICollection<LectorStudyProgram> LectorStudyPrograms { get; set; }
+        public IEnumerable<Course> Courses { get; set; }
     }
 }

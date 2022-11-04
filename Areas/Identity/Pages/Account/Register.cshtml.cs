@@ -97,6 +97,18 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
 
                     await _userManager.AddToRoleAsync(user, "Teacher");
                 }
+                else
+                {
+                    if (!await _roleManager.RoleExistsAsync("Student"))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole
+                        {
+                            Name = "Student"
+                        });
+                    }
+
+                    await _userManager.AddToRoleAsync(user, "Student");
+                }
 
 
                 if (result.Succeeded)

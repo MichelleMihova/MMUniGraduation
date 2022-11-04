@@ -63,15 +63,22 @@ namespace MMUniGraduation.Services
             string Name;
             if (user.CurrentCourseId != 0)
             {
-                Name = _db.Courses.FirstOrDefault(x => x.ParetntId == user.CurrentCourseId).Name.ToString();
+                if (_db.Courses.FirstOrDefault(x => x.Id == user.CurrentCourseId).NextCourseId != 0)
+                {
+                    Name = _db.Courses.FirstOrDefault(x => x.ParetntId == user.CurrentCourseId).Name.ToString();
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
-                Name = _db.Courses.FirstOrDefault().Name;
+                //Name = _db.Courses.FirstOrDefault().Name;
+                Name = "Basic";
             }
 
             return Name;
-            //return _db.Courses.FirstOrDefault(x => x.Id == NextCourseId).Name;
         }
     }
 }

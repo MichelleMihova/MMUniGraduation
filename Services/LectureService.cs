@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using MMUniGraduation.Data;
 using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
@@ -17,10 +19,12 @@ namespace MMUniGraduation.Services
 
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _webHost;
-        public LectureService(ApplicationDbContext db, IWebHostEnvironment webHost)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public LectureService(ApplicationDbContext db, IWebHostEnvironment webHost, UserManager<ApplicationUser> userManager)
         {
             _db = db;
             _webHost = webHost;
+            _userManager = userManager;
         }
         public async Task CreateLectureAsync(CreateLecture input)
         {
@@ -84,6 +88,60 @@ namespace MMUniGraduation.Services
                 .OrderBy(x => x.Name)
                 .ToList()
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name));
+        }
+
+        public async Task AddHomeworkToLecture(int lectureId, IFormFile file, string userId)
+        {
+            var currLectire = _db.Lectures.FirstOrDefault(x => x.Id == lectureId);
+            //Id / HomeworkName / Extension / HomeworkTitle / Grade / StudentId /LectureId /Lecture
+
+            var extension = Path.GetExtension(file.FileName).TrimStart('.');
+            var wwwrootPath = _webHost.WebRootPath;
+
+            if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+            {
+                throw new Exception($"Invalid file extension {extension} !");
+            }
+
+            var homeworkFile = new Homework
+            {
+                Extension = extension,
+                HomeworkName = file.FileName,
+                StudentId = userId
+            };
+
+            currLectire.Homeworks.Add(homeworkFile);
+
+            var physicalPath = $"{wwwrootPath}/homeworks/{homeworkFile.Id}.{extension}";
+            await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
+            await file.CopyToAsync(fileStream);
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task DeleteLecture (int courseId)
+        {
+            //var parentLecture = _db.Lectures.FirstOrDefault(x => x.Id == input.ParetntLectureId);
+            //parentLecture.NextLectureId = lecture.Id;
+            //await _db.SaveChangesAsync();
+            var lectures = _db.Lectures.Select(x => x.CourseId == courseId).ToArray();
+            //delete lecture materials and homeworks
+        }
+
+        public async Task EditHomework(int homeworkId, decimal homeworkGrade, string homeworkComment)
+        {
+            var homework = _db.Homeworks.FirstOrDefault(h => h.Id == homeworkId);
+            if (homeworkGrade > 0)
+            {
+                homework.Grade = homeworkGrade;
+            }
+
+            if (homeworkComment != null)
+            {
+                homework.Comment = homeworkComment;
+            }
+
+            await _db.SaveChangesAsync();
         }
     }
 }
