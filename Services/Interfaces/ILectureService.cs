@@ -15,5 +15,6 @@ namespace MMUniGraduation.Services.Interfaces
         public Task AddHomeworkToLecture(int lectureId, IFormFile file, string userId);
         public Task DeleteLecture(int courseId);
         public Task EditHomework(int homeworkId, decimal homeworkGrade, string homeworkComment);
+        public Task EditLecture(int lectureId, string lectureDescription, int courseId);
     }
 }

@@ -92,5 +92,11 @@ namespace MMUniGraduation.Controllers
             await _lectureService.EditHomework(homeworkId, homeworkGrade, homeworkComment);
             return RedirectToAction("Assessment", "Lector");
         }
+
+        public async Task<IActionResult> EditLecture(int lectureId, string lectureDescription, int courseId)
+        {
+            await _lectureService.EditLecture(lectureId, lectureDescription, courseId);
+            return RedirectToAction("Edit", "Course", new { courseId = courseId });
+        }
     }
 }

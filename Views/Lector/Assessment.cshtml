@@ -14,13 +14,13 @@
         border-color: lightblue;
     }
 
-    .info {
+    /*.info {
         background-color: #2196F3;
-    }
+    }*/
         /* Blue */
-        .info:hover {
+        /*.info:hover {
             background: #0b7dda;
-        }
+        }*/
 
     /*#show-filters {
         display: none;
@@ -87,7 +87,7 @@
                         <p>Homework solutions:</p>
 
                         <ul>
-                            @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension })
+                            @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "homework" })
                         </ul>
                     </div>
                     <div class="col">

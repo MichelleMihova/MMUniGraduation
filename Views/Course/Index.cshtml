@@ -138,7 +138,7 @@
                                     @foreach (var file in lecture.TextMaterials)
                                     {
                                         <ul>
-                                            @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension })
+                                            @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
                                         </ul>
                                         @*<li>
                         @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension })
@@ -185,7 +185,7 @@
                                     @foreach (var file in lecture.Homeworks)
                                     {
                                         <ul>
-                                            @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension })
+                                            @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "homework" })
                                         </ul>
                                     }
                                 }

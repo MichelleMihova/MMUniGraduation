@@ -20,22 +20,34 @@ namespace MMUniGraduation.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ICourseService _courseService;
         private readonly IStudyProgramService _studyProgramService;
+        private readonly ILectureService _lectureService;
         private readonly IWebHostEnvironment _webHost;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public CourseController(ICourseService courseService, IStudyProgramService studyProgramService,
-            ApplicationDbContext context, IWebHostEnvironment webHost, UserManager<ApplicationUser> userManager)
+            ILectureService lectureService, ApplicationDbContext context, IWebHostEnvironment webHost, 
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _courseService = courseService;
             _studyProgramService = studyProgramService;
+            _lectureService = lectureService;
             _webHost = webHost;
             _userManager = userManager;
         }
 
-        public FileResult DownloadFile(string fileName)
+        public FileResult DownloadFile(string fileName, string type)
         {
-            string path = Path.Combine(_webHost.WebRootPath, "files/") + fileName;
+            string path;
+            if (type == "homework")
+            {
+                path = Path.Combine(_webHost.WebRootPath, "homeworks/") + fileName;
+            }
+            else
+            {
+                path = Path.Combine(_webHost.WebRootPath, "files/") + fileName;
+            }
+            //string path = Path.Combine(_webHost.WebRootPath, "files/") + fileName;
 
             byte[] bytes = System.IO.File.ReadAllBytes(path);
 
@@ -140,7 +152,7 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Index", new { courseId = courseId });
         }
 
-        public async Task<IActionResult> Edit(int courseId)
+        public IActionResult Edit(int courseId)
         {
             //TO DO..
             //Add homework/new lecture materiad/homework grade
@@ -148,7 +160,7 @@ namespace MMUniGraduation.Controllers
             //Change description/grade/skip course end date/ criterias who and when can see lectures
 
             var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
-            currentCourse.Lectures = await _context.Lectures.Where(l => l.CourseId == courseId).ToListAsync();
+            currentCourse.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
 
             var textMaterial = new List<LectureFile>();
 
@@ -163,8 +175,36 @@ namespace MMUniGraduation.Controllers
             }
 
             return View(currentCourse);
+        }
 
-            // this.View();
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditCourseViewModel input)
+        {
+            //TO DO..
+            //Add homework/new lecture materiad/homework grade
+            //Remove lecture material
+            //Change description/grade/skip course end date/ criterias who and when can see lectures
+
+
+
+            var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == input.CourseId);
+            var currLecture = _context.Lectures.Where(l => l.CourseId == input.CourseId && l.Id == input.LectureId);
+
+            _lectureService.EditLecture(input.LectureId, input.LectureDescription, input.CourseId);
+            //EditLecture( lectureId, lectureDescription, courseId)
+                //var textMaterial = new List<LectureFile>();
+
+                //foreach (var lecture in currentCourse.Lectures)
+                //{
+                //    textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
+
+                //    foreach (var file in textMaterial)
+                //    {
+                //        lecture.TextMaterials.Add(file);
+                //    }
+                //}
+
+                return View(currentCourse);
         }
 
         [Authorize(Roles = "Teacher")]

@@ -5,6 +5,7 @@ using MMUniGraduation.Data;
 using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
+using MMUniGraduation.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -90,6 +91,37 @@ namespace MMUniGraduation.Services
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name));
         }
 
+        //TO DO..
+        //public async Task AddLectureMaterial(EditCourseViewModel input)
+        //{
+        //    var lecture = _db.Lectures.Where(l => l.Id == input.LectureId);
+        //    foreach (var file in input.Files)
+        //    {
+        //        var extension = Path.GetExtension(file.FileName).TrimStart('.');
+        //        var wwwrootPath = _webHost.WebRootPath;
+
+        //        if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+        //        {
+        //            throw new Exception($"Invalid file extension {extension} !");
+        //        }
+
+        //        var lectureFile = new LectureFile
+        //        {
+        //            Extension = extension,
+        //            FileName = file.FileName
+        //        };
+
+        //        lecture.TextMaterials.Add(lectureFile);
+
+        //        var physicalPath = $"{wwwrootPath}/files/{lectureFile.Id}.{extension}";
+        //        await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
+        //        await file.CopyToAsync(fileStream);
+        //    }
+
+        //    await _db.Lectures.AddAsync(lecture);
+        //    await _db.SaveChangesAsync();
+        //}
+
         public async Task AddHomeworkToLecture(int lectureId, IFormFile file, string userId)
         {
             var currLectire = _db.Lectures.FirstOrDefault(x => x.Id == lectureId);
@@ -119,7 +151,7 @@ namespace MMUniGraduation.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task DeleteLecture (int courseId)
+        public async Task DeleteLecture(int courseId)
         {
             //var parentLecture = _db.Lectures.FirstOrDefault(x => x.Id == input.ParetntLectureId);
             //parentLecture.NextLectureId = lecture.Id;
@@ -139,6 +171,19 @@ namespace MMUniGraduation.Services
             if (homeworkComment != null)
             {
                 homework.Comment = homeworkComment;
+            }
+
+            await _db.SaveChangesAsync();
+        }
+
+        //TO DO..
+        public async Task EditLecture(int lectureId, string lectureDescription, int courseId)
+        {
+            var lecture = _db.Lectures.FirstOrDefault(l => l.Id == lectureId);
+            
+            if (lectureDescription != null)
+            {
+                lecture.Description = lectureDescription;
             }
 
             await _db.SaveChangesAsync();
