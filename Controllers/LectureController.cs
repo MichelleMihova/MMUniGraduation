@@ -7,6 +7,7 @@ using MMUniGraduation.Data;
 using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
+using MMUniGraduation.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -93,9 +94,16 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Assessment", "Lector");
         }
 
-        public async Task<IActionResult> EditLecture(int lectureId, string lectureDescription, int courseId)
+        //public async Task<IActionResult> EditLecture(int lectureId, string lectureDescription, int courseId)
+        public async Task<IActionResult> EditLecture(EditCourseViewModel input)
         {
-            await _lectureService.EditLecture(lectureId, lectureDescription, courseId);
+            await _lectureService.EditLecture(input);
+            return RedirectToAction("Edit", "Course", new { courseId = input.CourseId });
+        }
+
+        public async Task<IActionResult> DeleteLectureMaterial(string lectureFileId, int courseId)
+        {
+            await _lectureService.DeleteLectureMaterial(lectureFileId);
             return RedirectToAction("Edit", "Course", new { courseId = courseId });
         }
     }

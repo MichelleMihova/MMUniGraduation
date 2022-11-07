@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using MMUniGraduation.Models.Create;
+using MMUniGraduation.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace MMUniGraduation.Services.Interfaces
         public Task AddHomeworkToLecture(int lectureId, IFormFile file, string userId);
         public Task DeleteLecture(int courseId);
         public Task EditHomework(int homeworkId, decimal homeworkGrade, string homeworkComment);
-        public Task EditLecture(int lectureId, string lectureDescription, int courseId);
+        public Task EditLecture(EditCourseViewModel input);
+        public Task DeleteLectureMaterial(string lectureFileId);
     }
 }

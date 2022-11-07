@@ -25,7 +25,7 @@ namespace MMUniGraduation.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
 
         public CourseController(ICourseService courseService, IStudyProgramService studyProgramService,
-            ILectureService lectureService, ApplicationDbContext context, IWebHostEnvironment webHost, 
+            ILectureService lectureService, ApplicationDbContext context, IWebHostEnvironment webHost,
             UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -53,10 +53,11 @@ namespace MMUniGraduation.Controllers
 
             return File(bytes, "application/octet-stream", fileName);
         }
-        public async Task<IActionResult> Index(int courseId)
+        //public async Task<IActionResult> Index(int courseId)
+        public IActionResult Index(int courseId)
         {
             var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
-            currentCourse.Lectures = await _context.Lectures.Where(l => l.CourseId == courseId).ToListAsync();
+            currentCourse.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
 
             var textMaterial = new List<LectureFile>();
 
@@ -64,26 +65,20 @@ namespace MMUniGraduation.Controllers
             {
                 textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
 
-                foreach (var file in textMaterial)
-                {
-                    lecture.TextMaterials.Add(file);
-                }
+                lecture.TextMaterials = textMaterial;
+                //foreach (var file in textMaterial)
+                //{
+                //    lecture.TextMaterials.Add(file);
+                //}
             }
 
-            //TO DO..
-            //Fill and show current lecture homework for current user and it's grade
-            //await _lectureService.CreateLectureAsync(input);
             var user = _userManager.GetUserAsync(this.User);
             var homework = new List<Homework>();
             foreach (var lecture in currentCourse.Lectures)
             {
                 homework = _context.Homeworks.Where(l => l.LectureId == lecture.Id).ToList();
-                //homeworks = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
 
-                foreach (var file in homework)
-                {
-                    lecture.Homeworks.Add(file);
-                }
+                lecture.Homeworks = homework;
             }
 
             //TO DO..
@@ -131,11 +126,9 @@ namespace MMUniGraduation.Controllers
             var viewModel = new AllCoursesViewModel
             {
                 NextCourseName = _courseService.GetNextCourseSuggestion(user),
-                //Signature = _context.Courses.FirstOrDefault().Signature,
                 AllCourses = await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync()
             };
             return View(viewModel);
-            //return View(await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync());
         }
 
         [Authorize]
@@ -148,7 +141,7 @@ namespace MMUniGraduation.Controllers
                 user.CurrentCourseId = courseId;
                 _context.SaveChanges();
             }
-            
+
             return RedirectToAction("Index", new { courseId = courseId });
         }
 
@@ -159,12 +152,20 @@ namespace MMUniGraduation.Controllers
             //Remove lecture material
             //Change description/grade/skip course end date/ criterias who and when can see lectures
 
-            var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
-            currentCourse.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
+            //var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
+            //currentCourse.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
 
+            var editViewModel = new EditCourseViewModel
+            {
+                Course = _context.Courses.FirstOrDefault(x => x.Id == courseId),
+                Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList()
+        };
+
+            //editViewModel.Course.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
+            
             var textMaterial = new List<LectureFile>();
 
-            foreach (var lecture in currentCourse.Lectures)
+            foreach (var lecture in editViewModel.Lectures)
             {
                 textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
 
@@ -174,37 +175,28 @@ namespace MMUniGraduation.Controllers
                 }
             }
 
-            return View(currentCourse);
+            editViewModel.Course.Lectures = editViewModel.Lectures;
+
+            return View(editViewModel);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(EditCourseViewModel input)
         {
             //TO DO..
-            //Add homework/new lecture materiad/homework grade
-            //Remove lecture material
             //Change description/grade/skip course end date/ criterias who and when can see lectures
 
-
-
-            var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == input.CourseId);
+            var editViewModel = new EditCourseViewModel
+            {
+                Course = _context.Courses.FirstOrDefault(x => x.Id == input.CourseId),
+                Lectures = _context.Lectures.Where(l => l.CourseId == input.CourseId).ToList()
+        };
             var currLecture = _context.Lectures.Where(l => l.CourseId == input.CourseId && l.Id == input.LectureId);
 
-            _lectureService.EditLecture(input.LectureId, input.LectureDescription, input.CourseId);
-            //EditLecture( lectureId, lectureDescription, courseId)
-                //var textMaterial = new List<LectureFile>();
+            await _lectureService.EditLecture(input);
 
-                //foreach (var lecture in currentCourse.Lectures)
-                //{
-                //    textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
-
-                //    foreach (var file in textMaterial)
-                //    {
-                //        lecture.TextMaterials.Add(file);
-                //    }
-                //}
-
-                return View(currentCourse);
+            //return View(editViewModel);
+            return RedirectToAction("Edit", new { courseId = input.CourseId });
         }
 
         [Authorize(Roles = "Teacher")]

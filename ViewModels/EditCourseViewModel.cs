@@ -18,8 +18,8 @@ namespace MMUniGraduation.ViewModels
         public int LectureId { get; set; }
         public string LectureName { get; set; }
         public string LectureDescription { get; set; }
-        public string LectureVideoMaterials { get; set; }
-        public ICollection<LectureFile> TextMaterials { get; set; }
+        //public string LectureVideoMaterials { get; set; }
+        public string VideoUrl { get; set; }
         public IEnumerable<IFormFile> Files { get; set; }
 
 
@@ -37,6 +37,8 @@ namespace MMUniGraduation.ViewModels
 
         //public int StudyProgramId { get; set; }
         //public virtual StudyProgram StudyProgram { get; set; }
+
+        public Course Course { get; set; }
         public virtual ICollection<Lecture> Lectures { get; set; }
     }
 }

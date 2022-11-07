@@ -151,15 +151,6 @@ namespace MMUniGraduation.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task DeleteLecture(int courseId)
-        {
-            //var parentLecture = _db.Lectures.FirstOrDefault(x => x.Id == input.ParetntLectureId);
-            //parentLecture.NextLectureId = lecture.Id;
-            //await _db.SaveChangesAsync();
-            var lectures = _db.Lectures.Select(x => x.CourseId == courseId).ToArray();
-            //delete lecture materials and homeworks
-        }
-
         public async Task EditHomework(int homeworkId, decimal homeworkGrade, string homeworkComment)
         {
             var homework = _db.Homeworks.FirstOrDefault(h => h.Id == homeworkId);
@@ -177,16 +168,74 @@ namespace MMUniGraduation.Services
         }
 
         //TO DO..
-        public async Task EditLecture(int lectureId, string lectureDescription, int courseId)
+        //public async Task EditLecture(int lectureId, string lectureDescription, int courseId)
+        public async Task EditLecture(EditCourseViewModel input)
         {
-            var lecture = _db.Lectures.FirstOrDefault(l => l.Id == lectureId);
-            
-            if (lectureDescription != null)
+            var lecture = _db.Lectures.FirstOrDefault(l => l.Id == input.LectureId);
+
+            if (input.LectureDescription != null)
             {
-                lecture.Description = lectureDescription;
+                lecture.Description = input.LectureDescription;
+            }
+
+            if (input.VideoUrl != null && lecture.VideoUrl != input.VideoUrl)
+            {
+                lecture.VideoUrl = input.VideoUrl;
+            }
+
+            if (input.DateTimeToShow != lecture.DateTimeToShow)
+            {
+                //lecture.DateTimeToShow = input.Lectures.ElementAt(input.LectureId).DateTimeToShow;
+                lecture.DateTimeToShow = input.DateTimeToShow;
+            }
+
+            //AddLectureMaterials
+            if (input.Files != null)
+            {
+                foreach (var file in input.Files)
+                {
+                    var extension = Path.GetExtension(file.FileName).TrimStart('.');
+                    var wwwrootPath = _webHost.WebRootPath;
+
+                    if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+                    {
+                        throw new Exception($"Invalid file extension {extension} !");
+                    }
+
+                    var lectureFile = new LectureFile
+                    {
+                        Extension = extension,
+                        FileName = file.FileName
+                    };
+
+                    lecture.TextMaterials.Add(lectureFile);
+
+                    var physicalPath = $"{wwwrootPath}/files/{lectureFile.Id}.{extension}";
+                    await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
+                    await file.CopyToAsync(fileStream);
+                }
             }
 
             await _db.SaveChangesAsync();
         }
+
+        public async Task DeleteLecture(int courseId)
+        {
+            //var parentLecture = _db.Lectures.FirstOrDefault(x => x.Id == input.ParetntLectureId);
+            //parentLecture.NextLectureId = lecture.Id;
+            //await _db.SaveChangesAsync();
+            var lectures = _db.Lectures.Select(x => x.CourseId == courseId).ToArray();
+            //delete lecture materials and homeworks
+        }
+
+        public async Task DeleteLectureMaterial(string lectureFileId)
+        {
+            var lectureFile = _db.LectureFiles.FirstOrDefault(x => x.Id == lectureFileId);
+
+            _db.LectureFiles.Remove(lectureFile);
+
+            await _db.SaveChangesAsync();
+        }
+
     }
 }

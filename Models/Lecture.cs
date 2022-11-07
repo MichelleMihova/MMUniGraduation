@@ -21,6 +21,7 @@ namespace MMUniGraduation.Models
         public virtual Course Course { get; set; }
         public int ParetntLectureId { get; set; }
         public int NextLectureId { get; set; }
+        public string VideoUrl { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
@@ -30,7 +31,7 @@ namespace MMUniGraduation.Models
         public DateTime EndDateTimeForHW { get; set; }
 
         public ICollection<LectureFile> TextMaterials { get; set; }
-        public IList<LearningObject> VideoMaterials { get; set; }
+        //public IList<LearningObject> VideoMaterials { get; set; }
 
         //NEW
         public ICollection<Homework> Homeworks { get; set; }
