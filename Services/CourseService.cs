@@ -25,7 +25,6 @@ namespace MMUniGraduation.Services
                 Description = input.Description,
                 StudyProgramId = input.StudyProgramId,
                 ParetntId = input.ParetntId,
-               // NextCourseId = input,
                 CourseStartDate = input.CourseStartDate,
                 SkipCoursEndDate = input.SkipCoursEndDate
 
@@ -40,11 +39,29 @@ namespace MMUniGraduation.Services
         }
         private async void SetNextCourseId(CreateCourse input, Course course)
         {
-            //_db.Lectures - all lectures
             var parentCourse = _db.Courses.FirstOrDefault(x => x.Id == input.ParetntId);
             parentCourse.NextCourseId = course.Id;
             await _db.SaveChangesAsync();
         }
+
+        private async Task RemoveCourseInheritance(int courseId, Course currCourse)
+        {
+            var courses = _db.Courses.Where(x => x.ParetntId == courseId || x.NextCourseId == courseId);
+            foreach (var course in courses)
+            {
+                if (course.NextCourseId == courseId)
+                {
+                    course.NextCourseId = currCourse.NextCourseId;
+                }
+                if (course.ParetntId == courseId)
+                {
+                    course.ParetntId = currCourse.ParetntId;
+                }
+            }
+
+            await _db.SaveChangesAsync();
+        }
+
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs()
         {
             return this._db.Courses.Select(x => new
@@ -79,6 +96,16 @@ namespace MMUniGraduation.Services
             }
 
             return Name;
+        }
+
+        public async Task DeleteCourse(int courseId)
+        {
+            var course = _db.Courses.FirstOrDefault(c => c.Id == courseId);
+            await RemoveCourseInheritance(courseId, course);
+
+            _db.Courses.Remove(course);
+
+            await _db.SaveChangesAsync();
         }
     }
 }

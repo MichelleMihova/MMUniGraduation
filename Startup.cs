@@ -47,6 +47,7 @@ namespace MMUniGraduation
             services.AddTransient<IStudyProgramService, StudyProgramService>();
             services.AddTransient<ICourseService, CourseService>();
             services.AddTransient<ILectureService, LectureService>();
+            services.AddTransient<ApplicationDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

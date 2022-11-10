@@ -7,12 +7,15 @@
 <form asp-controller="Course" asp-action="Edit" enctype="multipart/form-data">
     @*<h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>*@
     <br />
-    <h1 style="padding-top:25px; text-align:center;">Edit @Model.Course.Signature @Model.Course.Name</h1>
+    <h2 style="padding-top:25px; text-align:center;">Edit </h2>
+    <h3 style="padding-bottom:25px; text-align:center;">@Model.Course.Signature @Model.Course.Name Course</h3>
     <div style="text-align:center;">
         @*<textarea class="form-control" id="exampleFormControlTextarea1" rows="3" style="margin-bottom:1em;" placeholder="Course Description..."></textarea>*@
         <textarea asp-for="CourseDescription" class="form-control" type="text" placeholder="@Model.Course.Description"></textarea>
     </div>
     <br />
+    <label for="party">Enter a date and time for start of the course:</label>
+    <input class="form-control" asp-for="@Model.Course.CourseStartDate" asp-format="{0:yyyy-MM-ddTHH:mm}" />
     <label for="party">Enter a date and time for end of the skipping course option:</label>
     <input class="form-control" asp-for="@Model.Course.SkipCoursEndDate" asp-format="{0:yyyy-MM-ddTHH:mm}" />
     <br />
@@ -30,6 +33,9 @@
                     <h5 class="mb-0">
                         <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne_@i" aria-expanded="false" aria-controls="collapseOne">
                             @lecture.Name
+                            <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureId="@lecture.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLecture">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
+                            </a>
                         </button>
                     </h5>
                 </div>
@@ -71,10 +77,6 @@
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders2" viewBox="0 0 16 16">
                                                         <path fill-rule="evenodd" d="M10.5 1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4H1.5a.5.5 0 0 1 0-1H10V1.5a.5.5 0 0 1 .5-.5ZM12 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Zm-6.5 2A.5.5 0 0 1 6 6v1.5h8.5a.5.5 0 0 1 0 1H6V10a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5ZM1 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 1 8Zm9.5 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V13H1.5a.5.5 0 0 1 0-1H10v-1.5a.5.5 0 0 1 .5-.5Zm1.5 2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z" />
                                                     </svg>
-                                                    @*<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
-                                                            <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
-                                                            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
-                                                        </svg>*@
                                                 </a>
                                             </ul>
                                         }

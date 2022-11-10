@@ -31,7 +31,7 @@ namespace MMUniGraduation.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Teacher")]
         public IActionResult Create()
         {
             //var courses = _context.Courses.Include(c => c.Name);
@@ -47,7 +47,7 @@ namespace MMUniGraduation.Controllers
             return this.View(viewModel);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Teacher")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateLecture input)
         {
@@ -75,10 +75,6 @@ namespace MMUniGraduation.Controllers
             var user = await _userManager.GetUserAsync(this.User);
             var currLecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == lectureId);
 
-            //if (!ModelState.IsValid)
-            //{
-                 
-            //}
             await _lectureService.AddHomeworkToLecture(lectureId, file, user.Id);
 
              this.TempData["Message"] = "Homework added successfully!";
@@ -106,5 +102,21 @@ namespace MMUniGraduation.Controllers
             await _lectureService.DeleteLectureMaterial(lectureFileId);
             return RedirectToAction("Edit", "Course", new { courseId = courseId });
         }
+        
+        public async Task<IActionResult> DeleteHomework(int lectureId, int courseId)
+        {
+            await _lectureService.DeleteHomework(lectureId);
+            return RedirectToAction("Edit", "Course", new { courseId = courseId });
+        }
+
+        public async Task<IActionResult> DeleteLecture(int lectureId, int courseId)
+        {
+            await _lectureService.DeleteLectureMaterial(lectureId);
+            await _lectureService.DeleteHomework(lectureId);
+            await _lectureService.DeleteLecture(lectureId);
+
+            return RedirectToAction("Edit", "Course", new { courseId = courseId });
+        }
+
     }
 }

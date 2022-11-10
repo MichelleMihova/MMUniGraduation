@@ -14,9 +14,11 @@ namespace MMUniGraduation.Services.Interfaces
         public Task CreateLectureAsync(CreateLecture input);
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs();
         public Task AddHomeworkToLecture(int lectureId, IFormFile file, string userId);
-        public Task DeleteLecture(int courseId);
         public Task EditHomework(int homeworkId, decimal homeworkGrade, string homeworkComment);
         public Task EditLecture(EditCourseViewModel input);
+        public Task DeleteLecture(int lectureId);
         public Task DeleteLectureMaterial(string lectureFileId);
+        public Task DeleteLectureMaterial(int lectureId);
+        public Task DeleteHomework(int lectureId);
     }
 }

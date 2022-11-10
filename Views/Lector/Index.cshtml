@@ -27,14 +27,6 @@
         .info:hover {
             background: #0b7dda;
         }
-
-    /*#show-filters {
-        display: none;
-    }
-
-    #close-filters-svg {
-        display: none;
-    }*/
 </style>
 
 
@@ -72,39 +64,11 @@
                 <p>Course: @course.Signature @course.Name</p>
             </div>
             <hr />
-            @*<a class="btn btn-outline-info" asp-route-courseId="@course.Id" asp-controller="Student" asp-action="Index" style="text-decoration: none;">Добави курс!</a>*@
             <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Index"><i class="fa fa-save"></i> View</a>
             <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Edit"><i class="fa fa-save"></i> Edit</a>
             <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Delete"><i class="fa fa-save"></i> Delete</a>
         </div>
         <hr />
     }
-    <!--<div class="row">
-        <div class="col">
-            <p>Course: C# Basic</p>
-        </div>
-        <hr />-->
-    @*<a class="btn btn-outline-info" asp-route-courseId="@course.Id" asp-controller="Student" asp-action="Index" style="text-decoration: none;">Добави курс!</a>*@
-    <!--<a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="1" asp-controller="Course" asp-action="Index"><i class="fa fa-save"></i> View</a>
-        <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="1" asp-controller="Course" asp-action="Edit"><i class="fa fa-save"></i> Edit</a>
-        <a class="btn btn-outline-info" style="text-align:right;" asp-area="" asp-controller="Course" asp-action="Delete"><i class="fa fa-save"></i> Delete</a>
-    </div>
-    <hr />-->
-    @*<div class="row">
-            <div class="col">
-                <p>Course: C# Basic</p>
-                <p>Lecture: Loops</p>
-                <p>Homework solution:</p>
-                <button class="btn btn-outline-info"><i class="fa fa-download"></i> Download</button>
-                <p>Advanced Homework Name:</p>
-                <button class="btn btn-outline-info"><i class="fa fa-download"></i> Download</button>
-            </div>
-            <div class="col">
-                <p>Name: Dimitar Nikolaev Kolev</p>
-                <p>ID: M762535</p>
-                <input type="text" class="form-control" placeholder="Grade/Points"><br />
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="4" placeholder="Comment..."></textarea>
-            </div>
-        </div>*@
 </div>
 

@@ -28,7 +28,7 @@ namespace MMUniGraduation.Controllers
         {
             var viewModel = new AllCoursesViewModel
             {
-                AllCourses = await _context.Courses.Where(c => c.StudyProgramId == 1).ToListAsync()
+                AllCourses = _context.Courses.ToList()
             };
 
             return View(viewModel);
@@ -52,20 +52,11 @@ namespace MMUniGraduation.Controllers
 
                 course.Lectures = lectures;
 
-                //foreach (var lecture in lectures)
-                //{
-                //    course.Lectures.Add(lecture);
-                //}
-
                 foreach (var lecture in course.Lectures)
                 {
                     homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
 
                     lecture.Homeworks = homeworks;
-                    //foreach (var file in homeworks)
-                    //{
-                    //    lecture.Homeworks.Add(file);
-                    //}
                 }
             }
             return View(viewModel);
@@ -91,6 +82,7 @@ namespace MMUniGraduation.Controllers
                 Courses = _courseService.GetAllAsKeyValuePairs(),
                 Lectures = _lectureService.GetAllAsKeyValuePairs()
             };
+
             var lectures = new List<Lecture>();
             var homeworks = new List<Homework>();
 

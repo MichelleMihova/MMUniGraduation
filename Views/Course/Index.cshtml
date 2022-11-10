@@ -164,12 +164,18 @@
                                 }
 
                                 @using (Html.BeginForm("AddHomework", "Lecture", FormMethod.Post,
-                                 new { enctype = "multipart/form-data" }))
+                                new { enctype = "multipart/form-data" }))
                                 {
                                     @Html.TextBox("file", "", new { type = "file" })
                                     <input type="text" name="lectureId" value="@lecture.Id" />
                                     <input type="submit" value="Upload" />
                                 }
+                                @*<div class="input-group">
+                                    <div class="custom-file">
+                                        <input asp-for="Files" type="file" class="custom-file-input" id="inputGroupFile04">
+                                        <label class="custom-file-label" for="inputGroupFile04">Add new materials</label>
+                                    </div>
+                                </div>*@
                             </div>
                             @*</form>*@
                         </div>

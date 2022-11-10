@@ -47,13 +47,12 @@ namespace MMUniGraduation.Controllers
             {
                 path = Path.Combine(_webHost.WebRootPath, "files/") + fileName;
             }
-            //string path = Path.Combine(_webHost.WebRootPath, "files/") + fileName;
 
             byte[] bytes = System.IO.File.ReadAllBytes(path);
 
             return File(bytes, "application/octet-stream", fileName);
         }
-        //public async Task<IActionResult> Index(int courseId)
+
         public IActionResult Index(int courseId)
         {
             var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
@@ -66,10 +65,6 @@ namespace MMUniGraduation.Controllers
                 textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
 
                 lecture.TextMaterials = textMaterial;
-                //foreach (var file in textMaterial)
-                //{
-                //    lecture.TextMaterials.Add(file);
-                //}
             }
 
             var user = _userManager.GetUserAsync(this.User);
@@ -87,7 +82,7 @@ namespace MMUniGraduation.Controllers
             return View(currentCourse);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Teacher")]
         public IActionResult Create()
         {
             var viewModel = new CreateCourse
@@ -99,7 +94,7 @@ namespace MMUniGraduation.Controllers
             return this.View(viewModel);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Teacher")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateCourse input)
         {
@@ -148,9 +143,7 @@ namespace MMUniGraduation.Controllers
         public IActionResult Edit(int courseId)
         {
             //TO DO..
-            //Add homework/new lecture materiad/homework grade
-            //Remove lecture material
-            //Change description/grade/skip course end date/ criterias who and when can see lectures
+            //Add or Change criterias who and when can see the lectures
 
             //var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
             //currentCourse.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
@@ -199,14 +192,21 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Edit", new { courseId = input.CourseId });
         }
 
-        [Authorize(Roles = "Teacher")]
-        public IActionResult Delete(int courseId)
+        [Authorize(Roles = "Admin, Teacher")]
+        public async Task<IActionResult> Delete(int courseId)
         {
-            //TO DO..
-            //Remove course
-            //Return message
-            //return this.View();
-            return RedirectToAction("Index", "Home");
+            var lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToArray();
+
+            foreach (var lecture in lectures)
+            {
+                await _lectureService.DeleteLectureMaterial(lecture.Id);
+                await _lectureService.DeleteHomework(lecture.Id);
+                await _lectureService.DeleteLecture(lecture.Id);
+            }
+
+            await _courseService.DeleteCourse(courseId);
+
+            return RedirectToAction("Index", "Lector");
         }
     }
 }
