@@ -53,7 +53,7 @@ namespace MMUniGraduation.Controllers
             return File(bytes, "application/octet-stream", fileName);
         }
 
-        public IActionResult Index(int courseId)
+        public async Task<IActionResult> Index(int courseId)
         {
             var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
             currentCourse.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
@@ -67,12 +67,17 @@ namespace MMUniGraduation.Controllers
                 lecture.TextMaterials = textMaterial;
             }
 
-            var user = _userManager.GetUserAsync(this.User);
+            var user = await _userManager.GetUserAsync(this.User);
+            var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
+
             var homework = new List<Homework>();
             foreach (var lecture in currentCourse.Lectures)
             {
-                homework = _context.Homeworks.Where(l => l.LectureId == lecture.Id).ToList();
-
+                if (student != null)
+                {
+                    homework = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.StudentId == student.UserId).ToList();
+                }
+                
                 lecture.Homeworks = homework;
             }
 
@@ -115,14 +120,22 @@ namespace MMUniGraduation.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> AllCourses(int studyProgramId)
+        public async Task<IActionResult> AllCourses(int studyProgramId, string message)
         {
             var user = await _userManager.GetUserAsync(this.User);
+            var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
+
             var viewModel = new AllCoursesViewModel
             {
-                NextCourseName = _courseService.GetNextCourseSuggestion(user),
+                NextCourseName = _courseService.GetNextCourseSuggestion(student),
                 AllCourses = await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync()
             };
+
+            if (message != null)
+            {
+                this.TempData["Message"] = message;
+            }
+
             return View(viewModel);
         }
 
@@ -130,11 +143,18 @@ namespace MMUniGraduation.Controllers
         public async Task<IActionResult> AssignUserToCourse(int courseId)
         {
             var user = await _userManager.GetUserAsync(this.User);
+            var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
 
-            if (user.CurrentCourseId == 0)
+            if (student != null && student.CurrentCourseId == 0)
             {
-                user.CurrentCourseId = courseId;
+                //student.CurrentCourse.Id = courseId;
+                student.CurrentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
                 _context.SaveChanges();
+            }
+            else if (student != null && student.CurrentCourseId != courseId)
+            {
+                var course = _context.Courses.FirstOrDefault(x => x.Id == courseId);
+                return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You are already assigned to {course.Name}" });
             }
 
             return RedirectToAction("Index", new { courseId = courseId });
@@ -152,10 +172,10 @@ namespace MMUniGraduation.Controllers
             {
                 Course = _context.Courses.FirstOrDefault(x => x.Id == courseId),
                 Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList()
-        };
+            };
 
             //editViewModel.Course.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
-            
+
             var textMaterial = new List<LectureFile>();
 
             foreach (var lecture in editViewModel.Lectures)
@@ -178,12 +198,18 @@ namespace MMUniGraduation.Controllers
         {
             //TO DO..
             //Change description/grade/skip course end date/ criterias who and when can see lectures
+            var course = _context.Courses.FirstOrDefault(x => x.Id == input.CourseId);
+            if (input.CourseDescription != null)
+            {
+                course.Description = input.CourseDescription;
+            }
+            await _context.SaveChangesAsync();
 
             var editViewModel = new EditCourseViewModel
             {
                 Course = _context.Courses.FirstOrDefault(x => x.Id == input.CourseId),
                 Lectures = _context.Lectures.Where(l => l.CourseId == input.CourseId).ToList()
-        };
+            };
             var currLecture = _context.Lectures.Where(l => l.CourseId == input.CourseId && l.Id == input.LectureId);
 
             await _lectureService.EditLecture(input);

@@ -168,7 +168,7 @@ namespace MMUniGraduation.Services
                 lecture.VideoUrl = input.VideoUrl;
             }
 
-            if (input.DateTimeToShow != lecture.DateTimeToShow)
+            if (lecture != null && input.DateTimeToShow != lecture.DateTimeToShow)
             {
                 lecture.DateTimeToShow = input.DateTimeToShow;
             }

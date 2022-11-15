@@ -10,11 +10,11 @@ namespace MMUniGraduation.Models
         public Student()
         {
             this.CompleatedStudyPrograms = new List<StudentStudyProgram>();
-            //this.StudentCourses = new List<StudentCourse>();
             this.PassedCourses = new List<Course>();
         }
 
         public int Id { get; set; }
+        public string UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         [Phone]
@@ -25,14 +25,11 @@ namespace MMUniGraduation.Models
         public string Photo { get; set; }
 
         //[ForeignKey("Course")]
-        //public int CurrenCourseId { get; set; }
-        public Course CurrentCourse { get; set; }
+        public int? CurrentCourseId { get; set; }
+        public virtual Course CurrentCourse { get; set; }
 
-        //Many to many relation
+        [NotMapped]
         public ICollection<StudentStudyProgram> CompleatedStudyPrograms { get; set; }
-        //public ICollection<StudentCourse> StudentCourses { get; set; }
-
-        //new - all passed student courses
         [NotMapped]
         public ICollection<Course> PassedCourses { get; set; }
 

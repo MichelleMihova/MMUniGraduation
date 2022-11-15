@@ -15,6 +15,18 @@ namespace MMUniGraduation.Services
         {
             _db = db;
         }
-        
+
+        public async Task AddStudentAsync(Student input)
+        {
+            var student = new Student
+            {
+               
+
+            };
+            //await _db.Courses.AddAsync(course);
+            await _db.SaveChangesAsync();
+           
+        }
+
     }
 }

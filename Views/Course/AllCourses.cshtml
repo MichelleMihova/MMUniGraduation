@@ -1,5 +1,12 @@
 ﻿@*@model IEnumerable<MMUniGraduation.Models.Course>*@
 @model MMUniGraduation.ViewModels.AllCoursesViewModel
+
+@if (this.TempData.ContainsKey("Message"))
+{
+    <div class="alert alert-heading alert-dismissible" style="color: mediumseagreen; font-weight: bold; text-align: center">
+        @this.TempData["Message"]
+    </div>
+}
 <style>
     .img-box {
         width: 100%;
@@ -17,7 +24,7 @@
 
 <h2 style="text-align: center; padding-top: 1em; ">Our Courses</h2>
 <hr />
-@if (User.Identity.IsAuthenticated)
+@if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
 {
     if (@Model.NextCourseName != null)
     {

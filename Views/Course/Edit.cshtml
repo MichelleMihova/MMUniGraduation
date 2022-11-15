@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Edit course";
 }
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 <form asp-controller="Course" asp-action="Edit" enctype="multipart/form-data">
     @*<h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>*@
@@ -19,6 +22,7 @@
     <label for="party">Enter a date and time for end of the skipping course option:</label>
     <input class="form-control" asp-for="@Model.Course.SkipCoursEndDate" asp-format="{0:yyyy-MM-ddTHH:mm}" />
     <br />
+    <input type="hidden" name="CourseId" value="@Model.Course.Id" />
     <button class="btn btn-outline-secondary btn-outline-info" style="text-align:right; margin-bottom: 1em;">Upload</button>
 </form>
 <hr />
@@ -73,11 +77,46 @@
                                                 <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
                                                 </a>
-                                                <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial">
+                                                @*<a class="btn btn-outline-info" id="BtnConstraints" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="SetConstraints">*@
+                                                <a class="btn btn-outline-info" style="text-align:right; margin: 1em;">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders2" viewBox="0 0 16 16">
                                                         <path fill-rule="evenodd" d="M10.5 1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4H1.5a.5.5 0 0 1 0-1H10V1.5a.5.5 0 0 1 .5-.5ZM12 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Zm-6.5 2A.5.5 0 0 1 6 6v1.5h8.5a.5.5 0 0 1 0 1H6V10a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5ZM1 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 1 8Zm9.5 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V13H1.5a.5.5 0 0 1 0-1H10v-1.5a.5.5 0 0 1 .5-.5Zm1.5 2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z" />
                                                     </svg>
                                                 </a>
+                                                <a type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#exampleModal">
+                                                    Constraints
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M10.5 1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4H1.5a.5.5 0 0 1 0-1H10V1.5a.5.5 0 0 1 .5-.5ZM12 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Zm-6.5 2A.5.5 0 0 1 6 6v1.5h8.5a.5.5 0 0 1 0 1H6V10a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5ZM1 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 1 8Zm9.5 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V13H1.5a.5.5 0 0 1 0-1H10v-1.5a.5.5 0 0 1 .5-.5Zm1.5 2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z" />
+                                                    </svg>
+                                                </a>
+                                                <div id="exampleModal" class="modal" tabindex="-1" role="dialog">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Constraints for  lecture</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="form-group">
+                                                                    <label>Date & Time to show lecture material:</label>
+                                                                    <input class="form-control" asp-for="DateTimeToShow" type="datetime-local" />
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Select minimal grade:</label>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                @*<button type="submit" class="btn btn-primary" >Save changes</button>*@
+                                                                <a type="submit" class="btn btn-primary" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="SetConstraints" >Save changes</a>
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             </ul>
                                         }
                                         <div class="input-group">
@@ -106,212 +145,4 @@
     }
 }
 
-<!--
-<div id="accordion">
-    <div class="card">
-        <div class="card-header" id="headingOne">
-            <h5 class="mb-0">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Lecture 1
-                </button>
-            </h5>
-        </div>
 
-        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-            <div class="card-body" style="text-align:end;">
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" style="margin-bottom:1em;" placeholder="Lecture Description..."></textarea>
-                <button class="btn btn-outline-secondary btn-outline-info" type="button" style="text-align:end;">Upload</button>
-            </div>
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <ul>
-                            <li>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16">
-                                    <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
-                                </svg>
-                                <i class="bi bi-youtube">Lecture video</i>
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input class="form-control" type="text" placeholder="Enter Lecture Video url"><br />
-                                    </div>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button">Upload</button>
-                                    </div>
-                                </div>
-                            </li>
-                            <br />
-                            <li>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
-                                </svg>
-                                <i class="bi bi-file-earmark-text-fill">Lecture materials</i>
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="inputGroupFile04">
-                                        <label class="custom-file-label" for="inputGroupFile04">Add new materials</label>
-                                    </div>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button">Upload</button>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header" id="headingTwo">
-                <h5 class="mb-0">
-                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                        Lecture 2
-                    </button>
-                </h5>
-            </div>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                <div class="card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                </div>
-                <input type="file" class="form-control" id="customFile" /><br />
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header" id="headingThree">
-                <h5 class="mb-0">
-                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                        Lecture 3
-                    </button>
-                </h5>
-            </div>
-            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                <div class="card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header" id="headingFour">
-                <h5 class="mb-0">
-                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                        Exam
-                    </button>
-                </h5>
-            </div>
-            <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
-                <div class="card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                </div>
-            </div>
-        </div>
-    </div>
-    <br />
-    <button class="btn btn-outline-secondary btn-outline-info" type="button" style="text-align: end;">SAVE</button>
-    -->
-<!--
-
-LECTURE CRITERIAS
- <li>
-<button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#exampleModalLong">
-    Criteria
-</button>
-
-
-<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Lecture criteria</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <h3 style="text-align:center;">Lecture criteria</h3>
-                <label for="meeting-time">Choose a time for lecture enable:</label>
-
-                <input type="datetime-local" id="meeting-time"
-                       name="meeting-time" value="2018-06-12T19:30"
-                       min="2018-06-07T00:00" max="2018-06-14T00:00">
-                <hr />
-                <label for="minimal-grade">Choose minimal grade of which students can see:</label>
-                <input type="text" class="form-control" id="minGrade" placeholder="insert minimal grade">
-                <hr />
-                <label for="minimal-homeworks">Choose minimal number of submitted homeworks:</label>
-                <input type="text" class="form-control" id="minSubmittedHW" placeholder="insert minimal count">
-                <hr />
-                <label for="students-list">Select students name who can see this lecture:</label>
-                <input type="text" class="form-control" id="the-filter" placeholder="Select student name..." />
-
-                <!--
-                <select class="js-example-basic-multiple" name="states[]" multiple="multiple">
-                    <option value="AL">Alabama</option>
-                    ...
-                    <option value="WY">Wyoming</option>
-                </select>
-                <label for="id_label_multiple">
-                    Click this to highlight the multiple select element
-                    <select class="js-example-basic-multiple js-states form-control" id="id_label_multiple" multiple="multiple"></select>
-                </label>
-                --
-                <hr />
-                <select class="selectpicker" multiple data-live-search="true" title="Select students name...">
-                    <option>Mihaela Mihowa</option>
-                    <option>Dimitar Kolev</option>
-                    <option>Felisha Born</option>
-                </select>
-                <hr />
-                <!--
-                <label for="id_label_multiple">
-                    Click this to highlight the multiple select element
-
-                    <select class="js-example-basic-multiple js-states form-control" id="id_label_multiple" multiple="multiple"></select>
-                </label>
-                <select class="form-control" multiple="multiple" id="id_label_multiple">
-                    <option selected="selected">orange</option>
-                    <option>white</option>
-                    <option selected="selected">purple</option>
-                </select>
-                    --
-                <hr />
-                <h3>Semantic-UI Dropdown Multiple Search Selection Type</h3>
-                <select class="ui fluid search dropdown" multiple="">
-                    <option value="">Company Name</option>
-                    <option value="AL">GeeksforGeeks</option>
-                    <option value="AK">Apple</option>
-                    <option value="AZ">Amazon</option>
-                </select>
-                <hr />
-                <label>
-                    Multi-select
-                    <input mbsc-input id="my-input" data-dropdown="true" data-tags="true" />
-                </label>
-                <select id="multiple-select" multiple>
-                    <option value="1">Books</option>
-                    <option value="2">Movies, Music & Games</option>
-                    <option value="3">Electronics & Computers</option>
-                    <option value="4">Home, Garden & Tools</option>
-                    <option value="5">Health & Beauty</option>
-                    <option value="6">Toys, Kids & Baby</option>
-                    <option value="7">Clothing & Jewelry</option>
-                    <option value="8">Sports & Outdoors</option>
-                </select>
-                <hr />
-                <select id="select_page" style="width:200px;" class="operator">
-                    <option value="">Select a Page...</option>
-                    <option value="alpha">alpha</option>
-                    <option value="beta">beta</option>
-                    <option value="theta">theta</option>
-                    <option value="omega">omega</option>
-                </select>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-                            </li>
--->

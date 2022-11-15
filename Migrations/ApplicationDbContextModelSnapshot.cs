@@ -99,7 +99,7 @@ namespace MMUniGraduation.Migrations
                     b.Property<decimal>("FinalHomeworkGrade")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("LectorID")
+                    b.Property<int?>("LectorId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -131,7 +131,7 @@ namespace MMUniGraduation.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LectorID");
+                    b.HasIndex("LectorId");
 
                     b.HasIndex("StudyProgramId");
 
@@ -208,7 +208,7 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Lector", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -228,7 +228,10 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Lectors");
                 });
@@ -297,6 +300,9 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime>("DateTimeToShow")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Extension")
                         .HasColumnType("nvarchar(max)");
 
@@ -362,6 +368,9 @@ namespace MMUniGraduation.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Town")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -520,7 +529,7 @@ namespace MMUniGraduation.Migrations
                 {
                     b.HasOne("MMUniGraduation.Models.Lector", null)
                         .WithMany("Courses")
-                        .HasForeignKey("LectorID");
+                        .HasForeignKey("LectorId");
 
                     b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
                         .WithMany("Courses")

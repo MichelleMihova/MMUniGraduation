@@ -118,5 +118,11 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Edit", "Course", new { courseId = courseId });
         }
 
+        public async Task<IActionResult> SetConstraints(string lectureFileId, int courseId)
+        {
+
+            return RedirectToAction("Edit", "Course", new { courseId = courseId });
+        }
+            
     }
 }

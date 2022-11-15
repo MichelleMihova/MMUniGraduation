@@ -75,14 +75,15 @@ namespace MMUniGraduation.Services
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Signature + " "+ x.Name));
         }
 
-        public string GetNextCourseSuggestion(ApplicationUser user)
+        //public string GetNextCourseSuggestion(ApplicationUser user)
+        public string GetNextCourseSuggestion(Student user)
         {
             string Name;
-            if (user.CurrentCourseId != 0)
+            if (user != null && user.CurrentCourseId != null)
             {
-                if (_db.Courses.FirstOrDefault(x => x.Id == user.CurrentCourseId).NextCourseId != 0)
+                if (_db.Courses.FirstOrDefault(x => x.Id == user.CurrentCourse.Id).NextCourseId != 0)
                 {
-                    Name = _db.Courses.FirstOrDefault(x => x.ParetntId == user.CurrentCourseId).Name.ToString();
+                    Name = _db.Courses.FirstOrDefault(x => x.ParetntId == user.CurrentCourse.Id).Name.ToString();
                 }
                 else
                 {

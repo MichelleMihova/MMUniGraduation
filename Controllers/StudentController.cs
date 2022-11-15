@@ -44,10 +44,11 @@ namespace MMUniGraduation.Controllers
             //return View(contentModel);
 
             var user = await _userManager.GetUserAsync(this.User);
+            var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
 
             var viewModel = new Student
             {
-                CurrentCourse = _context.Courses.FirstOrDefault(c => c.Id == user.CurrentCourseId),
+                CurrentCourse = _context.Courses.FirstOrDefault(c => c.Id == student.CurrentCourseId),
                 PassedCourses = await _context.Courses.Where(c => c.StudyProgramId == 1).ToListAsync()
             };
 

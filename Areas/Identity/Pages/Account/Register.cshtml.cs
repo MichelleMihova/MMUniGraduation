@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using MMUniGraduation.Data;
 using MMUniGraduation.Models;
 
 namespace MMUniGraduation.Areas.Identity.Pages.Account
@@ -26,18 +27,22 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
+        private readonly ApplicationDbContext _context;
+
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
         ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         [BindProperty]
@@ -87,6 +92,13 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
 
                 if (user.TeacherToken != null)
                 {
+                    var lector = new Lector
+                    {
+                        UserId = user.Id
+                    };
+                    await _context.Lectors.AddAsync(lector);
+                    await _context.SaveChangesAsync();
+
                     if (!await _roleManager.RoleExistsAsync("Teacher"))
                     {
                         await _roleManager.CreateAsync(new IdentityRole
@@ -99,6 +111,13 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
                 }
                 else
                 {
+                    var student = new Student
+                    {
+                        UserId = user.Id
+                    };
+                    await _context.Students.AddAsync(student);
+                    await _context.SaveChangesAsync();
+
                     if (!await _roleManager.RoleExistsAsync("Student"))
                     {
                         await _roleManager.CreateAsync(new IdentityRole
@@ -109,6 +128,16 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
 
                     await _userManager.AddToRoleAsync(user, "Student");
                 }
+
+                //TO DO..
+                //Add token criteria for ADMIN and TEACHER
+                //if (!await _roleManager.RoleExistsAsync("Admin"))
+                //{
+                //    await _roleManager.CreateAsync(new IdentityRole
+                //    {
+                //        Name = "Admin"
+                //    });
+                //}
 
 
                 if (result.Succeeded)
