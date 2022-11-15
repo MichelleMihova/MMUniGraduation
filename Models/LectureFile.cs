@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MMUniGraduation.Models
 {
@@ -12,6 +13,10 @@ namespace MMUniGraduation.Models
         public string Extension { get; set; }
         public string FileName { get; set; }
         public string FileTitle { get; set; }
+
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime DateTimeToShow { get; set; }
 
         public int? LectureId { get; set; }
         public virtual Lecture Lecture { get; set; }

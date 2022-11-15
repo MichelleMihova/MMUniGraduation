@@ -5,7 +5,7 @@ using MMUniGraduation.Models;
 
 namespace MMUniGraduation.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -17,6 +17,7 @@ namespace MMUniGraduation.Data
         public DbSet<Lecture> Lectures { get; set; }
         public DbSet<LearningObject> LearningObjects { get; set; }
         public DbSet<LectureFile> LectureFiles { get; set; }
+        public DbSet<Homework> Homeworks { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<RestrictAccess> RestrictAccess { get; set; }
         public DbSet<Student> Students { get; set; }

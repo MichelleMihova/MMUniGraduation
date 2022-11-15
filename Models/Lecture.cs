@@ -9,6 +9,7 @@ namespace MMUniGraduation.Models
         public Lecture()
         {
             this.TextMaterials = new HashSet<LectureFile>();
+            this.Homeworks = new HashSet<Homework>();
         }
 
         public int Id { get; set; }
@@ -20,6 +21,7 @@ namespace MMUniGraduation.Models
         public virtual Course Course { get; set; }
         public int ParetntLectureId { get; set; }
         public int NextLectureId { get; set; }
+        public string VideoUrl { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
@@ -27,13 +29,11 @@ namespace MMUniGraduation.Models
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime EndDateTimeForHW { get; set; }
+
         public ICollection<LectureFile> TextMaterials { get; set; }
-        public IList<LearningObject> VideoMaterials { get; set; }
+        //public IList<LearningObject> VideoMaterials { get; set; }
 
-
-        //public CategoryType CategoryType { get; set; }
-        //one to many relation
-        //[Key]
-        //[ForeignKey("Course")]
+        //NEW
+        public ICollection<Homework> Homeworks { get; set; }
     }
 }

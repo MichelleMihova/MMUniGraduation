@@ -19,6 +19,64 @@ namespace MMUniGraduation.Migrations
                 .HasAnnotation("ProductVersion", "5.0.17")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("MMUniGraduation.Models.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CurrentCourseId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeacherToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("MMUniGraduation.Models.Course", b =>
                 {
                     b.Property<int>("Id")
@@ -40,6 +98,9 @@ namespace MMUniGraduation.Migrations
 
                     b.Property<decimal>("FinalHomeworkGrade")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("LectorId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -65,11 +126,51 @@ namespace MMUniGraduation.Migrations
                     b.Property<int>("StudyProgramId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("LectorId");
 
                     b.HasIndex("StudyProgramId");
 
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("MMUniGraduation.Models.Homework", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Extension")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Grade")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("HomeworkName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HomeworkTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("LectureId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LectureId");
+
+                    b.ToTable("Homeworks");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Image", b =>
@@ -97,22 +198,17 @@ namespace MMUniGraduation.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("LectureId")
-                        .HasColumnType("int");
-
                     b.Property<string>("VideoMaterial")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("LectureId");
 
                     b.ToTable("LearningObjects");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Lector", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -132,7 +228,10 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Lectors");
                 });
@@ -186,6 +285,9 @@ namespace MMUniGraduation.Migrations
                     b.Property<int>("ParetntLectureId")
                         .HasColumnType("int");
 
+                    b.Property<string>("VideoUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
@@ -197,6 +299,9 @@ namespace MMUniGraduation.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("DateTimeToShow")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Extension")
                         .HasColumnType("nvarchar(max)");
@@ -263,6 +368,9 @@ namespace MMUniGraduation.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Town")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -345,58 +453,6 @@ namespace MMUniGraduation.Migrations
                     b.ToTable("RoleClaims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -471,6 +527,10 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Course", b =>
                 {
+                    b.HasOne("MMUniGraduation.Models.Lector", null)
+                        .WithMany("Courses")
+                        .HasForeignKey("LectorId");
+
                     b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
                         .WithMany("Courses")
                         .HasForeignKey("StudyProgramId")
@@ -480,6 +540,15 @@ namespace MMUniGraduation.Migrations
                     b.Navigation("StudyProgram");
                 });
 
+            modelBuilder.Entity("MMUniGraduation.Models.Homework", b =>
+                {
+                    b.HasOne("MMUniGraduation.Models.Lecture", "Lecture")
+                        .WithMany("Homeworks")
+                        .HasForeignKey("LectureId");
+
+                    b.Navigation("Lecture");
+                });
+
             modelBuilder.Entity("MMUniGraduation.Models.Image", b =>
                 {
                     b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
@@ -487,13 +556,6 @@ namespace MMUniGraduation.Migrations
                         .HasForeignKey("StudyProgramId");
 
                     b.Navigation("StudyProgram");
-                });
-
-            modelBuilder.Entity("MMUniGraduation.Models.LearningObject", b =>
-                {
-                    b.HasOne("MMUniGraduation.Models.Lecture", null)
-                        .WithMany("VideoMaterials")
-                        .HasForeignKey("LectureId");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.LectorStudyProgram", b =>
@@ -579,14 +641,16 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Lector", b =>
                 {
+                    b.Navigation("Courses");
+
                     b.Navigation("LectorStudyPrograms");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Lecture", b =>
                 {
-                    b.Navigation("TextMaterials");
+                    b.Navigation("Homeworks");
 
-                    b.Navigation("VideoMaterials");
+                    b.Navigation("TextMaterials");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Student", b =>

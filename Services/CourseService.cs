@@ -25,7 +25,6 @@ namespace MMUniGraduation.Services
                 Description = input.Description,
                 StudyProgramId = input.StudyProgramId,
                 ParetntId = input.ParetntId,
-               // NextCourseId = input,
                 CourseStartDate = input.CourseStartDate,
                 SkipCoursEndDate = input.SkipCoursEndDate
 
@@ -40,11 +39,29 @@ namespace MMUniGraduation.Services
         }
         private async void SetNextCourseId(CreateCourse input, Course course)
         {
-            //_db.Lectures - all lectures
             var parentCourse = _db.Courses.FirstOrDefault(x => x.Id == input.ParetntId);
             parentCourse.NextCourseId = course.Id;
             await _db.SaveChangesAsync();
         }
+
+        private async Task RemoveCourseInheritance(int courseId, Course currCourse)
+        {
+            var courses = _db.Courses.Where(x => x.ParetntId == courseId || x.NextCourseId == courseId);
+            foreach (var course in courses)
+            {
+                if (course.NextCourseId == courseId)
+                {
+                    course.NextCourseId = currCourse.NextCourseId;
+                }
+                if (course.ParetntId == courseId)
+                {
+                    course.ParetntId = currCourse.ParetntId;
+                }
+            }
+
+            await _db.SaveChangesAsync();
+        }
+
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs()
         {
             return this._db.Courses.Select(x => new
@@ -56,6 +73,40 @@ namespace MMUniGraduation.Services
                 .OrderBy(x => x.Name)
                 .ToList()
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Signature + " "+ x.Name));
+        }
+
+        //public string GetNextCourseSuggestion(ApplicationUser user)
+        public string GetNextCourseSuggestion(Student user)
+        {
+            string Name;
+            if (user != null && user.CurrentCourseId != null)
+            {
+                if (_db.Courses.FirstOrDefault(x => x.Id == user.CurrentCourse.Id).NextCourseId != 0)
+                {
+                    Name = _db.Courses.FirstOrDefault(x => x.ParetntId == user.CurrentCourse.Id).Name.ToString();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                //Name = _db.Courses.FirstOrDefault().Name;
+                Name = "Basic";
+            }
+
+            return Name;
+        }
+
+        public async Task DeleteCourse(int courseId)
+        {
+            var course = _db.Courses.FirstOrDefault(c => c.Id == courseId);
+            await RemoveCourseInheritance(courseId, course);
+
+            _db.Courses.Remove(course);
+
+            await _db.SaveChangesAsync();
         }
     }
 }

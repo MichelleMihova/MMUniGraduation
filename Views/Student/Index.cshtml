@@ -71,7 +71,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#saved">
+                <a class="nav-link" data-toggle="tab" href="#currentCourse">
                     <i class="far fa-bookmark"></i> Courent Courses
                 </a>
             </li>
@@ -84,44 +84,65 @@
     </div>
     <div class="profile-tabs tab-content">
         <div class="tab-pane fade show active" id="photos">
-            <div class="row">
-                <div class="col-12 col-md-4">
-                    <div class="square" style="background-image:url('assets/img/dog-4.jpg');"></div>
+            @foreach (var pasedCourse in Model.PassedCourses)
+            {
+                <div class="card">
+                    @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
+                    <div class="card-body">
+                        <h5 class="card-title">@pasedCourse.Signature @pasedCourse.Name</h5>
+                        <p class="card-text">@pasedCourse.Description</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-footer">
+                            @*<small class="text-muted">Last updated 3 mins ago</small>*@
+                            <a class="nav-link text-dark" asp-route-courseId="@pasedCourse.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
+
+                            @*<div>
+                            <a class="btn btn-outline-info" asp-route-courseId="@program.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">View course information</a>
+                        </div>*@
+                        </div>
+                    </div>
                 </div>
-                <div class="col-12 col-md-4">
-                    <div class="square" style="background-image:url('assets/img/dog-5.jpg');"></div>
-                </div>
-                <div class="col-12 col-md-4">
-                    <div class="square" style="background-image:url('assets/img/dog-6.jpg');"></div>
-                </div>
-                <div class="col-12 col-md-4">
-                    <div class="square" style="background-image:url('assets/img/dog-7.jpg');"></div>
-                </div>
-                <div class="col-12 col-md-4">
-                    <div class="square" style="background-image:url('assets/img/dog-8.jpg');"></div>
-                </div>
-                <div class="col-12 col-md-4">
-                    <div class="square" style="background-image:url('assets/img/dog-3.jpg');"></div>
-                </div>
+            }
+        <br />
+            @*<div class="row">
+            <div class="col-12 col-md-4">
+                <div class="square" style="background-image:url('assets/img/dog-4.jpg');"></div>
             </div>
-            <div class="d-flex justify-content-center my-5">
-                <a href="#a" class="btn btn-outline-primary btn-pill">Load More</a>
+            <div class="col-12 col-md-4">
+                <div class="square" style="background-image:url('assets/img/dog-5.jpg');"></div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="square" style="background-image:url('assets/img/dog-6.jpg');"></div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="square" style="background-image:url('assets/img/dog-7.jpg');"></div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="square" style="background-image:url('assets/img/dog-8.jpg');"></div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="square" style="background-image:url('assets/img/dog-3.jpg');"></div>
             </div>
         </div>
-        <div class="tab-pane fade text-center" id="saved">
+        <div class="d-flex justify-content-center my-5">
+            <a href="#a" class="btn btn-outline-primary btn-pill">Load More</a>
+        </div>*@
+        </div>
+        <div class="tab-pane fade text-center" id="currentCourse">
 
-            <p class="lead"><span class="text-danger"><i class="far fa-frown-open"></i></span> Nothing saved yet.</p>
+            @*<p class="lead"><span class="text-danger"><i class="far fa-frown-open"></i></span> Nothing saved yet.</p>*@
 
             <div class="card">
                 @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
                 <div class="card-body">
-                    <h5 class="card-title">CurrentCourse.Name</h5>
-                    <p class="card-text">CurrentCourse.Description</p>
+                    <h5 class="card-title">@Model.CurrentCourse.Signature @Model.CurrentCourse.Name</h5>
+                    <p class="card-text">@Model.CurrentCourse.Description</p>
                 </div>
                 <div class="card-footer">
                     <div class="card-footer">
                         @*<small class="text-muted">Last updated 3 mins ago</small>*@
-                        <a class="nav-link text-dark" asp-route-courseId="2" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
+                        <a class="nav-link text-dark" asp-route-courseId="@Model.CurrentCourse.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
 
                         @*<div>
                         <a class="btn btn-outline-info" asp-route-courseId="@program.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">View course information</a>
@@ -129,6 +150,7 @@
                     </div>
                 </div>
             </div>
+            <br />
         </div>
         <div class="tab-pane fade text-center" id="tagged">
             <p class="lead">Help people tag you.</p>

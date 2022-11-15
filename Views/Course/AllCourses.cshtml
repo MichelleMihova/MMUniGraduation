@@ -1,4 +1,12 @@
-﻿@model IEnumerable<MMUniGraduation.Models.Course>
+﻿@*@model IEnumerable<MMUniGraduation.Models.Course>*@
+@model MMUniGraduation.ViewModels.AllCoursesViewModel
+
+@if (this.TempData.ContainsKey("Message"))
+{
+    <div class="alert alert-heading alert-dismissible" style="color: mediumseagreen; font-weight: bold; text-align: center">
+        @this.TempData["Message"]
+    </div>
+}
 <style>
     .img-box {
         width: 100%;
@@ -16,14 +24,33 @@
 
 <h2 style="text-align: center; padding-top: 1em; ">Our Courses</h2>
 <hr />
-@foreach (var course in Model)
+@if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
+{
+    if (@Model.NextCourseName != null)
+    {
+        <div style="text-align: center; padding-top: 1em; ">
+            <h4>Course suggestions</h4>
+            <p>The more appropriate course for you is @Model.NextCourseName </p>
+        </div>
+    }
+    else
+    {
+        <div style="text-align: center; padding-top: 1em; ">
+            <h4>Course suggestions</h4>
+            <p>Congrats! You compleated all courses! </p>
+        </div>
+    }
+    <hr />
+}
+
+@foreach (var course in Model.AllCourses)
 {
     <div class="row">
         <div class="col" asp-route-id="@course.Id">
             <h5>@course.Signature @course.Name</h5>
             <p class="p-desc">@course.Description</p>
             <div>
-                <a class="btn btn-outline-info" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Започни сега!</a>
+                <a class="btn btn-outline-info" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="AssignUserToCourse" style="text-decoration: none;">Започни сега!</a>
             </div>
             <div>
                 <a class="btn btn-outline-info" asp-route-courseId="@course.Id" asp-controller="Student" asp-action="Index" style="text-decoration: none;">Добави курс!</a>

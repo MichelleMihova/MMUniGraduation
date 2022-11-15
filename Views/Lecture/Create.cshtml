@@ -55,42 +55,23 @@
         <br />
         <hr />
         <br />
-     
+
         <h4>Lecture materials..</h4>
         <label>Files</label>
         <input asp-for="Files" class="form-control" />
         <br />
 
-        <div>
-            <!--
-    <div class="custom-file mb-3">
-            <input class="form-control" type="text" placeholder="Video"><br />
-        <input type="file" class="custom-file-input" id="customFile" name="filename">
-        <label class="custom-file-label" for="customFile">Upload video lecture</label>
-    </div>
-    <br />
-    <div class="custom-file mb-3">
-        <input type="file" class="custom-file-input" id="customFile" name="filename">
-        <label class="custom-file-label" for="customFile">Upload word lecture</label>
-    </div>
-    <br />
-    <div class="custom-file mb-3">
-        <input type="file" class="custom-file-input" id="customFile" name="filename">
-        <label class="custom-file-label" for="customFile">Upload homework file</label>
-    </div>
-    <br />
-    <div class="custom-file mb-3">
-        <input type="file" class="custom-file-input" id="customFile" name="filename">
-        <label class="custom-file-label" for="customFile">Upload advanced homework file</label>
-    </div>
-    -->
-            <!--
+        <div class="input-group">
+            <div class="custom-file form-control">
+                <input asp-for="Files" class="custom-file-input form-control" id="inputGroupFile04">
+                <label class="custom-file-label form-control" for="inputGroupFile04">Choose lecture materials</label>
 
-    <input class="form-control" type="text" placeholder="word"><br />
-    <input class="form-control" type="text" placeholder="homework"><br />
-    <input class="form-control" type="text" placeholder="advanced homework"><br />
-    -->
+                @*<input asp-for="Files" class="custom-file-input form-control" id="inputGroupFile04">
+                <label class="custom-file-label form-control" for="inputGroupFile04">Choose lecture materials</label>*@
+            </div>
         </div>
+        <label>Video url</label>
+        <input asp-for="VideoUrl" class="form-control" type="url" placeholder="Video url"><br />
         <hr />
         <br />
         <h4>Lecture criteria</h4>
