@@ -18,10 +18,11 @@ namespace MMUniGraduation.ViewModels
         public int LectureId { get; set; }
         public string LectureName { get; set; }
         public string LectureDescription { get; set; }
-        //public string LectureVideoMaterials { get; set; }
         public string VideoUrl { get; set; }
         public IEnumerable<IFormFile> Files { get; set; }
 
+        public string LectureFileId { get; set; }
+        public decimal MinHWGrade { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
@@ -34,6 +35,10 @@ namespace MMUniGraduation.ViewModels
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateTimeToShow { get; set; }
+        
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime DateTimeToShowFile { get; set; }
 
         //public int StudyProgramId { get; set; }
         //public virtual StudyProgram StudyProgram { get; set; }

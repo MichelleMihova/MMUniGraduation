@@ -27,7 +27,7 @@ namespace MMUniGraduation.Services
                 ParetntId = input.ParetntId,
                 CourseStartDate = input.CourseStartDate,
                 SkipCoursEndDate = input.SkipCoursEndDate
-
+                //set currUserID as creatorID
             };
             await _db.Courses.AddAsync(course);
             await _db.SaveChangesAsync();
@@ -81,9 +81,9 @@ namespace MMUniGraduation.Services
             string Name;
             if (user != null && user.CurrentCourseId != null)
             {
-                if (_db.Courses.FirstOrDefault(x => x.Id == user.CurrentCourse.Id).NextCourseId != 0)
+                if (_db.Courses.FirstOrDefault(x => x.Id == user.CurrentCourseId).NextCourseId != 0)
                 {
-                    Name = _db.Courses.FirstOrDefault(x => x.ParetntId == user.CurrentCourse.Id).Name.ToString();
+                    Name = _db.Courses.FirstOrDefault(x => x.ParetntId == user.CurrentCourseId).Name.ToString();
                 }
                 else
                 {

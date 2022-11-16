@@ -8,6 +8,7 @@ using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
 using MMUniGraduation.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -118,10 +119,12 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Edit", "Course", new { courseId = courseId });
         }
 
-        public async Task<IActionResult> SetConstraints(string lectureFileId, int courseId)
+        public async Task<IActionResult> SetConstraints(EditCourseViewModel input)
         {
+            //if homeworkGrade for currStudentId
+            await _lectureService.EditLectureFile(input);
 
-            return RedirectToAction("Edit", "Course", new { courseId = courseId });
+            return RedirectToAction("Edit", "Course", new { courseId = input.CourseId });
         }
             
     }

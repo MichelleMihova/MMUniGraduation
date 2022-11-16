@@ -71,7 +71,7 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
 
             [DataType(DataType.Password)]
-            [Display(Name = "Teacher Token")]
+            [Display(Name = "Token")]
             public string TeacherToken { get; set; }
         }
 
@@ -90,11 +90,24 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
                 var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, TeacherToken = Input.TeacherToken };
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
-                if (user.TeacherToken != null)
+                if (user.TeacherToken != null && user.TeacherToken.StartsWith("UACFL."))
+                {
+                    if (!await _roleManager.RoleExistsAsync("Admin"))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole
+                        {
+                            Name = "Admin"
+                        });
+                    }
+
+                    await _userManager.AddToRoleAsync(user, "Admin");
+                }
+                else if (user.TeacherToken != null && user.TeacherToken.StartsWith("UTCFL."))
                 {
                     var lector = new Lector
                     {
-                        UserId = user.Id
+                        UserId = user.Id,
+                        Email = user.Email
                     };
                     await _context.Lectors.AddAsync(lector);
                     await _context.SaveChangesAsync();
@@ -109,11 +122,12 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
 
                     await _userManager.AddToRoleAsync(user, "Teacher");
                 }
-                else
+                else if(user.TeacherToken == null)
                 {
                     var student = new Student
                     {
-                        UserId = user.Id
+                        UserId = user.Id,
+                        Email = user.Email
                     };
                     await _context.Students.AddAsync(student);
                     await _context.SaveChangesAsync();
@@ -128,17 +142,10 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
 
                     await _userManager.AddToRoleAsync(user, "Student");
                 }
-
-                //TO DO..
-                //Add token criteria for ADMIN and TEACHER
-                //if (!await _roleManager.RoleExistsAsync("Admin"))
-                //{
-                //    await _roleManager.CreateAsync(new IdentityRole
-                //    {
-                //        Name = "Admin"
-                //    });
-                //}
-
+                else
+                {
+                    return Page();
+                }
 
                 if (result.Succeeded)
                 {

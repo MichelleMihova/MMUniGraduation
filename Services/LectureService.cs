@@ -38,6 +38,7 @@ namespace MMUniGraduation.Services
                 VideoUrl = input.VideoUrl,
                 DateTimeToShow = input.DateTimeToShow,
                 EndDateTimeForHW = input.EndDateTimeForHW,
+                //set currentUserId as creatorId
             };
 
             foreach (var file in input.Files)
@@ -149,6 +150,23 @@ namespace MMUniGraduation.Services
             if (homeworkComment != null)
             {
                 homework.Comment = homeworkComment;
+            }
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task EditLectureFile (EditCourseViewModel input)
+        {
+            var lectureFile = _db.LectureFiles.FirstOrDefault(x => x.Id == input.LectureFileId);
+
+            if (lectureFile != null && input.MinHWGrade != 0)
+            {
+                lectureFile.MinHWGrade = input.MinHWGrade;
+            }
+
+            if (lectureFile != null && input.DateTimeToShowFile != lectureFile.DateTimeToShow)
+            {
+                lectureFile.DateTimeToShow = input.DateTimeToShowFile;
             }
 
             await _db.SaveChangesAsync();

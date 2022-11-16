@@ -13,6 +13,7 @@ namespace MMUniGraduation.Models
         public string Extension { get; set; }
         public string FileName { get; set; }
         public string FileTitle { get; set; }
+        public decimal MinHWGrade { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

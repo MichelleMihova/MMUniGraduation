@@ -55,6 +55,9 @@ namespace MMUniGraduation.Controllers
 
         public async Task<IActionResult> Index(int courseId)
         {
+            var user = await _userManager.GetUserAsync(this.User);
+            var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
+
             var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
             currentCourse.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
 
@@ -62,13 +65,18 @@ namespace MMUniGraduation.Controllers
 
             foreach (var lecture in currentCourse.Lectures)
             {
-                textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
+                var hw = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.StudentId == student.UserId).ToList();
+                decimal avarageHWgrade = 0;
+
+                foreach (var item in hw)
+                {
+                    avarageHWgrade += item.Grade;
+                }
+
+                textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade && l.DateTimeToShow <= System.DateTime.Now).ToList();
 
                 lecture.TextMaterials = textMaterial;
             }
-
-            var user = await _userManager.GetUserAsync(this.User);
-            var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
 
             var homework = new List<Homework>();
             foreach (var lecture in currentCourse.Lectures)
@@ -145,10 +153,12 @@ namespace MMUniGraduation.Controllers
             var user = await _userManager.GetUserAsync(this.User);
             var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
 
-            if (student != null && student.CurrentCourseId == 0)
+            if (student != null && student.CurrentCourseId == null)
             {
                 //student.CurrentCourse.Id = courseId;
-                student.CurrentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
+                var setCourseId = _context.Courses.FirstOrDefault(x => x.Id == courseId).Id;
+                student.CurrentCourseId = setCourseId;
+
                 _context.SaveChanges();
             }
             else if (student != null && student.CurrentCourseId != courseId)
