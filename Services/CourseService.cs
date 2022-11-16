@@ -16,7 +16,7 @@ namespace MMUniGraduation.Services
             _db = db;
         }
 
-        public async Task CreateCourseAsync(CreateCourse input)
+        public async Task CreateCourseAsync(CreateCourse input, ApplicationUser user)
         {
             var course = new Course
             {
@@ -26,8 +26,8 @@ namespace MMUniGraduation.Services
                 StudyProgramId = input.StudyProgramId,
                 ParetntId = input.ParetntId,
                 CourseStartDate = input.CourseStartDate,
-                SkipCoursEndDate = input.SkipCoursEndDate
-                //set currUserID as creatorID
+                SkipCoursEndDate = input.SkipCoursEndDate,
+                CreatorId = user.Id
             };
             await _db.Courses.AddAsync(course);
             await _db.SaveChangesAsync();

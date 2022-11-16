@@ -27,7 +27,7 @@ namespace MMUniGraduation.Services
             _webHost = webHost;
             _userManager = userManager;
         }
-        public async Task CreateLectureAsync(CreateLecture input)
+        public async Task CreateLectureAsync(CreateLecture input, ApplicationUser user)
         {
             var lecture = new Lecture
             {
@@ -38,7 +38,7 @@ namespace MMUniGraduation.Services
                 VideoUrl = input.VideoUrl,
                 DateTimeToShow = input.DateTimeToShow,
                 EndDateTimeForHW = input.EndDateTimeForHW,
-                //set currentUserId as creatorId
+                CreatorId = user.Id
             };
 
             foreach (var file in input.Files)

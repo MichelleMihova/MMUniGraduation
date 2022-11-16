@@ -8,8 +8,6 @@ using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
 using MMUniGraduation.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MMUniGraduation.Controllers
@@ -35,12 +33,8 @@ namespace MMUniGraduation.Controllers
         [Authorize(Roles = "Admin, Teacher")]
         public IActionResult Create()
         {
-            //var courses = _context.Courses.Include(c => c.Name);
-            //return View(courses.ToList());
-
             var viewModel = new CreateLecture
             {
-                //Courses - from model/create/createLecture
                 Courses = _courseService.GetAllAsKeyValuePairs(),
                 AllLectures = _lectureService.GetAllAsKeyValuePairs()
             };
@@ -57,18 +51,13 @@ namespace MMUniGraduation.Controllers
                 input.Courses = _courseService.GetAllAsKeyValuePairs();
                 input.AllLectures = _lectureService.GetAllAsKeyValuePairs();
             }
-            //var user = await _userManager.GetUserAsync(this.User);
+            var user = await _userManager.GetUserAsync(this.User);
           
-            await _lectureService.CreateLectureAsync(input);
+            await _lectureService.CreateLectureAsync(input, user);
 
             this.TempData["Message"] = "Lecture created successfully!";
 
             return RedirectToAction("Index", "Home");
-        }
-        // GET: Course
-        public async Task<IActionResult> Index1()
-        {
-            return View(await _context.Lectures.ToListAsync());
         }
 
         public async Task<IActionResult> AddHomework(IFormFile file, int lectureId)

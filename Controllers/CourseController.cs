@@ -118,9 +118,9 @@ namespace MMUniGraduation.Controllers
                 return this.View(input);
             }
 
-            //var user = await _userManager.GetUserAsync(this.User);
+            var user = await _userManager.GetUserAsync(this.User);
 
-            await _courseService.CreateCourseAsync(input);
+            await _courseService.CreateCourseAsync(input, user);
 
             this.TempData["Message"] = "Course created successfully!";
 

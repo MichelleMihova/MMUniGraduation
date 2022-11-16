@@ -13,6 +13,7 @@ namespace MMUniGraduation.Models.Create
         public string Description { get; set; }
         public int StudyProgramId { get; set; }
         public int ParetntId { get; set; }
+        public string CreatorId { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]

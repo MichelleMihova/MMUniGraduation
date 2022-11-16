@@ -85,11 +85,11 @@ namespace MMUniGraduation.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && (Input.TeacherToken == null || Input.TeacherToken.StartsWith("UACFL.") || Input.TeacherToken.StartsWith("UTCFL.")) )
             {
                 var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, TeacherToken = Input.TeacherToken };
                 var result = await _userManager.CreateAsync(user, Input.Password);
-
+                
                 if (user.TeacherToken != null && user.TeacherToken.StartsWith("UACFL."))
                 {
                     if (!await _roleManager.RoleExistsAsync("Admin"))

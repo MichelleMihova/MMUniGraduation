@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Data;
 using MMUniGraduation.Models;
@@ -17,18 +18,24 @@ namespace MMUniGraduation.Controllers
         private readonly ICourseService _courseService;
         private readonly IStudyProgramService _studyProgramService;
         private readonly ILectureService _lectureService;
-        public LectorController(ApplicationDbContext context, ICourseService courseService, IStudyProgramService studyProgramService, ILectureService lectureService)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public LectorController(ApplicationDbContext context, ICourseService courseService, 
+            IStudyProgramService studyProgramService, ILectureService lectureService,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _courseService = courseService;
             _studyProgramService = studyProgramService;
             _lectureService = lectureService;
+            _userManager = userManager;
         }
         public async Task<IActionResult> Index()
         {
+            var user = await _userManager.GetUserAsync(this.User);
+
             var viewModel = new AllCoursesViewModel
             {
-                AllCourses = _context.Courses.ToList()
+                AllCourses = _context.Courses.Where(x => x.CreatorId == user.Id).ToList()
             };
 
             return View(viewModel);

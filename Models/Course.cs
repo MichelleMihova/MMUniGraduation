@@ -19,8 +19,9 @@ namespace MMUniGraduation.Models
         public int ParetntId { get; set; }
         public int NextCourseId { get; set; }
         public string UserId { get; set; }
+        public string CreatorId { get; set; }
 
-         //TODO !!!
+        //TODO !!!
         public string SkippingCourseSignature { get; set; }
         public bool SkipCourse { get; set; }
         public string Exam { get; set; }
