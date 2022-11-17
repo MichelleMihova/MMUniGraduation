@@ -75,7 +75,7 @@
 @{ int i = 0;
     foreach (var lecture in Model.Lectures)
     {
-        if (lecture.DateTimeToShow <= DateTime.Now)
+        if (lecture.DateTimeToShow <= DateTime.Now || User.IsInRole("Admin") || User.IsInRole("Teacher"))
         {
             <div class="container">
                 <div class="card">
@@ -90,34 +90,34 @@
                         <div class="card-body">
                             @lecture.Description
                         </div>
-                        <div class="card-body">
-                            Date of performance: @lecture.DateTimeToShow
-                            <br />
-                            <br />
-                            <div class="embed-responsive embed-responsive-16by9">
-                                <iframe class="embed-responsive-item" src="@lecture.VideoUrl" allowfullscreen></iframe>
+                        @if (lecture.isExam == false)
+                        {
+                            <div class="card-body">
+                                Date of performance: @lecture.DateTimeToShow
+                                <br />
+                                <br />
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <iframe class="embed-responsive-item" src="@lecture.VideoUrl" allowfullscreen></iframe>
+                                </div>
                             </div>
-                        </div>
+                        }
                         <div class="container">
-
                             <div class="row">
                                 <div class="col">
                                     <ul>
-                                        @*<li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16">
-                                                <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
-                                            </svg>
-                                            <i class="bi bi-youtube">Lecture</i>
-                                        </li>
-                                        <div class="embed-responsive embed-responsive-16by9">
-                                            <iframe class="embed-responsive-item" src="@lecture.VideoUrl" allowfullscreen></iframe>
-                                        </div>
-                                        <br />*@
                                         <li>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
                                                 <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
                                             </svg>
-                                            <i class="bi bi-file-earmark-text-fill">Lecture materials:</i>
+                                            @if (lecture.isExam)
+                                            {
+                                                <i class="bi bi-file-earmark-text-fill">Exam materials:</i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-file-earmark-text-fill">Lecture materials:</i>
+                                            }
+
                                         </li>
                                         @foreach (var file in lecture.TextMaterials)
                                         {
@@ -129,39 +129,76 @@
                                 </div>
                                 @if (User.IsInRole("Student"))
                                 {
-                                    <div class="col">
-
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-                                                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
-                                            </svg>
-                                            <i class="bi bi-file-earmark-text-fill">Homework:</i>
-                                        </li>
-                                        @if (lecture.Homeworks.Any())
-                                        {
-                                            @foreach (var file in lecture.Homeworks)
+                                    @if (lecture.isExam)
+                                    {
+                                        <div class="col">
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+                                                </svg>
+                                                <i class="bi bi-file-earmark-text-fill">Exam solution:</i>
+                                            </li>
+                                            @if (lecture.Homeworks.Any())
                                             {
-                                                <ul>
-                                                    @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "homework" })
-                                                    <br />
-                                                    <label>Grade/Points: @file.Grade</label>
-                                                    <br />
-                                                    <label>Comment: @file.Comment</label>
-                                                    <br />
-                                                </ul>
+                                                @foreach (var file in lecture.Homeworks)
+                                                {
+                                                    <ul>
+                                                        @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "examSolution" })
+                                                        <br />
+                                                        <label>Grade/Points: @file.Grade</label>
+                                                        <br />
+                                                        <label>Comment: @file.Comment</label>
+                                                        <br />
+                                                    </ul>
+                                                }
                                             }
-                                        }
-                                        @if (lecture.EndDateTimeForHW >= DateTime.Now)
-                                        {
-                                            @using (Html.BeginForm("AddHomework", "Lecture", FormMethod.Post,
-                                          new { enctype = "multipart/form-data" }))
+                                            @if (lecture.EndDateTimeForHW >= DateTime.Now || !lecture.Homeworks.Any())
                                             {
-                                                @Html.TextBox("file", "", new { type = "file" })
-                                                <input type="text" name="lectureId" value="@lecture.Id" />
-                                                <input type="submit" value="Upload" />
+                                                @using (Html.BeginForm("AddExamSolution", "Lecture", FormMethod.Post,
+                                        new { enctype = "multipart/form-data" }))
+                                                {
+                                                    @Html.TextBox("file", "", new { type = "file" })
+                                                    <input type="text" name="lectureId" value="@lecture.Id" />
+                                                    <input type="submit" value="Upload" />
+                                                }
                                             }
-                                        }
-                                    </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col">
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+                                                </svg>
+                                                <i class="bi bi-file-earmark-text-fill">Homework:</i>
+                                            </li>
+                                            @if (lecture.Homeworks.Any())
+                                            {
+                                                @foreach (var file in lecture.Homeworks)
+                                                {
+                                                    <ul>
+                                                        @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "homework" })
+                                                        <br />
+                                                        <label>Grade/Points: @file.Grade</label>
+                                                        <br />
+                                                        <label>Comment: @file.Comment</label>
+                                                        <br />
+                                                    </ul>
+                                                }
+                                            }
+                                            @if (lecture.EndDateTimeForHW >= DateTime.Now)
+                                            {
+                                                @using (Html.BeginForm("AddHomework", "Lecture", FormMethod.Post,
+                                        new { enctype = "multipart/form-data" }))
+                                                {
+                                                    @Html.TextBox("file", "", new { type = "file" })
+                                                    <input type="text" name="lectureId" value="@lecture.Id" />
+                                                    <input type="submit" value="Upload" />
+                                                }
+                                            }
+                                        </div>
+                                    }
                                 }
                                 @*</form>*@
                             </div>

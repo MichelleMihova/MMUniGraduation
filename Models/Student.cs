@@ -11,6 +11,7 @@ namespace MMUniGraduation.Models
         {
             this.CompleatedStudyPrograms = new List<StudentStudyProgram>();
             this.PassedCourses = new List<Course>();
+            this.Passed = new List<StudentCourses>();
         }
 
         public int Id { get; set; }
@@ -32,6 +33,8 @@ namespace MMUniGraduation.Models
         public ICollection<StudentStudyProgram> CompleatedStudyPrograms { get; set; }
         [NotMapped]
         public ICollection<Course> PassedCourses { get; set; }
+        public ICollection<StudentCourses> Passed { get; set; }
+        //create new table with studentId, passedCourseId and FinalGrade
 
     }
 }

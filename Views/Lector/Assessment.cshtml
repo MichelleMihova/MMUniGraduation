@@ -59,13 +59,21 @@
             <select asp-for="LectureId" class="form-control" asp-items="lectures"></select>
             <br />
 
+            <label>Select kind of assessment</label>
+            <select asp-for="KindOfAssessment" class="form-control">
+                <option value="Homeworks">Homeworks</option>
+                <option value="ExamSolutions">Exam solutions</option>
+                <option value="AllAssessments">All</option>
+            </select>
+            <br />
+
             <select class="form-control" placeholder="Lector">
                 <option value="1">Select Lector</option>
                 <option>Pesho</option>
                 <option>Mitko</option>
                 <option>Select from existing Programs in DB</option>
             </select><br />
-            <button class="btn btn-outline-info" style="text-align:right;" >Search</button>
+            <button class="btn btn-outline-info" style="text-align:right;">Search</button>
         </div>
     </form>
 </div>
@@ -84,11 +92,20 @@
                     <div class="col">
                         <p>Course: @course.Signature @course.Name</p>
                         <p>Lecture: @lecture.Name</p>
-                        <p>Homework solutions:</p>
-
-                        <ul>
-                            @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "homework" })
-                        </ul>
+                        @if (lecture.isExam)
+                        {
+                            <p>Exam solution:</p>
+                            <ul>
+                                @Html.ActionLink(file.HomeworkName, "DownloadFile", new { Controller = "Course", fileName = file.Id + '.' + file.Extension, type = "examSolution" })
+                            </ul>
+                        }
+                        else
+                        {
+                            <p>Homework solutions:</p>
+                            <ul>
+                                @Html.ActionLink(file.HomeworkName, "DownloadFile", new { Controller = "Course", fileName = file.Id + '.' + file.Extension, type = "homework" })
+                            </ul>
+                        }
                     </div>
                     <div class="col">
                         <form asp-controller="Lecture" asp-action="EditHomework" enctype="multipart/form-data">

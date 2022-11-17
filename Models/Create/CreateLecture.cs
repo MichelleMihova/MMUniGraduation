@@ -14,6 +14,7 @@ namespace MMUniGraduation.Models.Create
         public int ParetntLectureId { get; set; }
         public string VideoUrl { get; set; }
         public string CreatorId { get; set; }
+        public bool isExam { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]

@@ -76,6 +76,9 @@
         <br />
         <h4>Lecture criteria</h4>
         <div>
+            @Html.EditorFor(x => x.isExam)
+            <label>Exam</label>
+            <br />
             <div class="form-group">
                 <label asp-for="DateTimeToShow" class="control-label"></label>
                 <input asp-for="DateTimeToShow" class="form-control" />
@@ -87,21 +90,12 @@
                 <input asp-for="EndDateTimeForHW" class="form-control" />
                 <span asp-validation-for="EndDateTimeForHW" class="text-danger"></span>
             </div>
+            <br />
 
-            @*<input class="form-control" type="text" placeholder="Criterias"><br />
-            <label for="party">Enter a date and time on which the lecture will be available:</label><br />
-            <input asp-for="DateTimeToShow" type="datetime-local" id="lecture-time"
-                   name="lecture-time" value="2018-06-12T19:30">
-            <br />
-            <br /><label for="party">Enter end date and time of homewokr submittion. If the homework is submitted before this date/time then the lecture will be available:</label><br />
-            <input asp-for="EndDateTimeForHW" type="datetime-local" id="lecture-time"
-                   name="lecture-time" value="2018-06-12T19:30"
-                   min="2018-06-07T00:00">
-            <br />*@
-            <br />
+            @*<label asp-for="isExam" class="form-check-label" for="flexCheckDefault">Is it Exam?</label>*@
             @*<input class="form-control" type="text" placeholder="Select students who can see the course"><br />
-            <input class="form-control" type="text" placeholder="Enter min grade to be shown"><br />
-            <input class="form-control" type="text" placeholder="Enter min count of submitted HW"><br />*@
+        <input class="form-control" type="text" placeholder="Enter min grade to be shown"><br />
+        <input class="form-control" type="text" placeholder="Enter min count of submitted HW"><br />*@
 
         </div>
 

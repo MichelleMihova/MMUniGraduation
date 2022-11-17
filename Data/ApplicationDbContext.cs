@@ -22,6 +22,7 @@ namespace MMUniGraduation.Data
         //public DbSet<RestrictAccess> RestrictAccess { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Lector> Lectors { get; set; }
+        public DbSet<StudentCourses> StudentCourses { get; set; }
         public DbSet<StudentStudyProgram> StudentStudyProgram { get; set; }
         public DbSet<LectorStudyProgram> LectorStudyProgram { get; set; }
 
@@ -47,6 +48,15 @@ namespace MMUniGraduation.Data
                 .HasOne(sc => sc.StudyProgram)
                 .WithMany(c => c.StudentStudyProgram)
                 .HasForeignKey(sc => sc.StudyProgramId);
+
+            builder.Entity<StudentCourses>()
+                .HasKey(sc => new { sc.StudentId, sc.CourseId });
+            builder.Entity<StudentCourses>()
+                .HasOne(sc => sc.User)
+                .WithMany(s => s.Passed)
+                .HasForeignKey(sc => sc.StudentId);
+            builder.Entity<StudentCourses>()
+                .HasOne(sc => sc.Course);
 
             builder.Entity<LectorStudyProgram>()
                 .HasKey(sc => new { sc.LectorId, sc.StudyProgramId });

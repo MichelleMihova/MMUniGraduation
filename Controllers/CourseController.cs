@@ -43,6 +43,10 @@ namespace MMUniGraduation.Controllers
             {
                 path = Path.Combine(_webHost.WebRootPath, "homeworks/") + fileName;
             }
+            else if (type == "examSolution")
+            {
+                path = Path.Combine(_webHost.WebRootPath, "examSolutions/") + fileName;
+            }
             else
             {
                 path = Path.Combine(_webHost.WebRootPath, "files/") + fileName;
@@ -65,16 +69,23 @@ namespace MMUniGraduation.Controllers
 
             foreach (var lecture in currentCourse.Lectures)
             {
-                var hw = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.StudentId == student.UserId).ToList();
-                decimal avarageHWgrade = 0;
-
-                foreach (var item in hw)
+                if (student != null)
                 {
-                    avarageHWgrade += item.Grade;
+                    var hw = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.StudentId == student.UserId).ToList();
+                    decimal avarageHWgrade = 0;
+
+                    foreach (var item in hw)
+                    {
+                        avarageHWgrade += item.Grade;
+                    }
+
+                    textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade && l.DateTimeToShow <= System.DateTime.Now).ToList();
                 }
-
-                textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade && l.DateTimeToShow <= System.DateTime.Now).ToList();
-
+                else
+                {
+                    textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
+                }
+                
                 lecture.TextMaterials = textMaterial;
             }
 
@@ -152,6 +163,8 @@ namespace MMUniGraduation.Controllers
         {
             var user = await _userManager.GetUserAsync(this.User);
             var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
+
+            //if currCourse is null => check passed courses and return sugesstion based on it
 
             if (student != null && student.CurrentCourseId == null)
             {

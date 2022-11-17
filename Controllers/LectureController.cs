@@ -60,6 +60,20 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public async Task<IActionResult> AddExamSolution(IFormFile file, int lectureId)
+        {
+            var user = await _userManager.GetUserAsync(this.User);
+            var currLecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == lectureId);
+
+            await _lectureService.AddExamSolutionToLecture(lectureId, file, user.Id);
+
+            this.TempData["Message"] = "Homework added successfully!";
+
+
+            //return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Course", new { courseId = 1 });
+        }
+
         public async Task<IActionResult> AddHomework(IFormFile file, int lectureId)
         {
             var user = await _userManager.GetUserAsync(this.User);
@@ -67,16 +81,39 @@ namespace MMUniGraduation.Controllers
 
             await _lectureService.AddHomeworkToLecture(lectureId, file, user.Id);
 
-             this.TempData["Message"] = "Homework added successfully!";
+            this.TempData["Message"] = "Homework added successfully!";
 
-            
-            //return RedirectToAction("Index", "Home");
             return RedirectToAction("Index", "Course", new { courseId = 1 });
         }
 
-        public async Task<IActionResult> EditHomework(int homeworkId, decimal homeworkGrade, string homeworkComment)
+        //public async Task<IActionResult> EditHomework(int homeworkId, decimal homeworkGrade, string homeworkComment)
+        public async Task<IActionResult> EditHomework(AssessmentsViewModel input)
         {
-            await _lectureService.EditHomework(homeworkId, homeworkGrade, homeworkComment);
+            await _lectureService.EditHomework(input.HomeworkId, input.HomeworkGrade, input.HomeworkComment);
+
+            //TO DO..
+            var hw = await _context.Homeworks.FirstOrDefaultAsync(x => x.Id == input.HomeworkId);
+            var student = await _context.Students.FirstOrDefaultAsync(x => x.UserId == hw.StudentId);
+
+            if (hw.HomeworkTitle.ToUpper() == "EXAM")
+            {
+                //move curr course as passed 
+                var passedCourse = new StudentCourses
+                {
+                    StudentId = student.Id,
+                    CourseId = input.CourseId,
+                    FinalGrade = input.HomeworkGrade,
+                    IsPassed = true
+                };
+
+                await _context.StudentCourses.AddAsync(passedCourse);
+                await _context.SaveChangesAsync();
+
+                student.CurrentCourseId = 0;
+
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction("Assessment", "Lector");
         }
 

@@ -38,7 +38,8 @@ namespace MMUniGraduation.Services
                 VideoUrl = input.VideoUrl,
                 DateTimeToShow = input.DateTimeToShow,
                 EndDateTimeForHW = input.EndDateTimeForHW,
-                CreatorId = user.Id
+                CreatorId = user.Id,
+                isExam = input.isExam
             };
 
             foreach (var file in input.Files)
@@ -111,6 +112,35 @@ namespace MMUniGraduation.Services
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name));
         }
 
+        public async Task AddExamSolutionToLecture(int lectureId, IFormFile file, string userId)
+        {
+            var currLectire = _db.Lectures.FirstOrDefault(x => x.Id == lectureId);
+
+            var extension = Path.GetExtension(file.FileName).TrimStart('.');
+            var wwwrootPath = _webHost.WebRootPath;
+
+            if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+            {
+                throw new Exception($"Invalid file extension {extension} !");
+            }
+
+            var homeworkFile = new Homework
+            {
+                Extension = extension,
+                HomeworkName = file.FileName,
+                StudentId = userId,
+                HomeworkTitle = "Exam"
+            };
+
+            currLectire.Homeworks.Add(homeworkFile);
+
+            var physicalPath = $"{wwwrootPath}/examSolutions/{homeworkFile.Id}.{extension}";
+            await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
+            await file.CopyToAsync(fileStream);
+
+            await _db.SaveChangesAsync();
+        }
+
         public async Task AddHomeworkToLecture(int lectureId, IFormFile file, string userId)
         {
             var currLectire = _db.Lectures.FirstOrDefault(x => x.Id == lectureId);
@@ -139,7 +169,7 @@ namespace MMUniGraduation.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task EditHomework(int homeworkId, decimal homeworkGrade, string homeworkComment)
+        public async Task EditHomework(string homeworkId, decimal homeworkGrade, string homeworkComment)
         {
             var homework = _db.Homeworks.FirstOrDefault(h => h.Id == homeworkId);
             if (homeworkGrade > 0)

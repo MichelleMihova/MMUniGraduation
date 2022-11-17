@@ -48,8 +48,10 @@ namespace MMUniGraduation.Controllers
 
             var viewModel = new Student
             {
-                CurrentCourse = _context.Courses.FirstOrDefault(c => c.Id == student.CurrentCourseId),
+                CurrentCourse = _context.Courses.FirstOrDefault(x => x.Id == student.CurrentCourseId),
+                Passed = await _context.StudentCourses.Where(x => x.StudentId == student.Id ).ToListAsync(),
                 PassedCourses = await _context.Courses.Where(c => c.StudyProgramId == 1).ToListAsync()
+                //PassedCourses = await _context.Courses.Where(c => c.StudyProgramId == 1).ToListAsync()
             };
 
             return View(viewModel);

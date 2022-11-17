@@ -93,6 +93,8 @@ namespace MMUniGraduation.Controllers
             var lectures = new List<Lecture>();
             var homeworks = new List<Homework>();
 
+            //TO DO..
+            //Show assessments only for current user
             foreach (var course in viewModel.AllCourses)
             {
                 lectures = _context.Lectures.Where(l => l.CourseId == course.Id && l.Id == input.LectureId).ToList();
@@ -100,7 +102,19 @@ namespace MMUniGraduation.Controllers
 
                 foreach (var lecture in course.Lectures)
                 {
-                    homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
+                    if (input.KindOfAssessment.ToUpper() == "HOMEWORKS")
+                    {
+                        homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle != "EXAM").ToList();
+                    }
+                    else if (input.KindOfAssessment.ToUpper() == "EXAMSOLUTIONS")
+                    {
+                        homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle == "EXAM").ToList();
+                    }
+                    else
+                    {
+                        homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
+                    }
+                    
                     lecture.Homeworks = homeworks;
                 }
             }

@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MMUniGraduation.Models
 {
     public class Homework
     {
-        public int Id { get; set; }
+        public Homework()
+        {
+            this.Id = Guid.NewGuid().ToString();
+        }
+        public string Id { get; set; }
         public string HomeworkName { get; set; }
         public string Extension { get; set; }
         public string HomeworkTitle { get; set; }
