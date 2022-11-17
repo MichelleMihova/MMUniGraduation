@@ -6,6 +6,7 @@ using MMUniGraduation.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace MMUniGraduation.Controllers
 {
@@ -45,12 +46,20 @@ namespace MMUniGraduation.Controllers
 
             var user = await _userManager.GetUserAsync(this.User);
             var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
+            var passedStudentCourses = _context.StudentCourses.Where(x => x.StudentId == student.Id);
+            var pass = new List<Course>();
+
+            foreach (var item in passedStudentCourses)
+            {
+                var course = _context.Courses.FirstOrDefault(x => x.Id == item.CourseId);
+                pass.Add(course);
+            }
 
             var viewModel = new Student
             {
                 CurrentCourse = _context.Courses.FirstOrDefault(x => x.Id == student.CurrentCourseId),
-                Passed = await _context.StudentCourses.Where(x => x.StudentId == student.Id ).ToListAsync(),
-                PassedCourses = await _context.Courses.Where(c => c.StudyProgramId == 1).ToListAsync()
+                Passed = await _context.StudentCourses.Where(x => x.StudentId == student.Id).ToListAsync(),
+                PassedCourses = pass
                 //PassedCourses = await _context.Courses.Where(c => c.StudyProgramId == 1).ToListAsync()
             };
 

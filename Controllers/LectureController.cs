@@ -109,9 +109,9 @@ namespace MMUniGraduation.Controllers
                 await _context.StudentCourses.AddAsync(passedCourse);
                 await _context.SaveChangesAsync();
 
-                student.CurrentCourseId = 0;
+                student.CurrentCourseId = null;
 
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
 
             return RedirectToAction("Assessment", "Lector");
