@@ -92,8 +92,46 @@ namespace MMUniGraduation.Services
             }
             else
             {
+                if (user != null && user.CurrentCourseId == null)
+                {
+                    var passedCourses = _db.StudentCourses.Where(x => x.StudentId == user.Id);
+                    if (passedCourses.Any())
+                    {
+                        //make it smarter!!!
+                        int num = 0;
+                        int maxNum = 0;
+                        foreach (var item in passedCourses)
+                        {
+                            num = item.CourseId;
+                            if (num > maxNum)
+                            {
+                                maxNum = num;
+                                num = 0;
+                            }
+                        }
+
+                        if (_db.Courses.FirstOrDefault(x => x.Id == maxNum).NextCourseId != 0)
+                        {
+                            Name = _db.Courses.FirstOrDefault(x => x.ParetntId == maxNum).Name.ToString();
+                        }
+                        else
+                        {
+                            Name = "Congrats! You compleate the program!";
+                        }
+                    }
+                    else
+                    {
+                        Name = _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                        //Name = "Basic";
+                    }
+                }
+                else
+                {
+                    Name = _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                    //Name = "Basic";
+                }
                 //Name = _db.Courses.FirstOrDefault().Name;
-                Name = "Basic";
+                //Name = "Basic";
             }
 
             return Name;

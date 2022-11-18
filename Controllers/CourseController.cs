@@ -85,7 +85,7 @@ namespace MMUniGraduation.Controllers
                 {
                     textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
                 }
-                
+
                 lecture.TextMaterials = textMaterial;
             }
 
@@ -96,12 +96,12 @@ namespace MMUniGraduation.Controllers
                 {
                     homework = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.StudentId == student.UserId).ToList();
                 }
-                
+
                 lecture.Homeworks = homework;
             }
 
             //TO DO..
-            this.TempData["Message"] = "You have been sucessfully assigned to this course !";
+            //this.TempData["Message"] = "You have been sucessfully assigned to this course !";
 
             return View(currentCourse);
         }
@@ -147,7 +147,8 @@ namespace MMUniGraduation.Controllers
             var viewModel = new AllCoursesViewModel
             {
                 NextCourseName = _courseService.GetNextCourseSuggestion(student),
-                AllCourses = await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync()
+                AllCourses = await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync(),
+                Signature = _context.StudyPrograms.FirstOrDefault(x => x.Id == studyProgramId).Name
             };
 
             if (message != null)
@@ -163,20 +164,74 @@ namespace MMUniGraduation.Controllers
         {
             var user = await _userManager.GetUserAsync(this.User);
             var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
+            var passedCoursesId = _context.StudentCourses.Where(x => x.StudentId == student.Id).Select(x => x.CourseId);
+            var passedCourses = new List<Course>();
+            if (passedCoursesId.Any())
+            {
+                foreach (var id in passedCoursesId)
+                {
+                    var course = _context.Courses.FirstOrDefault(x => x.Id == id);
+                    passedCourses.Add(course);
+                }
+            }
+            
 
             //if currCourse is null => check passed courses and return sugesstion based on it
-
             if (student != null && student.CurrentCourseId == null)
             {
-                //student.CurrentCourse.Id = courseId;
-                var setCourseId = _context.Courses.FirstOrDefault(x => x.Id == courseId).Id;
-                student.CurrentCourseId = setCourseId;
+                int setCourseId;
+                var parrentCourseId = 0;
+                //TO DO..
+                // Add courses from begining!! You cant start with Advanced if you are not passed Basic !!!
+                if (passedCourses.Any())
+                {
+                    var course = _context.Courses.FirstOrDefault(x => x.Id == courseId);
+                    if (passedCourses.Contains(course))
+                    {
+                        return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have already passed {course.Name} course" });
+                    }
+                    else
+                    {
+                        foreach (var passedCourse in passedCourses)
+                        {
+                            if (passedCourse.NextCourseId == courseId)
+                            {
+                                student.CurrentCourseId = courseId;
+                                _context.SaveChanges();
+                            }
+                            else
+                            {
+                                return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have to continue with {_courseService.GetNextCourseSuggestion(student)} course" });
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var course = _context.Courses.FirstOrDefault(x => x.Id == courseId);
+                    //setCourseId = _context.Courses.FirstOrDefault(x => x.Id == courseId && x.ParetntId == 0).Id;
+                    //if (courseId == setCourseId)
+                    if (course.ParetntId == 0)
+                    {
+                        student.CurrentCourseId = course.Id;
+                        _context.SaveChanges();
+                    }
+                    else
+                    {
+                        //var course = _context.Courses.FirstOrDefault(x => x.Id == courseId);
+                        return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have to start with {_courseService.GetNextCourseSuggestion(student)} course" });
+                        //return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have to start with {course.Name} course" });
+                    }
 
-                _context.SaveChanges();
+                }
+                //var setCourseId = _context.Courses.FirstOrDefault(x => x.Id == courseId).Id;
+                //student.CurrentCourseId = setCourseId;
+
+                //_context.SaveChanges();
             }
             else if (student != null && student.CurrentCourseId != courseId)
             {
-                var course = _context.Courses.FirstOrDefault(x => x.Id == courseId);
+                var course = _context.Courses.FirstOrDefault(x => x.Id == student.CurrentCourseId);
                 return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You are already assigned to {course.Name}" });
             }
 

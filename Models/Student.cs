@@ -33,8 +33,9 @@ namespace MMUniGraduation.Models
         public ICollection<StudentStudyProgram> CompleatedStudyPrograms { get; set; }
         [NotMapped]
         public ICollection<Course> PassedCourses { get; set; }
+        
+        // Maybe we don't need it:
         public ICollection<StudentCourses> Passed { get; set; }
-        //create new table with studentId, passedCourseId and FinalGrade
 
     }
 }
