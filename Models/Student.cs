@@ -25,9 +25,17 @@ namespace MMUniGraduation.Models
         public DateTime DateOfBirth { get; set; }
         public string Photo { get; set; }
 
+        //TO DO..
+        //add variable to show that we select to skip the course - reset on course movement from curr to pass
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? EndDateTime { get; set; }
+
         //[ForeignKey("Course")]
         public int? CurrentCourseId { get; set; }
         public virtual Course CurrentCourse { get; set; }
+        //TO DO..
+        //Add skipCourse variable, so we can know what content to show on course.index page
 
         [NotMapped]
         public ICollection<StudentStudyProgram> CompleatedStudyPrograms { get; set; }
