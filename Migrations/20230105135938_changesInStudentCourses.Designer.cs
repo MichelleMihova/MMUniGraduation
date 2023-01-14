@@ -4,14 +4,16 @@ using MMUniGraduation.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MMUniGraduation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230105135938_changesInStudentCourses")]
+    partial class changesInStudentCourses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -279,9 +281,6 @@ namespace MMUniGraduation.Migrations
                     b.Property<int>("ParetntLectureId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("RequiredGrade")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("VideoUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -355,12 +354,6 @@ namespace MMUniGraduation.Migrations
 
                     b.Property<string>("Photo")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("ShowTextMaterials")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("ShowVideoMaterials")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Town")
                         .HasColumnType("nvarchar(max)");

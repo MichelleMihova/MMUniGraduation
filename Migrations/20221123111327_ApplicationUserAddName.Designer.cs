@@ -4,14 +4,16 @@ using MMUniGraduation.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MMUniGraduation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221123111327_ApplicationUserAddName")]
+    partial class ApplicationUserAddName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -132,9 +134,6 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("SkippingCourseSignature")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("StudentId")
-                        .HasColumnType("int");
-
                     b.Property<int>("StudyProgramId")
                         .HasColumnType("int");
 
@@ -144,8 +143,6 @@ namespace MMUniGraduation.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LectorId");
-
-                    b.HasIndex("StudentId");
 
                     b.HasIndex("StudyProgramId");
 
@@ -279,9 +276,6 @@ namespace MMUniGraduation.Migrations
                     b.Property<int>("ParetntLectureId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("RequiredGrade")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("VideoUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -356,12 +350,6 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Photo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("ShowTextMaterials")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("ShowVideoMaterials")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Town")
                         .HasColumnType("nvarchar(max)");
 
@@ -388,9 +376,6 @@ namespace MMUniGraduation.Migrations
 
                     b.Property<bool>("IsPassed")
                         .HasColumnType("bit");
-
-                    b.Property<int>("ProgramId")
-                        .HasColumnType("int");
 
                     b.HasKey("StudentId", "CourseId");
 
@@ -550,10 +535,6 @@ namespace MMUniGraduation.Migrations
                         .WithMany("Courses")
                         .HasForeignKey("LectorId");
 
-                    b.HasOne("MMUniGraduation.Models.Student", null)
-                        .WithMany("CurrentCourses")
-                        .HasForeignKey("StudentId");
-
                     b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
                         .WithMany("Courses")
                         .HasForeignKey("StudyProgramId")
@@ -689,8 +670,6 @@ namespace MMUniGraduation.Migrations
             modelBuilder.Entity("MMUniGraduation.Models.Student", b =>
                 {
                     b.Navigation("CompleatedStudyPrograms");
-
-                    b.Navigation("CurrentCourses");
 
                     b.Navigation("Passed");
                 });

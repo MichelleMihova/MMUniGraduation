@@ -23,7 +23,8 @@ namespace MMUniGraduation.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<Lector> Lectors { get; set; }
         public DbSet<StudentCourses> StudentCourses { get; set; }
-        public DbSet<StudentStudyProgram> StudentStudyProgram { get; set; }
+        //public DbSet<StudentCurrentCourses> StudentCurrentCourses { get; set; }
+        //public DbSet<StudentStudyProgram> StudentStudyProgram { get; set; }
         public DbSet<LectorStudyProgram> LectorStudyProgram { get; set; }
 
         //public DbSet<StudentCourse> StudentCourses { get; set; }
@@ -37,7 +38,7 @@ namespace MMUniGraduation.Data
                 .HasKey(x => x.UserId);
             builder.Entity<IdentityUserToken<string>>()
                 .HasKey(x => x.UserId);
-            
+
             builder.Entity<StudentStudyProgram>()
                 .HasKey(sc => new { sc.StudentId, sc.StudyProgramId });
             builder.Entity<StudentStudyProgram>()
@@ -57,6 +58,15 @@ namespace MMUniGraduation.Data
                 .HasForeignKey(sc => sc.StudentId);
             builder.Entity<StudentCourses>()
                 .HasOne(sc => sc.Course);
+
+            //builder.Entity<StudentCurrentCourses>()
+            //    .HasKey(sc => new { sc.StudentId, sc.CourseId });
+            //builder.Entity<StudentCurrentCourses>()
+            //    .HasOne(sc => sc.User)
+            //    //.WithMany(s => s.Passed)
+            //    .HasForeignKey(sc => sc.StudentId);
+            //builder.Entity<StudentCurrentCourses>()
+            //    .HasOne(sc => sc.Course);
 
             builder.Entity<LectorStudyProgram>()
                 .HasKey(sc => new { sc.LectorId, sc.StudyProgramId });

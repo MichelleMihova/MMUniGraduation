@@ -12,6 +12,7 @@ namespace MMUniGraduation.Models
             this.CompleatedStudyPrograms = new List<StudentStudyProgram>();
             this.PassedCourses = new List<Course>();
             this.Passed = new List<StudentCourses>();
+            //this.Images = new HashSet<Image>();
         }
 
         public int Id { get; set; }
@@ -23,10 +24,13 @@ namespace MMUniGraduation.Models
         public string Email { get; set; }
         public string Town { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public string Photo { get; set; }
+        public bool ShowTextMaterials { get; set; }
+        public bool ShowVideoMaterials { get; set; }
 
-        //TO DO..
-        //add variable to show that we select to skip the course - reset on course movement from curr to pass
+        //remove Photo
+        public string Photo { get; set; }
+        //public virtual ICollection<Image> Images { get; set; }
+
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? EndDateTime { get; set; }
@@ -34,14 +38,13 @@ namespace MMUniGraduation.Models
         //[ForeignKey("Course")]
         public int? CurrentCourseId { get; set; }
         public virtual Course CurrentCourse { get; set; }
-        //TO DO..
-        //Add skipCourse variable, so we can know what content to show on course.index page
 
         [NotMapped]
         public ICollection<StudentStudyProgram> CompleatedStudyPrograms { get; set; }
         [NotMapped]
         public ICollection<Course> PassedCourses { get; set; }
-        
+        public ICollection<Course> CurrentCourses { get; set; }
+
         // Maybe we don't need it:
         public ICollection<StudentCourses> Passed { get; set; }
 

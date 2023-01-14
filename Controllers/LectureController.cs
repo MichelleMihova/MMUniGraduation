@@ -8,6 +8,8 @@ using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
 using MMUniGraduation.ViewModels;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MMUniGraduation.Controllers
@@ -95,6 +97,22 @@ namespace MMUniGraduation.Controllers
             var hw = await _context.Homeworks.FirstOrDefaultAsync(x => x.Id == input.HomeworkId);
             var student = await _context.Students.FirstOrDefaultAsync(x => x.UserId == hw.StudentId);
 
+            //get all EXAM lectures and all HW for this lecturesID
+            //var allFinalLectures = _context.Lectures.Where(x => x.isExam == true).ToList();
+            //var allFinalHomeworkSolutions = new List<Homework>();
+            //foreach (var lecture in allFinalLectures)
+            //{
+            //    var homeworks = _context.Homeworks.FirstOrDefault(x => x.LectureId == lecture.Id && x.StudentId == student.UserId);
+            //    if (lecture.RequiredGrade <= homeworks.Grade)
+            //    {
+
+            //    }
+            //    allFinalHomeworkSolutions.Add(homeworks);
+            //}
+
+
+            
+
             if (hw.HomeworkTitle.ToUpper() == "EXAM")
             {
                 //move curr course as passed 
@@ -106,6 +124,7 @@ namespace MMUniGraduation.Controllers
                     IsPassed = true
                 };
 
+                //Check criteria for passing course
                 await _context.StudentCourses.AddAsync(passedCourse);
                 await _context.SaveChangesAsync();
 

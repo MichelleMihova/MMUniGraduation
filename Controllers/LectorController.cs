@@ -52,20 +52,33 @@ namespace MMUniGraduation.Controllers
 
             var lectures = new List<Lecture>(); 
             var homeworks = new List<Homework>();
+            var students = new List<Student>();
 
             foreach (var course in viewModel.AllCourses)
             {
                 lectures = _context.Lectures.Where(l => l.CourseId == course.Id).ToList();
 
                 course.Lectures = lectures;
-
+                
                 foreach (var lecture in course.Lectures)
                 {
                     homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
-
                     lecture.Homeworks = homeworks;
+
+                    var studentsId = _context.Homeworks.Select(x => x.StudentId).ToList();
+                    foreach (var id in studentsId)
+                    {
+                        var student = _context.Students.FirstOrDefault(x => x.UserId == id);
+                        if (!students.Contains(student))
+                        {
+                            students.Add(student);
+                        }
+                    }
                 }
             }
+
+            viewModel.Students = students;
+
             return View(viewModel);
         }
 

@@ -25,6 +25,7 @@
     <Folder Include="wwwroot\files\" />
     <Folder Include="wwwroot\homeworks\" />
     <Folder Include="wwwroot\examSolutions\" />
+    <Folder Include="wwwroot\profileImg\" />
   </ItemGroup>
 
 </Project>

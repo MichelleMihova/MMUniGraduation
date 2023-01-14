@@ -9,7 +9,8 @@ namespace MMUniGraduation.Services.Interfaces
     {
         public Task CreateCourseAsync(CreateCourse input, ApplicationUser user);
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs();
-        public string GetNextCourseSuggestion(Student user);
+        //public string GetNextCourseSuggestion(Student user);
+        public string GetNextCourseSuggestion(Student user, int programId);
         public Task DeleteCourse(int courseId);
     }
 }

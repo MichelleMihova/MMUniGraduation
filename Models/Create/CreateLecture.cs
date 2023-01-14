@@ -15,6 +15,8 @@ namespace MMUniGraduation.Models.Create
         public string VideoUrl { get; set; }
         public string CreatorId { get; set; }
         public bool isExam { get; set; }
+        public decimal RequiredGrade { get; set; }
+
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
@@ -25,6 +27,8 @@ namespace MMUniGraduation.Models.Create
         public DateTime EndDateTimeForHW { get; set; }
         [NotMapped]
         public IEnumerable<IFormFile> Files { get; set; }
+        [NotMapped]
+        public IEnumerable<IFormFile> HWFiles { get; set; }
         [NotMapped]
         public IEnumerable<KeyValuePair<string, string>> Courses { get; set; }
         [NotMapped]

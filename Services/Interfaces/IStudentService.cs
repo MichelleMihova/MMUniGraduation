@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace MMUniGraduation.Services.Interfaces
 {
-    interface IStudentService
+    public interface IStudentService
     {
-        public Task AddStudentAsync(Student input);
+        //public Task AddStudentAsync(Student input);
+        public Task EditStudent(Student input);
     }
 }

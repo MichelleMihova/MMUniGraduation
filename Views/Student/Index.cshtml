@@ -49,93 +49,89 @@
                     </div>
                 </div>
                 <div class="stats d-flex flex-row align-items-center align-items-lg-start text-center text-lg-left">
-                    <div class="posts ml-2 ml-lg-0"><p class="lead"><b>134</b> posts</p></div>
-                    <div class="posts"><p class="lead"><b>6.6m</b> followers</p></div>
-                    <div class="posts"><p class="lead"><b>201</b> following</p></div>
+                    <div class="posts ml-2 ml-lg-0">
+                        <p class="lead">
+                            <b>@Model.PassedCourses.Count</b> passed courses |
+                        </p>
+                    </div>
+                    <div class="posts">
+                        @if (@Model.CurrentCourses.Count == 1)
+                        {
+                            <p class="lead"><b>@Model.CurrentCourses.Count</b> active course </p>
+                        }
+                        else
+                        {
+                            <p class="lead"><b>@Model.CurrentCourses.Count</b> active courses </p>
+                        }
+                    </div>
+                    @*<div class="posts"><p class="lead"><b>6.6m</b> followers</p></div>
+                        <div class="posts"><p class="lead"><b>201</b> following</p></div>*@
                 </div>
-                <p class="lead mb-0 mt-2"><b>Ella Yelich-O'Connor</b></p>
-                <p class="lead text-center text-lg-left">Let's let things come out of the woodwork.  I'll give you my best side, tell you all my best lies.  Yeah, awesome right?</p>
+                @*<p class="lead mb-0 mt-2"><b>Ella Yelich-O'Connor</b></p>
+                    <p class="lead text-center text-lg-left">Let's let things come out of the woodwork.  I'll give you my best side, tell you all my best lies.  Yeah, awesome right?</p>*@
             </div>
         </div>
+        <form asp-controller="Student" asp-action="Edit" enctype="multipart/form-data">
+            @*<h3 style="padding-bottom:25px; text-align:center;">@Model.Course.Signature @Model.Course.Name Course</h3>*@
+            <label for="party">First name:</label>
+            <input class="form-control" asp-for="@Model.FirstName" type="text" placeholder="@Model.FirstName" />
+            <label for="party">Last name:</label>
+            <input class="form-control" asp-for="@Model.LastName" type="text" placeholder="@Model.LastName" />
+            <hr />
+            <h6>Choose what kind of lecture materials you want to see:</h6>
+            <label>Text Materials: </label>
+            @Html.EditorFor(x => x.ShowTextMaterials)
+            @*<label>Exam</label>*@
+            <br />
+            <label>Video Materials: </label>
+            @Html.EditorFor(x => x.ShowVideoMaterials)
+            <br />
+            <br />
+            <input type="hidden" name="Id" asp-for="@Model.Id" value="@Model.Id" />
+
+            <button class="btn btn-outline-secondary btn-outline-info" style="text-align:right; margin-bottom: 1em;">Update</button>
+        </form>
     </div>
+    <hr />
     <div class="navigation d-flex justify-content-center">
         <ul class="nav nav-primary nav-tabs mt-3 d-flex flex-column flex-md-row">
             <li class="nav-item">
-                <a class="nav-link active" data-toggle="tab" href="#photos">
-                    <i class="fas fa-th"></i> Past Courses
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#currentCourse">
+                <a class="nav-link active" data-toggle="tab" href="#currentCourse">
                     <i class="far fa-bookmark"></i> Courent Courses
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#tagged">
-                    <i class="far fa-id-badge"></i> Tagged
+                <a class="nav-link" data-toggle="tab" href="#passedCourses">
+                    <i class="fas fa-th"></i> Passed Courses
                 </a>
             </li>
+            @*<li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#tagged">
+                        <i class="far fa-id-badge"></i> Tagged
+                    </a>
+                </li>*@
         </ul>
     </div>
     <div class="profile-tabs tab-content">
-        <div class="tab-pane fade show active" id="photos">
-            @foreach (var pasedCourse in Model.PassedCourses)
+        <div class="tab-pane fade show active text-center" id="currentCourse">
+            @if (Model.CurrentCourses != null)
             {
-                <div class="card">
-                    @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
-                    <div class="card-body">
-                        <h5 class="card-title">@pasedCourse.Signature @pasedCourse.Name</h5>
-                        <p class="card-text">@pasedCourse.Description</p>
-                    </div>
-                    <div class="card-footer">
+                @foreach (var currCourse in Model.CurrentCourses)
+                {
+                    <div class="card">
+                        @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
+                        <div class="card-body">
+                            <h5 class="card-title">@currCourse.Signature @currCourse.Name</h5>
+                            <p class="card-text">@currCourse.Description</p>
+                        </div>
                         <div class="card-footer">
-                            @*<small class="text-muted">Last updated 3 mins ago</small>*@
-                            <a class="nav-link text-dark" asp-route-courseId="@pasedCourse.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
+                            <div class="card-footer">
+                                @*<small class="text-muted">Last updated 3 mins ago</small>*@
+                                <a class="nav-link text-dark" asp-route-courseId="@currCourse.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-            <br />
-            @*<div class="row">
-                    <div class="col-12 col-md-4">
-                        <div class="square" style="background-image:url('assets/img/dog-4.jpg');"></div>
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <div class="square" style="background-image:url('assets/img/dog-5.jpg');"></div>
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <div class="square" style="background-image:url('assets/img/dog-6.jpg');"></div>
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <div class="square" style="background-image:url('assets/img/dog-7.jpg');"></div>
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <div class="square" style="background-image:url('assets/img/dog-8.jpg');"></div>
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <div class="square" style="background-image:url('assets/img/dog-3.jpg');"></div>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-center my-5">
-                    <a href="#a" class="btn btn-outline-primary btn-pill">Load More</a>
-                </div>*@
-        </div>
-        <div class="tab-pane fade text-center" id="currentCourse">
-            @if (Model.CurrentCourse != null)
-            {
-                <div class="card">
-                    @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
-                    <div class="card-body">
-                        <h5 class="card-title">@Model.CurrentCourse.Signature @Model.CurrentCourse.Name</h5>
-                        <p class="card-text">@Model.CurrentCourse.Description</p>
-                    </div>
-                    <div class="card-footer">
-                        <div class="card-footer">
-                            @*<small class="text-muted">Last updated 3 mins ago</small>*@
-                            <a class="nav-link text-dark" asp-route-courseId="@Model.CurrentCourse.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
-                        </div>
-                    </div>
-                </div>
+                }
             }
             else
             {
@@ -143,49 +139,68 @@
             }
             <br />
         </div>
-        <div class="tab-pane fade text-center" id="tagged">
-            <p class="lead">Help people tag you.</p>
-            <a href="#a" class="btn btn-info btn-pill">Find Friends</a>
+        <div class="tab-pane fade text-center" id="passedCourses">
+            @foreach (var passedCourse in Model.PassedCourses)
+            {
+                <div class="card">
+                    @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
+                    <div class="card-body">
+                        <h5 class="card-title">@passedCourse.Signature @passedCourse.Name</h5>
+                        <p class="card-text">@passedCourse.Description</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-footer">
+                            @*<small class="text-muted">Last updated 3 mins ago</small>*@
+                            <a class="nav-link text-dark" asp-route-courseId="@passedCourse.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
+                        </div>
+                    </div>
+                </div>
+            }
+            <br />
         </div>
+        @*<div class="tab-pane fade text-center" id="tagged">
+                <p class="lead">Help people tag you.</p>
+                <a href="#a" class="btn btn-info btn-pill">Find Friends</a>
+            </div>*@
     </div>
 
 </div>
 
 
 @*<footer class="footer-1 bg-light text-dark">
-    <div class="container">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <div class="links">
-                <ul class="footer-menu list-unstyled d-flex flex-row text-center text-md-left">
-                    <li><a href="https://bootstrapbay.com/" target="_blank">Store</a></li>
-                    <li><a href="https://bootstrapbay.com/about" target="_blank">About Us</a></li>
-                    <li><a href="https://bootstrapbay.com/blog/" target="_blank">Blog</a></li>
-                    <li><a href="https://bootstrapbay.com/terms" target="_blank">Terms & Conditions</a></li>
-                </ul>
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <div class="links">
+                    <ul class="footer-menu list-unstyled d-flex flex-row text-center text-md-left">
+                        <li><a href="https://bootstrapbay.com/" target="_blank">Store</a></li>
+                        <li><a href="https://bootstrapbay.com/about" target="_blank">About Us</a></li>
+                        <li><a href="https://bootstrapbay.com/blog/" target="_blank">Blog</a></li>
+                        <li><a href="https://bootstrapbay.com/terms" target="_blank">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                <div class="social mt-4 mt-md-0">
+                    <a class="twitter btn btn-outline-primary btn-icon" href="https://twitter.com/bootstrapbay" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                        <span class="sr-only">View our Twitter Profile</span>
+                    </a>
+                    <a class="facebook btn btn-outline-primary btn-icon" href="https://www.facebook.com/bootstrapbayofficial/" target="_blank">
+                        <i class="fab fa-facebook"></i>
+                        <span class="sr-only">
+                            View our Facebook Profile
+                            <span>
+                    </a>
+                    <a class="github btn btn-outline-primary btn-icon" href="https://github.com/bootstrapbay" target="_blank">
+                        <i class="fab fa-github"></i>
+                        <span class="sr-only">View our GitHub Profile</span>
+                    </a>
+                </div>
             </div>
-            <div class="social mt-4 mt-md-0">
-                <a class="twitter btn btn-outline-primary btn-icon" href="https://twitter.com/bootstrapbay" target="_blank">
-                    <i class="fab fa-twitter"></i>
-                    <span class="sr-only">View our Twitter Profile</span>
-                </a>
-                <a class="facebook btn btn-outline-primary btn-icon" href="https://www.facebook.com/bootstrapbayofficial/" target="_blank">
-                    <i class="fab fa-facebook"></i>
-                    <span class="sr-only">
-                        View our Facebook Profile
-                        <span>
-                </a>
-                <a class="github btn btn-outline-primary btn-icon" href="https://github.com/bootstrapbay" target="_blank">
-                    <i class="fab fa-github"></i>
-                    <span class="sr-only">View our GitHub Profile</span>
-                </a>
+            <div class="copyright text-center">
+                <hr />
+                <p class="small">&copy; 2019, made with <span class="text-danger"><i class="fas fa-heart"></i></span> by BootstrapBay</p>
             </div>
         </div>
-        <div class="copyright text-center">
-            <hr />
-            <p class="small">&copy; 2019, made with <span class="text-danger"><i class="fas fa-heart"></i></span> by BootstrapBay</p>
-        </div>
-    </div>
-</footer>*@
+    </footer>*@
 
 
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->

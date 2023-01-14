@@ -18,6 +18,7 @@ namespace MMUniGraduation.ViewModels
 
         public string KindOfAssessment { get; set; }
 
+        public IEnumerable<Student> Students { get; set; }
         public IEnumerable<Course> AllCourses { get; set; }
         public IEnumerable<KeyValuePair<string, string>> StudyPrograms { get; set; }
         public IEnumerable<KeyValuePair<string, string>> Courses { get; set; }

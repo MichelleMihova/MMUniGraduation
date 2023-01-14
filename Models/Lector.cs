@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MMUniGraduation.Models
 {
@@ -18,6 +19,7 @@ namespace MMUniGraduation.Models
         public string PhoneNumber { get; set; }
         //public List<Course> Courses { get; set; }
         //public List<Lecture> Assignments { get; set; }
+        [NotMapped]
         public ICollection<LectorStudyProgram> LectorStudyPrograms { get; set; }
         public IEnumerable<Course> Courses { get; set; }
     }

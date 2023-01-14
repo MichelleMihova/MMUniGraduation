@@ -75,6 +75,7 @@ namespace MMUniGraduation.Services
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Signature + " "+ x.Name));
         }
 
+        /*
         //public string GetNextCourseSuggestion(ApplicationUser user)
         public string GetNextCourseSuggestion(Student user)
         {
@@ -136,7 +137,73 @@ namespace MMUniGraduation.Services
 
             return Name;
         }
+        */
 
+        public string GetNextCourseSuggestion(Student user, int programId)
+        {
+            string Name = null;
+
+            var currCourseId = 0;
+            
+            //var currCourseId = _db.StudentCourses.FirstOrDefault(x => x.StudentId == user.Id && x.IsPassed == false && x.ProgramId == programId).CourseId;
+           
+            //if we have user and some curr courses for the same program
+            if (user != null)
+            {
+                if (_db.StudentCourses.FirstOrDefault(x => x.StudentId == user.Id && x.IsPassed == false && x.ProgramId == programId) != null)
+                {
+                    currCourseId = _db.StudentCourses.FirstOrDefault(x => x.StudentId == user.Id && x.IsPassed == false && x.ProgramId == programId).CourseId;
+                }
+
+                if (currCourseId == 0)
+                {
+                    var passedCourses = _db.StudentCourses.Where(x => x.StudentId == user.Id && x.IsPassed == true && x.ProgramId == programId);
+
+                    if (passedCourses.Any())
+                    {
+                        //make it smarter!!!
+                        int num = 0;
+                        int maxNum = 0;
+                        foreach (var item in passedCourses)
+                        {
+                            num = item.CourseId;
+                            if (num > maxNum)
+                            {
+                                maxNum = num;
+                                num = 0;
+                            }
+                        }
+
+                        if (_db.Courses.FirstOrDefault(x => x.Id == maxNum).NextCourseId != 0)
+                        {
+                            Name = _db.Courses.FirstOrDefault(x => x.ParetntId == maxNum).Name.ToString();
+                        }
+                        else
+                        {
+                            Name = "Congrats! You compleate the program!";
+                        }
+                    }
+                    else
+                    {
+                        Name = _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                    }
+                }
+                else
+                {
+                    //if we have curr course
+                    if (_db.Courses.FirstOrDefault(x => x.Id == currCourseId).NextCourseId != 0)
+                    {
+                        Name = _db.Courses.FirstOrDefault(x => x.ParetntId == currCourseId).Name.ToString();
+                    }
+                }
+                
+            }
+            else
+            {
+                Name = _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+            }
+            return Name;
+        }
         public async Task DeleteCourse(int courseId)
         {
             var course = _db.Courses.FirstOrDefault(c => c.Id == courseId);

@@ -2,9 +2,13 @@
 @{
     ViewData["Title"] = "Edit course";
 }
-@*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>*@
-@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />*@
-@*<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>*@
+@*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>*@
+
+<script>
+    $('#exampleModal').modal('show')
+</script>
 
 <form asp-controller="Course" asp-action="Edit" enctype="multipart/form-data">
     @*<h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>*@
@@ -68,6 +72,7 @@
                                             </svg>
                                             <i class="bi bi-file-earmark-text-fill">Lecture materials:</i>
                                         </li>
+
                                         @foreach (var file in lecture.TextMaterials)
                                         {
                                             <ul>
@@ -75,19 +80,14 @@
                                                 <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
                                                 </a>
-                                                @*<a class="btn btn-outline-info" id="BtnConstraints" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="SetConstraints">*@
-                                                @*<a class="btn btn-outline-info" style="text-align:right; margin: 1em;">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders2" viewBox="0 0 16 16">
-                                                            <path fill-rule="evenodd" d="M10.5 1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4H1.5a.5.5 0 0 1 0-1H10V1.5a.5.5 0 0 1 .5-.5ZM12 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Zm-6.5 2A.5.5 0 0 1 6 6v1.5h8.5a.5.5 0 0 1 0 1H6V10a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5ZM1 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 1 8Zm9.5 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V13H1.5a.5.5 0 0 1 0-1H10v-1.5a.5.5 0 0 1 .5-.5Zm1.5 2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z" />
-                                                        </svg>
-                                                    </a>*@
-                                                <a type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#exampleModal">
+                                                <a type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#exampleModal_@i">
                                                     Constraints
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders2" viewBox="0 0 16 16">
                                                         <path fill-rule="evenodd" d="M10.5 1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4H1.5a.5.5 0 0 1 0-1H10V1.5a.5.5 0 0 1 .5-.5ZM12 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Zm-6.5 2A.5.5 0 0 1 6 6v1.5h8.5a.5.5 0 0 1 0 1H6V10a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5ZM1 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 1 8Zm9.5 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V13H1.5a.5.5 0 0 1 0-1H10v-1.5a.5.5 0 0 1 .5-.5Zm1.5 2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z" />
                                                     </svg>
                                                 </a>
-                                                <div id="exampleModal" class="modal" tabindex="-1" role="dialog">
+
+                                                <div id="exampleModal_@i" class="modal" tabindex="-1" role="dialog">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">

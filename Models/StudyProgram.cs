@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MMUniGraduation.Models
 {
@@ -18,6 +19,7 @@ namespace MMUniGraduation.Models
         public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<Course> Courses { get; set; }
         public virtual ICollection<StudentStudyProgram> StudentStudyProgram { get; set; }
+        [NotMapped]
         public virtual ICollection<LectorStudyProgram> LectorStudyPrograms { get; set; }
     }
 }

@@ -14,11 +14,13 @@ namespace MMUniGraduation.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ICourseService _courseService;
+        private readonly IStudentService _studentService;
         private readonly UserManager<ApplicationUser> _userManager;
-        public StudentController(ApplicationDbContext context, ICourseService courseService, UserManager<ApplicationUser> userManager)
+        public StudentController(ApplicationDbContext context, ICourseService courseService, IStudentService studentService, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _courseService = courseService;
+            _studentService = studentService;
             _userManager = userManager;
         }
 
@@ -46,28 +48,46 @@ namespace MMUniGraduation.Controllers
 
             var user = await _userManager.GetUserAsync(this.User);
             var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
-            var passedStudentCourses = _context.StudentCourses.Where(x => x.StudentId == student.Id);
+            var passedStudentCourses = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == true);
+            var currentStudentCourses = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == false);
             var pass = new List<Course>();
+            var curr = new List<Course>();
+            //var currentStudentCourses = _context.StudentCurrentCourses.Where(x => x.StudentId == student.Id);
+            //var currCourses = new List<Course>();
+            //var currentStudentCoursesId = _context.StudentCurrentCourses.Where(x => x.StudentId == student.Id).Select(x => x.CourseId);
 
             foreach (var item in passedStudentCourses)
             {
                 var course = _context.Courses.FirstOrDefault(x => x.Id == item.CourseId);
                 pass.Add(course);
             }
+            foreach (var item in currentStudentCourses)
+            {
+                var course = _context.Courses.FirstOrDefault(x => x.Id == item.CourseId);
+                curr.Add(course);
+            }
 
             var viewModel = new Student
             {
-                CurrentCourse = _context.Courses.FirstOrDefault(x => x.Id == student.CurrentCourseId),
+                //CurrentCourse = _context.Courses.FirstOrDefault(x => x.Id == student.CurrentCourseId),
                 Passed = await _context.StudentCourses.Where(x => x.StudentId == student.Id).ToListAsync(),
-                PassedCourses = pass
-                //PassedCourses = await _context.Courses.Where(c => c.StudyProgramId == 1).ToListAsync()
+                PassedCourses = pass,
+                CurrentCourses = curr,
+                Id = student.Id,
+                UserId = user.Id,
+                FirstName = student.FirstName,
+                LastName = student.LastName,
+                ShowTextMaterials = student.ShowTextMaterials,
+                ShowVideoMaterials = student.ShowVideoMaterials
             };
 
             return View(viewModel);
         }
-        public IActionResult Edit()
+        public async Task<IActionResult> Edit(Student input)
         {
-            return View();
+            await _studentService.EditStudent(input);
+
+            return RedirectToAction("Index","Student");
         }
 
     }

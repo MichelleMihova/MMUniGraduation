@@ -23,6 +23,7 @@
 </style>
 
 <h2 style="text-align: center; padding-top: 1em; ">Our @Model.Signature Courses</h2>
+<br />
 <hr />
 @if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
 {
@@ -56,6 +57,7 @@
                 </div>
             }
             else if  (Model.CurrentUserCourse != null && Model.CurrentUserCourse.Equals(course))
+            //else if  (Model.CurrentCourses.Equals(course))
             {
                 <div>
                     <a class="btn btn-outline-success" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="AssignUserToCourse" style="text-decoration: none;">View it</a>

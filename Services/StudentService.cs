@@ -16,16 +16,41 @@ namespace MMUniGraduation.Services
             _db = db;
         }
 
-        public async Task AddStudentAsync(Student input)
-        {
-            var student = new Student
-            {
+        //public async Task AddStudentAsync(Student input)
+        //{
+        //    var student = new Student
+        //    {
                
 
-            };
-            //await _db.Courses.AddAsync(course);
-            await _db.SaveChangesAsync();
+        //    };
+        //    //await _db.Courses.AddAsync(course);
+        //    await _db.SaveChangesAsync();
            
+        //}
+        public async Task EditStudent(Student input)
+        {
+            var currStudent = _db.Students.FirstOrDefault(x => x.Id == input.Id);
+            if (input.FirstName != null && input.FirstName != currStudent.FirstName)
+            {
+                currStudent.FirstName = input.FirstName;
+            }
+
+            if (input.LastName != null && input.LastName != currStudent.LastName)
+            {
+                currStudent.LastName = input.LastName;
+            }
+
+            if (input.ShowTextMaterials != currStudent.ShowTextMaterials)
+            {
+                currStudent.ShowTextMaterials = input.ShowTextMaterials;
+            }
+
+            if (input.ShowVideoMaterials != currStudent.ShowVideoMaterials)
+            {
+                currStudent.ShowVideoMaterials = input.ShowVideoMaterials;
+            }
+
+            await _db.SaveChangesAsync();
         }
 
     }

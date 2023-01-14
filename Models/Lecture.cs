@@ -24,6 +24,7 @@ namespace MMUniGraduation.Models
         public string VideoUrl { get; set; }
         public string CreatorId { get; set; }
         public bool isExam { get; set;  }
+        public decimal RequiredGrade { get; set;  }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

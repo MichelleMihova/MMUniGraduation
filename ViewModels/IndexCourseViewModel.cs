@@ -16,6 +16,8 @@ namespace MMUniGraduation.ViewModels
 
         //public string UserId { get; set; }
         public bool SkipCourse { get; set; }
+        public bool ShowVideoMaterials { get; set; }
+        public bool ShowTextMaterials { get; set; }
 
         //[DataType(DataType.DateTime)]
         //[DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
@@ -30,6 +32,8 @@ namespace MMUniGraduation.ViewModels
         public DateTime? EndDateTime { get; set; }
 
         public Course Course { get; set; }
+        public Student Student { get; set; }
         public virtual ICollection<Lecture> Lectures { get; set; }
+        public virtual ICollection<LectureFile> HWMaterials { get; set; }
     }
 }

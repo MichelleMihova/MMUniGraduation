@@ -27,22 +27,9 @@ namespace MMUniGraduation.Services
             _webHost = webHost;
             _userManager = userManager;
         }
-        public async Task CreateLectureAsync(CreateLecture input, ApplicationUser user)
+        public async Task CreateLectureFile(Lecture lecture, IEnumerable<IFormFile> files, string type)
         {
-            var lecture = new Lecture
-            {
-                Name = input.Name,
-                Description = input.Description,
-                CourseId = input.CourseId,
-                ParetntLectureId = input.ParetntLectureId,
-                VideoUrl = input.VideoUrl,
-                DateTimeToShow = input.DateTimeToShow,
-                EndDateTimeForHW = input.EndDateTimeForHW,
-                CreatorId = user.Id,
-                isExam = input.isExam
-            };
-
-            foreach (var file in input.Files)
+            foreach (var file in files)
             {
                 var extension = Path.GetExtension(file.FileName).TrimStart('.');
                 var wwwrootPath = _webHost.WebRootPath;
@@ -55,7 +42,8 @@ namespace MMUniGraduation.Services
                 var lectureFile = new LectureFile
                 {
                     Extension = extension,
-                    FileName = file.FileName
+                    FileName = file.FileName,
+                    FileTitle = type
                 };
 
                 lecture.TextMaterials.Add(lectureFile);
@@ -64,6 +52,48 @@ namespace MMUniGraduation.Services
                 await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
                 await file.CopyToAsync(fileStream);
             }
+        }
+        public async Task CreateLectureAsync(CreateLecture input, ApplicationUser user)
+        {
+            var lecture = new Lecture
+            {
+                Name = input.Name,
+                Description = input.Description,
+                CourseId = input.CourseId,
+                ParetntLectureId = input.ParetntLectureId,
+                VideoUrl = input.VideoUrl,
+                DateTimeToShow = input.DateTimeToShow,
+                EndDateTimeForHW = input.EndDateTimeForHW,
+                CreatorId = user.Id,
+                isExam = input.isExam,
+                RequiredGrade = input.RequiredGrade
+            };
+
+            //foreach (var file in input.Files)
+            //{
+            //    var extension = Path.GetExtension(file.FileName).TrimStart('.');
+            //    var wwwrootPath = _webHost.WebRootPath;
+
+            //    if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+            //    {
+            //        throw new Exception($"Invalid file extension {extension} !");
+            //    }
+
+            //    var lectureFile = new LectureFile
+            //    {
+            //        Extension = extension,
+            //        FileName = file.FileName,
+            //        FileTitle = "LECTURE"
+            //    };
+
+            //    lecture.TextMaterials.Add(lectureFile);
+
+            //    var physicalPath = $"{wwwrootPath}/files/{lectureFile.Id}.{extension}";
+            //    await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
+            //    await file.CopyToAsync(fileStream);
+            //}
+            await CreateLectureFile(lecture, input.Files, "LECTURE");
+            await CreateLectureFile(lecture, input.HWFiles, "HOMEWORK");
 
             await _db.Lectures.AddAsync(lecture);
             await _db.SaveChangesAsync();
