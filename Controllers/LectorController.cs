@@ -105,6 +105,7 @@ namespace MMUniGraduation.Controllers
 
             var lectures = new List<Lecture>();
             var homeworks = new List<Homework>();
+            var students = new List<Student>();
 
             //TO DO..
             //Show assessments only for current user
@@ -117,11 +118,11 @@ namespace MMUniGraduation.Controllers
                 {
                     if (input.KindOfAssessment.ToUpper() == "HOMEWORKS")
                     {
-                        homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle != "EXAM").ToList();
+                        homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() != "EXAM").ToList();
                     }
                     else if (input.KindOfAssessment.ToUpper() == "EXAMSOLUTIONS")
                     {
-                        homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle == "EXAM").ToList();
+                        homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() == "EXAM").ToList();
                     }
                     else
                     {
@@ -129,8 +130,20 @@ namespace MMUniGraduation.Controllers
                     }
                     
                     lecture.Homeworks = homeworks;
+
+                    var studentsId = _context.Homeworks.Select(x => x.StudentId).ToList();
+                    foreach (var id in studentsId)
+                    {
+                        var student = _context.Students.FirstOrDefault(x => x.UserId == id);
+                        if (!students.Contains(student))
+                        {
+                            students.Add(student);
+                        }
+                    }
                 }
             }
+            viewModel.Students = students;
+
             return View(viewModel);
         }
     }

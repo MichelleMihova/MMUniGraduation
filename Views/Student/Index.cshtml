@@ -39,9 +39,9 @@
 <div class="container">
     <div class="info">
         <div class="row">
-            <div class="col-12 col-md-4 text-center">
+            @*<div class="col-12 col-md-4 text-center">
                 <img src="./img/misha.jpg" alt="Raised circle image" class="img-fluid rounded-circle shadow-lg" style="width: 180px;">
-            </div>
+            </div>*@
             <div class="col-12 col-md-8 d-flex flex-column align-items-center align-items-lg-start">
                 <div class="d-flex flex-row align-items-start mt-3 mt-lg-0">
                     <div class="name">
@@ -140,18 +140,32 @@
             <br />
         </div>
         <div class="tab-pane fade text-center" id="passedCourses">
-            @foreach (var passedCourse in Model.PassedCourses)
+            @*@foreach (var passedCourse in Model.PassedCourses)
             {
                 <div class="card">
-                    @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
                     <div class="card-body">
                         <h5 class="card-title">@passedCourse.Signature @passedCourse.Name</h5>
                         <p class="card-text">@passedCourse.Description</p>
                     </div>
                     <div class="card-footer">
                         <div class="card-footer">
-                            @*<small class="text-muted">Last updated 3 mins ago</small>*@
                             <a class="nav-link text-dark" asp-route-courseId="@passedCourse.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
+                        </div>
+                    </div>
+                </div>
+            }*@
+            @foreach (var item in Model.PassedCoursesGrade)
+            {
+                <div class="card">
+                    @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Key.Signature @item.Key.Name - @item.Value</h5>
+                        <p class="card-text">@item.Key.Description</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-footer">
+                            @*<small class="text-muted">Last updated 3 mins ago</small>*@
+                            <a class="nav-link text-dark" asp-route-courseId="@item.Key.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
                         </div>
                     </div>
                 </div>

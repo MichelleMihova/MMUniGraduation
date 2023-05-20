@@ -69,11 +69,11 @@ namespace MMUniGraduation.Controllers
 
             await _lectureService.AddExamSolutionToLecture(lectureId, file, user.Id);
 
-            this.TempData["Message"] = "Homework added successfully!";
+            this.TempData["Message"] = "Exam solution added successfully!";
 
 
             //return RedirectToAction("Index", "Home");
-            return RedirectToAction("Index", "Course", new { courseId = 1 });
+            return RedirectToAction("Index", "Course", new { courseId = currLecture.CourseId });
         }
 
         public async Task<IActionResult> AddHomework(IFormFile file, int lectureId)
@@ -85,50 +85,36 @@ namespace MMUniGraduation.Controllers
 
             this.TempData["Message"] = "Homework added successfully!";
 
-            return RedirectToAction("Index", "Course", new { courseId = 1 });
+            return RedirectToAction("Index", "Course", new { courseId = currLecture.CourseId });
         }
 
-        //public async Task<IActionResult> EditHomework(int homeworkId, decimal homeworkGrade, string homeworkComment)
         public async Task<IActionResult> EditHomework(AssessmentsViewModel input)
         {
             await _lectureService.EditHomework(input.HomeworkId, input.HomeworkGrade, input.HomeworkComment);
 
-            //TO DO..
             var hw = await _context.Homeworks.FirstOrDefaultAsync(x => x.Id == input.HomeworkId);
             var student = await _context.Students.FirstOrDefaultAsync(x => x.UserId == hw.StudentId);
+            var lecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == hw.LectureId);
 
-            //get all EXAM lectures and all HW for this lecturesID
-            //var allFinalLectures = _context.Lectures.Where(x => x.isExam == true).ToList();
-            //var allFinalHomeworkSolutions = new List<Homework>();
-            //foreach (var lecture in allFinalLectures)
-            //{
-            //    var homeworks = _context.Homeworks.FirstOrDefault(x => x.LectureId == lecture.Id && x.StudentId == student.UserId);
-            //    if (lecture.RequiredGrade <= homeworks.Grade)
-            //    {
-
-            //    }
-            //    allFinalHomeworkSolutions.Add(homeworks);
-            //}
-
-
-            
-
-            if (hw.HomeworkTitle.ToUpper() == "EXAM")
+            if (hw.HomeworkTitle.ToUpper() == "EXAM" && hw.Grade >= lecture.RequiredGrade)
             {
+                //TO DO.. change StudentId = student.UserId
                 //move curr course as passed 
-                var passedCourse = new StudentCourses
-                {
-                    StudentId = student.Id,
-                    CourseId = input.CourseId,
-                    FinalGrade = input.HomeworkGrade,
-                    IsPassed = true
-                };
+                //var passedCourse = new StudentCourses
+                //{
+                //    StudentId = student.Id,
+                //    CourseId = input.CourseId,
+                //    FinalGrade = input.HomeworkGrade,
+                //    IsPassed = true
+                //};
 
-                //Check criteria for passing course
-                await _context.StudentCourses.AddAsync(passedCourse);
-                await _context.SaveChangesAsync();
+                var studentCourse = _context.StudentCourses.FirstOrDefault(x => x.CourseId == lecture.CourseId && !x.IsPassed && x.StudentId == student.Id);
+                studentCourse.IsPassed = true;
+                studentCourse.FinalGrade = input.HomeworkGrade;
+                //await _context.StudentCourses.AddAsync(passedCourse);
+                //await _context.SaveChangesAsync();
 
-                student.CurrentCourseId = null;
+                //student.CurrentCourseId = null;
 
                 _context.SaveChanges();
             }
@@ -136,7 +122,6 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Assessment", "Lector");
         }
 
-        //public async Task<IActionResult> EditLecture(int lectureId, string lectureDescription, int courseId)
         public async Task<IActionResult> EditLecture(EditCourseViewModel input)
         {
             await _lectureService.EditLecture(input);

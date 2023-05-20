@@ -12,6 +12,7 @@ namespace MMUniGraduation.Services.Interfaces
     public interface ILectureService
     {
         //public Task CreateAsync(string name, string description, string paretntLectureSignature, string nextLectureSignature, DateTime dateTimeToShow, DateTime endDateTimeForHW);
+        public Task IsPassed(Lecture lecture, string studentId);
         public Task CreateLectureAsync(CreateLecture input, ApplicationUser user);
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs();
         public Task AddExamSolutionToLecture(int lectureId, IFormFile file, string userId);

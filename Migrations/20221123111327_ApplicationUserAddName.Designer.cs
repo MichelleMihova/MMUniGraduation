@@ -279,7 +279,7 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("VideoUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isExam")
+                    b.Property<bool>("IsExam")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");

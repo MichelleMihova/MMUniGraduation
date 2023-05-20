@@ -24,7 +24,6 @@ namespace MMUniGraduation.Controllers
             _userManager = userManager;
         }
 
-        //public IActionResult Index()
         public async Task<IActionResult> Index()
         {
             //display image
@@ -52,6 +51,7 @@ namespace MMUniGraduation.Controllers
             var currentStudentCourses = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == false);
             var pass = new List<Course>();
             var curr = new List<Course>();
+            var passedCoursesGrade = new Dictionary<Course,decimal>();
             //var currentStudentCourses = _context.StudentCurrentCourses.Where(x => x.StudentId == student.Id);
             //var currCourses = new List<Course>();
             //var currentStudentCoursesId = _context.StudentCurrentCourses.Where(x => x.StudentId == student.Id).Select(x => x.CourseId);
@@ -60,6 +60,7 @@ namespace MMUniGraduation.Controllers
             {
                 var course = _context.Courses.FirstOrDefault(x => x.Id == item.CourseId);
                 pass.Add(course);
+                passedCoursesGrade.Add(course, item.FinalGrade);
             }
             foreach (var item in currentStudentCourses)
             {
@@ -70,7 +71,7 @@ namespace MMUniGraduation.Controllers
             var viewModel = new Student
             {
                 //CurrentCourse = _context.Courses.FirstOrDefault(x => x.Id == student.CurrentCourseId),
-                Passed = await _context.StudentCourses.Where(x => x.StudentId == student.Id).ToListAsync(),
+                //Passed = await _context.StudentCourses.Where(x => x.StudentId == student.Id).ToListAsync(),
                 PassedCourses = pass,
                 CurrentCourses = curr,
                 Id = student.Id,
@@ -78,7 +79,8 @@ namespace MMUniGraduation.Controllers
                 FirstName = student.FirstName,
                 LastName = student.LastName,
                 ShowTextMaterials = student.ShowTextMaterials,
-                ShowVideoMaterials = student.ShowVideoMaterials
+                ShowVideoMaterials = student.ShowVideoMaterials,
+                PassedCoursesGrade = passedCoursesGrade
             };
 
             return View(viewModel);

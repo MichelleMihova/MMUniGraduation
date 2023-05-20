@@ -3,8 +3,6 @@ using MMUniGraduation.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MMUniGraduation.ViewModels
 {
@@ -20,6 +18,7 @@ namespace MMUniGraduation.ViewModels
         public string LectureDescription { get; set; }
         public string VideoUrl { get; set; }
         public IEnumerable<IFormFile> Files { get; set; }
+        public IEnumerable<IFormFile> HWFiles { get; set; }
 
         public string LectureFileId { get; set; }
         public decimal MinHWGrade { get; set; }
@@ -29,7 +28,7 @@ namespace MMUniGraduation.ViewModels
         public DateTime CourseStartDate { get; set; }
 
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime SkipCoursEndDate { get; set; }
 
         [DataType(DataType.DateTime)]

@@ -52,6 +52,53 @@ namespace MMUniGraduation.Services
                 await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
                 await file.CopyToAsync(fileStream);
             }
+
+            await _db.SaveChangesAsync();
+        }
+        public async Task IsPassed(Lecture lecture, string studentId)
+        {
+            var courseId = lecture.CourseId;
+
+            //get all exam lectures lectures
+            var assessmentLecturesId = _db.Lectures.Where(x => x.RequiredGrade != 0 && x.CourseId == courseId && x.IsExam == true).Select(x => x.Id);
+            var student = _db.Students.FirstOrDefault(x => x.UserId == studentId);
+            
+            bool passed = true;
+            decimal finalGrade = 0;
+            var cnt = 0;
+
+            foreach (var assessmentLectureId in assessmentLecturesId)
+            {
+                var homeworkGrades = _db.Homeworks.Where(x => x.LectureId == assessmentLectureId && x.StudentId == student.UserId).Select(x => x.Grade).ToList();
+                decimal avGrade = 0;
+                foreach (var grade in homeworkGrades)
+                {
+                    avGrade += grade;
+                }
+                avGrade /= homeworkGrades.Count();
+                finalGrade += avGrade;
+                cnt++;
+
+                if (avGrade < _db.Lectures.FirstOrDefault(x => x.Id == assessmentLectureId).RequiredGrade)
+                {
+                    passed = false;
+                }
+            }
+
+            if (passed)
+            {
+                //mark course as passed
+                var studentCourse = _db.StudentCourses.FirstOrDefault(x => x.CourseId == courseId && !x.IsPassed && x.StudentId == student.Id);
+                finalGrade /= cnt;
+
+                studentCourse.IsPassed = true;
+                studentCourse.FinalGrade = finalGrade;
+
+                student.CurrentCourseId = null;
+
+                await _db.SaveChangesAsync();
+            }
+
         }
         public async Task CreateLectureAsync(CreateLecture input, ApplicationUser user)
         {
@@ -65,33 +112,18 @@ namespace MMUniGraduation.Services
                 DateTimeToShow = input.DateTimeToShow,
                 EndDateTimeForHW = input.EndDateTimeForHW,
                 CreatorId = user.Id,
-                isExam = input.isExam,
+                IsFinal = input.IsFinal,
+                IsExam = input.IsExam,
                 RequiredGrade = input.RequiredGrade
             };
 
-            //foreach (var file in input.Files)
-            //{
-            //    var extension = Path.GetExtension(file.FileName).TrimStart('.');
-            //    var wwwrootPath = _webHost.WebRootPath;
+            var haveFinalLecture =  _db.Lectures.FirstOrDefault(x => x.CourseId == input.CourseId && x.IsFinal == true);
+            if (haveFinalLecture != null)
+            {
+                lecture.IsFinal = false;
+                lecture.IsExam = false;
+            }
 
-            //    if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
-            //    {
-            //        throw new Exception($"Invalid file extension {extension} !");
-            //    }
-
-            //    var lectureFile = new LectureFile
-            //    {
-            //        Extension = extension,
-            //        FileName = file.FileName,
-            //        FileTitle = "LECTURE"
-            //    };
-
-            //    lecture.TextMaterials.Add(lectureFile);
-
-            //    var physicalPath = $"{wwwrootPath}/files/{lectureFile.Id}.{extension}";
-            //    await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
-            //    await file.CopyToAsync(fileStream);
-            //}
             await CreateLectureFile(lecture, input.Files, "LECTURE");
             await CreateLectureFile(lecture, input.HWFiles, "HOMEWORK");
 
@@ -101,6 +133,19 @@ namespace MMUniGraduation.Services
             if (input.ParetntLectureId != 0)
             {
                 SetNextLectureId(input, lecture);
+            }
+
+            //Check all lectures that are enought to finish the course when lecture is final
+            if (input.IsFinal)
+            {
+                var courseId = lecture.CourseId;
+                var studentsId = _db.StudentCourses.Where(x => x.CourseId == courseId && !x.IsPassed).Select(x => x.StudentId).ToList();
+
+                foreach (var id in studentsId)
+                {
+                    var studentId = _db.Students.FirstOrDefault(x => x.Id == id).UserId;
+                    await IsPassed(lecture, studentId);
+                }
             }
         }
 
@@ -126,7 +171,7 @@ namespace MMUniGraduation.Services
                     lecture.ParetntLectureId = currLecture.ParetntLectureId;
                 }
             }
-            
+
             await _db.SaveChangesAsync();
         }
 
@@ -187,7 +232,8 @@ namespace MMUniGraduation.Services
             {
                 Extension = extension,
                 HomeworkName = file.FileName,
-                StudentId = userId
+                StudentId = userId,
+                HomeworkTitle = "Homework"
             };
 
             currLectire.Homeworks.Add(homeworkFile);
@@ -201,7 +247,7 @@ namespace MMUniGraduation.Services
 
         public async Task EditHomework(string homeworkId, decimal homeworkGrade, string homeworkComment)
         {
-            var homework = _db.Homeworks.FirstOrDefault(h => h.Id == homeworkId);
+            var homework = _db.Homeworks.FirstOrDefault(x => x.Id == homeworkId);
             if (homeworkGrade > 0)
             {
                 homework.Grade = homeworkGrade;
@@ -213,9 +259,17 @@ namespace MMUniGraduation.Services
             }
 
             await _db.SaveChangesAsync();
+
+            var lecture = _db.Lectures.FirstOrDefault(x => x.Id == homework.LectureId);
+            var hasFinalLecture = _db.Lectures.FirstOrDefault(x => x.CourseId == lecture.CourseId && x.IsFinal == true);
+            //check first if we have final lectire for this course
+            if (hasFinalLecture != null && homework.HomeworkTitle.ToUpper() != "EXAM")
+            {
+                IsPassed(lecture, homework.StudentId);
+            }
         }
 
-        public async Task EditLectureFile (EditCourseViewModel input)
+        public async Task EditLectureFile(EditCourseViewModel input)
         {
             var lectureFile = _db.LectureFiles.FirstOrDefault(x => x.Id == input.LectureFileId);
 
@@ -246,36 +300,16 @@ namespace MMUniGraduation.Services
                 lecture.VideoUrl = input.VideoUrl;
             }
 
-            if (lecture != null && input.DateTimeToShow != lecture.DateTimeToShow)
+            if (lecture != null && input.DateTimeToShow != lecture.DateTimeToShow && input.DateTimeToShow != Convert.ToDateTime("1.1.0001 г. 0:00:00"))
             {
                 lecture.DateTimeToShow = input.DateTimeToShow;
             }
 
             if (input.Files != null)
-            {
-                foreach (var file in input.Files)
-                {
-                    var extension = Path.GetExtension(file.FileName).TrimStart('.');
-                    var wwwrootPath = _webHost.WebRootPath;
+                await CreateLectureFile(lecture, input.Files, "LECTURE");
 
-                    if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
-                    {
-                        throw new Exception($"Invalid file extension {extension} !");
-                    }
-
-                    var lectureFile = new LectureFile
-                    {
-                        Extension = extension,
-                        FileName = file.FileName
-                    };
-
-                    lecture.TextMaterials.Add(lectureFile);
-
-                    var physicalPath = $"{wwwrootPath}/files/{lectureFile.Id}.{extension}";
-                    await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
-                    await file.CopyToAsync(fileStream);
-                }
-            }
+            if (input.HWFiles != null)
+                await CreateLectureFile(lecture, input.HWFiles, "HOMEWORK");
 
             await _db.SaveChangesAsync();
         }

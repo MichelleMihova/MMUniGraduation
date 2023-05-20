@@ -47,6 +47,7 @@ namespace MMUniGraduation.Models
 
         // Maybe we don't need it:
         public ICollection<StudentCourses> Passed { get; set; }
-
+        [NotMapped]
+        public IDictionary<Course, decimal> PassedCoursesGrade { get; set; }
     }
 }

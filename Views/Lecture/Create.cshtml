@@ -35,7 +35,8 @@
         }
 </style>
 
-<h1 style="padding-top:25px; padding-bottom:1em; text-align:center;">@ViewData["Title"]</h1>
+@*<h1 style="padding-top:25px; padding-bottom:1em; text-align:center;">@ViewData["Title"]</h1>*@
+<h1 style="padding-top:25px; text-align:center;">Create Lecture</h1>
 <form asp-action="Create" asp-controller="Lecture" enctype="multipart/form-data">
     <div>
         <h4>Lecture information</h4>
@@ -58,8 +59,8 @@
 
         <h4>Lecture materials..</h4>
         @*<label>HW Files</label>
-        <input asp-for="HWFiles" class="form-control" />
-        <br />*@
+            <input asp-for="HWFiles" class="form-control" />
+            <br />*@
 
         <label>Lecture materials</label>
         <div class="input-group">
@@ -68,7 +69,7 @@
                 <label class="custom-file-label form-control" for="inputGroupFile04">Choose lecture materials</label>
 
                 @*<input asp-for="Files" class="custom-file-input form-control" id="inputGroupFile04">
-                <label class="custom-file-label form-control" for="inputGroupFile04">Choose lecture materials</label>*@
+                    <label class="custom-file-label form-control" for="inputGroupFile04">Choose lecture materials</label>*@
             </div>
         </div>
         <br />
@@ -86,12 +87,16 @@
         <br />
         <h4>Lecture criteria</h4>
         <div>
-            <label>Is lecture final: </label>
-            @Html.EditorFor(x => x.isExam)
+            <label>Is lecture final for the course: </label>
+            @Html.EditorFor(x => x.IsFinal)
+            <br />
+            <label>Is lecture related with the final grade: </label>
+            @Html.EditorFor(x => x.IsExam)
             <br />
             <label>Required grade:</label>
-            <input asp-for="RequiredGrade" class="form-control" type="text" placeholder="Required grade">
+            <input asp-for="RequiredGrade" class="form-control" type="number" min="2" max="6" placeholder="Required grade" value="">
             <br />
+
             <div class="form-group">
                 <label asp-for="DateTimeToShow" class="control-label"></label>
                 <input asp-for="DateTimeToShow" class="form-control" />
@@ -105,10 +110,10 @@
             </div>
             <br />
 
-            @*<label asp-for="isExam" class="form-check-label" for="flexCheckDefault">Is it Exam?</label>*@
+            @*<label asp-for="IsExam" class="form-check-label" for="flexCheckDefault">Is it Exam?</label>*@
             @*<input class="form-control" type="text" placeholder="Select students who can see the course"><br />
-            <input class="form-control" type="text" placeholder="Enter min grade to be shown"><br />
-            <input class="form-control" type="text" placeholder="Enter min count of submitted HW"><br />*@
+                <input class="form-control" type="text" placeholder="Enter min grade to be shown"><br />
+                <input class="form-control" type="text" placeholder="Enter min count of submitted HW"><br />*@
 
         </div>
 

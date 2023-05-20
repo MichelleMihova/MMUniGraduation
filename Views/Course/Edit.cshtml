@@ -19,10 +19,13 @@
         <textarea asp-for="CourseDescription" class="form-control" type="text" placeholder="@Model.Course.Description"></textarea>
     </div>
     <br />
-    <label for="party">Enter a date and time for start of the course:</label>
-    <input class="form-control" asp-for="@Model.Course.CourseStartDate" asp-format="{0:yyyy-MM-ddTHH:mm}" />
-    <label for="party">Enter a date and time for end of the skipping course option:</label>
-    <input class="form-control" asp-for="@Model.Course.SkipCoursEndDate" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+    <label for="party">Change @Model.Course.CourseStartDate date and time for start of the course:</label>
+    <input class="form-control" asp-for="CourseStartDate" type="datetime-local"/>
+    <label>Change @Model.Course.SkipCoursEndDate date and time for end of the skipping course option:</label>
+    <input class="form-control" asp-for="SkipCoursEndDate" type="datetime-local"/>
+    @*<span asp-validation-for="SkipCoursEndDate" class="text-danger"></span>*@
+    @*<input class="form-control" asp-for="@Model.Course.SkipCoursEndDate" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+        <span asp-validation-for="SkipCoursEndDate" class="text-danger"></span>*@
     <br />
     <input type="hidden" name="CourseId" value="@Model.Course.Id" />
     <button class="btn btn-outline-secondary btn-outline-info" style="text-align:right; margin-bottom: 1em;">Upload</button>
@@ -73,7 +76,7 @@
                                             <i class="bi bi-file-earmark-text-fill">Lecture materials:</i>
                                         </li>
 
-                                        @foreach (var file in lecture.TextMaterials)
+                                        @foreach (var file in lecture.TextMaterials.Where(x => x.FileTitle == "LECTURE"))
                                         {
                                             <ul>
                                                 @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
@@ -120,15 +123,41 @@
 
                                             </ul>
                                         }
+                                        <li>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                                                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+                                            </svg>
+                                            <i class="bi bi-file-earmark-text-fill">Homework materials:</i>
+                                        </li>
+                                        @foreach (var file in lecture.TextMaterials.Where(x => x.FileTitle == "HOMEWORK"))
+                                        {
+                                            <ul>
+                                                @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
+                                                <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
+                                                </a>
+                                            </ul>
+                                        }
+
                                         <div class="input-group">
                                             <div class="custom-file">
                                                 <input asp-for="Files" type="file" class="custom-file-input" id="inputGroupFile04">
-                                                <label class="custom-file-label" for="inputGroupFile04">Add new materials</label>
+                                                <label class="custom-file-label" for="inputGroupFile04">Add new lecture materials</label>
                                             </div>
                                             @*<div class="input-group-append">
                                                 <button class="btn btn-outline-info" type="button">Upload</button>
                                                 </div>*@
                                         </div>
+                                        <br />
+
+                                        <div class="input-group">
+                                            <div class="custom-file form-control">
+                                                <input asp-for="HWFiles" class="custom-file-input form-control" id="inputGroupFile04">
+                                                <label class="custom-file-label form-control" for="inputGroupFile04">Add new homework materials</label>
+                                            </div>
+                                        </div>
+                                        <br />
+
                                         <input type="hidden" name="CourseId" value="@Model.Course.Id" />
                                         <input type="hidden" name="LectureId" value="@lecture.Id" />
 

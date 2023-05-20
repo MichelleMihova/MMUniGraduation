@@ -43,7 +43,6 @@ namespace MMUniGraduation.Services
             parentCourse.NextCourseId = course.Id;
             await _db.SaveChangesAsync();
         }
-
         private async Task RemoveCourseInheritance(int courseId, Course currCourse)
         {
             var courses = _db.Courses.Where(x => x.ParetntId == courseId || x.NextCourseId == courseId);
@@ -61,7 +60,6 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs()
         {
             return this._db.Courses.Select(x => new
@@ -74,79 +72,12 @@ namespace MMUniGraduation.Services
                 .ToList()
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Signature + " "+ x.Name));
         }
-
-        /*
-        //public string GetNextCourseSuggestion(ApplicationUser user)
-        public string GetNextCourseSuggestion(Student user)
-        {
-            string Name;
-            if (user != null && user.CurrentCourseId != null)
-            {
-                if (_db.Courses.FirstOrDefault(x => x.Id == user.CurrentCourseId).NextCourseId != 0)
-                {
-                    Name = _db.Courses.FirstOrDefault(x => x.ParetntId == user.CurrentCourseId).Name.ToString();
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                if (user != null && user.CurrentCourseId == null)
-                {
-                    var passedCourses = _db.StudentCourses.Where(x => x.StudentId == user.Id);
-                    if (passedCourses.Any())
-                    {
-                        //make it smarter!!!
-                        int num = 0;
-                        int maxNum = 0;
-                        foreach (var item in passedCourses)
-                        {
-                            num = item.CourseId;
-                            if (num > maxNum)
-                            {
-                                maxNum = num;
-                                num = 0;
-                            }
-                        }
-
-                        if (_db.Courses.FirstOrDefault(x => x.Id == maxNum).NextCourseId != 0)
-                        {
-                            Name = _db.Courses.FirstOrDefault(x => x.ParetntId == maxNum).Name.ToString();
-                        }
-                        else
-                        {
-                            Name = "Congrats! You compleate the program!";
-                        }
-                    }
-                    else
-                    {
-                        Name = _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
-                        //Name = "Basic";
-                    }
-                }
-                else
-                {
-                    Name = _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
-                    //Name = "Basic";
-                }
-                //Name = _db.Courses.FirstOrDefault().Name;
-                //Name = "Basic";
-            }
-
-            return Name;
-        }
-        */
-
         public string GetNextCourseSuggestion(Student user, int programId)
         {
             string Name = null;
-
+            string suggestionText = "The more appropriate course for you is ";
             var currCourseId = 0;
             
-            //var currCourseId = _db.StudentCourses.FirstOrDefault(x => x.StudentId == user.Id && x.IsPassed == false && x.ProgramId == programId).CourseId;
-           
             //if we have user and some curr courses for the same program
             if (user != null)
             {
@@ -176,7 +107,7 @@ namespace MMUniGraduation.Services
 
                         if (_db.Courses.FirstOrDefault(x => x.Id == maxNum).NextCourseId != 0)
                         {
-                            Name = _db.Courses.FirstOrDefault(x => x.ParetntId == maxNum).Name.ToString();
+                            Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == maxNum).Name.ToString();
                         }
                         else
                         {
@@ -185,7 +116,7 @@ namespace MMUniGraduation.Services
                     }
                     else
                     {
-                        Name = _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                        Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
                     }
                 }
                 else
@@ -193,14 +124,14 @@ namespace MMUniGraduation.Services
                     //if we have curr course
                     if (_db.Courses.FirstOrDefault(x => x.Id == currCourseId).NextCourseId != 0)
                     {
-                        Name = _db.Courses.FirstOrDefault(x => x.ParetntId == currCourseId).Name.ToString();
+                        Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == currCourseId).Name.ToString();
                     }
                 }
                 
             }
             else
             {
-                Name = _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
             }
             return Name;
         }

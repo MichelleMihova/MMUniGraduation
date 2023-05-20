@@ -91,8 +91,8 @@ namespace MMUniGraduation.Controllers
                     }
                     //avarageHWgrade /= cnt;
 
-                    //if (currentCourse.SkipCourse && lecture.isExam)
-                    if (goToExam && lecture.isExam)
+                    //if (currentCourse.SkipCourse && lecture.IsExam)
+                    if (goToExam && lecture.IsExam)
                     {
                         if (student.EndDateTime == null)
                         {
@@ -187,11 +187,17 @@ namespace MMUniGraduation.Controllers
             //var currentCourses = new List<Course>();
             if (student != null)
             {
-                var currentCoursesId = _context.StudentCourses.FirstOrDefault(x => x.StudentId == student.Id && x.IsPassed == false && x.ProgramId == studyProgramId).CourseId;
-                currCourse = _context.Courses.FirstOrDefault(x => x.Id == currentCoursesId);
-                var passedCoursesId = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == true && x.ProgramId == studyProgramId).Select(x => x.CourseId);
-                //var passedCourses = new List<Course>();
+                //get current courseId from selected program for logged user
+                var currentCoursesId = _context.StudentCourses.FirstOrDefault(x => x.StudentId == student.Id && x.IsPassed == false && x.ProgramId == studyProgramId);
+                
+                if (currentCoursesId != null)
+                {
+                    currCourse = _context.Courses.FirstOrDefault(x => x.Id == currentCoursesId.CourseId);
+                }
 
+                //get all passed courseId's from selected program for logged user
+                var passedCoursesId = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == true && x.ProgramId == studyProgramId).Select(x => x.CourseId);
+                
                 if (passedCoursesId.Any())
                 {
                     foreach (var item in passedCoursesId)
@@ -200,14 +206,6 @@ namespace MMUniGraduation.Controllers
                         passedCourses.Add(course);
                     }
                 }
-                //if (currentCoursesId.Any())
-                //{
-                //    foreach (var item in currentCoursesId)
-                //    {
-                //        var course = _context.Courses.FirstOrDefault(x => x.Id == item);
-                //        currentCourses.Add(course);
-                //    }
-                //}
             }
 
             var viewModel = new AllCoursesViewModel
@@ -229,121 +227,6 @@ namespace MMUniGraduation.Controllers
             return View(viewModel);
         }
 
-        /*
-        [Authorize]
-        public async Task<IActionResult> AssignUserToCourse(int courseId)
-        {
-            var user = await _userManager.GetUserAsync(this.User);
-            var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
-            //var passedCoursesId = _context.StudentCourses.Where(x => x.StudentId == student.Id).Select(x => x.CourseId);
-            //var passedCourses = new List<Course>();
-            //if (passedCoursesId.Any())
-            //{
-            //    foreach (var id in passedCoursesId)
-            //    {
-            //        var course = _context.Courses.FirstOrDefault(x => x.Id == id);
-            //        passedCourses.Add(course);
-            //    }
-            //}
-
-
-            //if currCourse is null => check passed courses and return sugesstion based on it
-            if (student != null && student.CurrentCourseId == null)
-            {
-                var passedCoursesId = _context.StudentCourses.Where(x => x.StudentId == student.Id).Select(x => x.CourseId);
-                var passedCourses = new List<Course>();
-                if (passedCoursesId.Any())
-                {
-                    foreach (var id in passedCoursesId)
-                    {
-                        var course = _context.Courses.FirstOrDefault(x => x.Id == id);
-                        passedCourses.Add(course);
-                    }
-                }
-                //TO DO..
-                // Add courses from begining!! You cant start with Advanced if you are not passed Basic !!!
-                if (passedCourses.Any())
-                {
-                    var course = _context.Courses.FirstOrDefault(x => x.Id == courseId);
-                    if (passedCourses.Contains(course))
-                    {
-                        return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have already passed {course.Name} course" });
-                    }
-                    else
-                    {
-                        foreach (var passedCourse in passedCourses)
-                        {
-                            if (passedCourse.NextCourseId == courseId)
-                            {
-                                student.CurrentCourseId = courseId;
-                                _context.SaveChanges();
-                            }
-                        }
-
-                        if (student.CurrentCourseId == null)
-                        {
-                            //return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have to continue with {_courseService.GetNextCourseSuggestion(student)} course" });
-                            return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have to continue with {_courseService.GetNextCourseSuggestion1(student, course.StudyProgramId)} course" });
-                        }
-                    }
-                }
-                else
-                {
-                    var course = _context.Courses.FirstOrDefault(x => x.Id == courseId);
-                    //setCourseId = _context.Courses.FirstOrDefault(x => x.Id == courseId && x.ParetntId == 0).Id;
-                    //if (courseId == setCourseId)
-                    if (course.ParetntId == 0)
-                    {
-                        student.CurrentCourseId = course.Id;
-                        //var currCoursesId = _context.StudentCourses.Where(x => x.IsPassed == false && x.StudentId == student.Id).Select(x => x.CourseId);
-                        //var currCourses = new List<Course>();
-                        //var programsId = new List<int>();
-                        //foreach (var id in currCoursesId)
-                        //{
-                        //    var c = _context.Courses.FirstOrDefault(x => x.Id == id);
-                        //    currCourses.Add(c);
-                        //    if (!programsId.Contains(c.StudyProgramId))
-                        //    {
-                        //        programsId.Add(c.StudyProgramId);
-                        //    }
-                        //}
-                        //if (!programsId.Contains(course.StudyProgramId))
-                        //{
-
-                        //}
-                        //var currCourse = new StudentCourses
-                        //{
-                        //    StudentId = student.Id,
-                        //    CourseId = course.Id,
-                        //    IsPassed = false
-                        //};
-
-                        //await _context.StudentCourses.AddAsync(currCourse);
-                        _context.SaveChanges();
-                    }
-                    else
-                    {
-                        //var course = _context.Courses.FirstOrDefault(x => x.Id == courseId);
-                        return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have to start with {_courseService.GetNextCourseSuggestion(student)} course" });
-                        //return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have to start with {course.Name} course" });
-                    }
-
-                }
-                //var setCourseId = _context.Courses.FirstOrDefault(x => x.Id == courseId).Id;
-                //student.CurrentCourseId = setCourseId;
-
-                //_context.SaveChanges();
-            }
-            //else if (student != null && student.CurrentCourseId != courseId)
-            //{
-            //    var course = _context.Courses.FirstOrDefault(x => x.Id == student.CurrentCourseId);
-            //    return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You are already assigned to {course.Name}" });
-            //}
-
-            return RedirectToAction("Index", new { courseId = courseId });
-        }
-        */
-
         [Authorize]
         public async Task<IActionResult> AssignUserToCourse(int courseId)
         {
@@ -352,11 +235,11 @@ namespace MMUniGraduation.Controllers
             var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
             var course = _context.Courses.FirstOrDefault(x => x.Id == courseId);
 
-           
             if (student != null)
             {
                 var passedCoursesId = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == true && x.ProgramId == course.StudyProgramId).Select(x => x.CourseId);
                 var passedCourses = new List<Course>();
+
                 if (passedCoursesId.Any())
                 {
                     foreach (var id in passedCoursesId)
@@ -368,6 +251,7 @@ namespace MMUniGraduation.Controllers
                 //var currCourses = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == false);
                 var currentCoursesId = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == false && x.ProgramId == course.StudyProgramId).Select(x => x.CourseId);
                 var currentCourses = new List<Course>();
+
                 if (currentCoursesId.Any())
                 {
                     foreach (var id in currentCoursesId)
@@ -376,8 +260,7 @@ namespace MMUniGraduation.Controllers
                         currentCourses.Add(c);
                     }
                 }
-                //check if we have not passed course with the same programId - we cannot have two curr courses from one program!
-                //if (_context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == false && x.ProgramId == course.StudyProgramId) == null)
+                //check if we have course that's not passed with the same programId - we cannot have two curr courses from one program
                 if (!currentCourses.Any())
                 {
                     //check if we have already passed this course
@@ -403,15 +286,12 @@ namespace MMUniGraduation.Controllers
                                 await _context.SaveChangesAsync();
 
                                 f = true;
-                                //student.CurrentCourseId = courseId;
-                                //_context.SaveChanges();
                             }
                         }
 
                         //suggest the proper next course
                         if (!f)
                         {
-                            //return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have to continue with {_courseService.GetNextCourseSuggestion(student)} course" });
                             return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have to continue with {_courseService.GetNextCourseSuggestion(student, course.StudyProgramId)} course" });
                         }
                     }
@@ -439,7 +319,8 @@ namespace MMUniGraduation.Controllers
                     else
                     {
                         //the course is already passed
-                        return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have already passed {course.Name} course" });
+                        //return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have already passed {course.Name} course" });
+                        return RedirectToAction("Index", new { courseId = courseId });
                     }
                 }
                 else
@@ -455,10 +336,6 @@ namespace MMUniGraduation.Controllers
                     }
                 }
             }
-            else
-            {
-                //go to login/register 
-            }
 
             return RedirectToAction("Index", new { courseId = courseId });
         }
@@ -467,16 +344,11 @@ namespace MMUniGraduation.Controllers
             //TO DO..
             //Add or Change criterias who and when can see the lectures
 
-            //var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
-            //currentCourse.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
-
             var editViewModel = new EditCourseViewModel
             {
                 Course = _context.Courses.FirstOrDefault(x => x.Id == courseId),
                 Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList()
             };
-
-            //editViewModel.Course.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
 
             var textMaterial = new List<LectureFile>();
 
@@ -491,7 +363,7 @@ namespace MMUniGraduation.Controllers
             }
 
             editViewModel.Course.Lectures = editViewModel.Lectures;
-
+            
             return View(editViewModel);
         }
 
@@ -505,15 +377,18 @@ namespace MMUniGraduation.Controllers
             {
                 course.Description = input.CourseDescription;
             }
-            await _context.SaveChangesAsync();
 
-            var editViewModel = new EditCourseViewModel
+            if (input.CourseStartDate != Convert.ToDateTime("1.1.0001 г. 0:00:00"))
             {
-                Course = _context.Courses.FirstOrDefault(x => x.Id == input.CourseId),
-                Lectures = _context.Lectures.Where(l => l.CourseId == input.CourseId).ToList()
-            };
-            var currLecture = _context.Lectures.Where(l => l.CourseId == input.CourseId && l.Id == input.LectureId);
+                course.CourseStartDate = input.CourseStartDate;
+            }
 
+            if (input.SkipCoursEndDate != Convert.ToDateTime("1.1.0001 г. 0:00:00"))
+            {
+                course.SkipCoursEndDate = input.SkipCoursEndDate;
+            }
+
+            await _context.SaveChangesAsync();
             await _lectureService.EditLecture(input);
 
             //return View(editViewModel);

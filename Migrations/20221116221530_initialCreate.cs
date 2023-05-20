@@ -246,7 +246,7 @@ namespace MMUniGraduation.Migrations
                     NextLectureId = table.Column<int>(type: "int", nullable: false),
                     VideoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatorId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    isExam = table.Column<bool>(type: "bit", nullable: false),
+                    IsExam = table.Column<bool>(type: "bit", nullable: false),
                     DateTimeToShow = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDateTimeForHW = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },

@@ -14,6 +14,12 @@
         border-color: lightblue;
     }
 </style>
+<script>
+    function optionSelectedProgram(value) {
+        alert(value)
+
+    }
+</script>
 
 <h2 style="text-align: center; padding-top: 1em; ">Assessment Page</h2>
 <!-- <h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>   -->
@@ -25,7 +31,10 @@
     <form asp-controller="Lector" asp-action="Assessment" enctype="multipart/form-data">
         <div id="show-filters">
             <label>Select program</label>
-            <select asp-for="ProgramId" class="form-control" asp-items="programs"></select>
+            @*<select asp-for="ProgramId" class="form-control" asp-items="programs" onchange="optionSelectedProgram(this.value)">*@
+            <select asp-for="ProgramId" class="form-control" asp-items="programs" onchange="optionSelectedProgram(this.value)">
+                @*<option value="" selected disabled hidden>Choose program</option>*@
+            </select>
             <br />
 
             <label>Select course</label>
@@ -45,11 +54,11 @@
             <br />
 
             @*<select class="form-control" placeholder="Lector">
-                <option value="1">Select Lector</option>
-                <option>Pesho</option>
-                <option>Mitko</option>
-                <option>Select from existing Programs in DB</option>
-            </select><br />*@
+                    <option value="1">Select Lector</option>
+                    <option>Pesho</option>
+                    <option>Mitko</option>
+                    <option>Select from existing Programs in DB</option>
+                </select><br />*@
 
             <br />
             <button class="btn btn-outline-info" style="text-align:right;">Search</button>
@@ -71,7 +80,7 @@
                     <div class="col">
                         <p>Course: @course.Signature @course.Name</p>
                         <p>Lecture: @lecture.Name</p>
-                        @if (lecture.isExam)
+                        @if (lecture.IsExam)
                         {
                             <p>Exam solution:</p>
                             <ul>
@@ -92,10 +101,11 @@
                             <p>Student Name: @Model.Students.FirstOrDefault(x => x.UserId == file.StudentId).FirstName @Model.Students.FirstOrDefault(x => x.UserId == file.StudentId).LastName </p>
                             <label>Grade/Points:</label>
                             <input asp-for="HomeworkGrade" type="text" class="form-control" placeholder="@file.Grade" value="@file.Grade"><br />
+                            <label>Comment:</label>
                             <textarea asp-for="HomeworkComment" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="@file.Comment"></textarea>
                             <input asp-for="HomeworkId" value="@file.Id" class="form-control" style="visibility:hidden;" \>
-                            <input asp-for="CourseId" value="@course.Id" class="form-control" style="visibility:hidden;" \>
                             <button class="btn btn-outline-info" style="text-align:right;"><i class="fa fa-save"></i> Save</button>
+                            <input asp-for="CourseId" value="@course.Id" class="form-control" style="visibility:hidden;" \>
                         </form>
                     </div>
 

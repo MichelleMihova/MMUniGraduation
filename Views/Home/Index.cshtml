@@ -15,7 +15,7 @@
 </div>
 <br />
 <br />
-<h3 style="text-align:center; padding-bottom: 1em; ">Main Programs</h3>
+@*<h3 style="text-align:center; padding-bottom: 1em; ">Main Programs</h3>*@
 <div class="card-deck">
     @foreach (var program in Model.StudyPrograms)
     {
@@ -32,21 +32,28 @@
                     <a class="nav-link text-dark" asp-route-studyProgramId="@program.Id" asp-controller="Course" asp-action="AllCourses" style="text-decoration: none;">View all @program.Name courses</a>
 
                     @*<div>
-            <a class="btn btn-outline-info" asp-route-courseId="@program.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">View course information</a>
-        </div>*@
+                            <a class="btn btn-outline-info" asp-route-courseId="@program.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">View course information</a>
+                        </div>*@
                 </div>
             </div>
         </div>
     }
 </div>
 <br />
+@if (Model.StudyPrograms.Count() >= 3)
+{
+    <div class="text-center">
+        <a class="btn btn-outline-info" asp-controller="StudyProgram" asp-action="Index" style="text-decoration: none;">View all programs</a>
+    </div>
+}
+
 
 <!--<div class="col text-center">
 
     <a href="/Identity/Account/Login">-->
-        @*<button type="button" class="btn btn-success">Запиши своя първи курс !</button>
-            <br />*@
-        <!--<br />
+@*<button type="button" class="btn btn-success">Запиши своя първи курс !</button>
+    <br />*@
+<!--<br />
     </a>
     <button type="button" class="btn btn-info">Запиши се още сега!</button>
 </div>-->

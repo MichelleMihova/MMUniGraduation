@@ -99,15 +99,6 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Exam")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("ExamGrade")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("FinalHomeworkGrade")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int?>("LectorId")
                         .HasColumnType("int");
 
@@ -137,9 +128,6 @@ namespace MMUniGraduation.Migrations
 
                     b.Property<int>("StudyProgramId")
                         .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -270,6 +258,12 @@ namespace MMUniGraduation.Migrations
                     b.Property<DateTime>("EndDateTimeForHW")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsExam")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFinal")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -284,9 +278,6 @@ namespace MMUniGraduation.Migrations
 
                     b.Property<string>("VideoUrl")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isExam")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
