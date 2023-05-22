@@ -406,13 +406,12 @@ namespace MMUniGraduation.Controllers
                 await _lectureService.CreateLectureFile(null, input.SkippingCourseFiles, "SKIPPINGEXAM", course);
             }
 
-            if (input.RequiredSkippingCourseGrade != null && input.RequiredSkippingCourseGrade != course.RequiredSkippingCourseGrade)
+            if (input.RequiredSkippingCourseGrade != 0 && input.RequiredSkippingCourseGrade != course.RequiredSkippingCourseGrade)
                 course.RequiredSkippingCourseGrade = input.RequiredSkippingCourseGrade;
 
             await _context.SaveChangesAsync();
             await _lectureService.EditLecture(input);
 
-            //return View(editViewModel);
             return RedirectToAction("Edit", new { courseId = input.CourseId });
         }
         public async Task<IActionResult> AddSkippingExamSolution(IFormFile file, int courseId)

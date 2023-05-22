@@ -5,7 +5,6 @@ using System.Linq;
 using MMUniGraduation.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
 namespace MMUniGraduation.Controllers
@@ -47,21 +46,21 @@ namespace MMUniGraduation.Controllers
 
             var user = await _userManager.GetUserAsync(this.User);
             var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
+
             var passedStudentCourses = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == true);
             var currentStudentCourses = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == false);
-            var pass = new List<Course>();
-            var curr = new List<Course>();
-            var passedCoursesGrade = new Dictionary<Course,decimal>();
-            //var currentStudentCourses = _context.StudentCurrentCourses.Where(x => x.StudentId == student.Id);
-            //var currCourses = new List<Course>();
-            //var currentStudentCoursesId = _context.StudentCurrentCourses.Where(x => x.StudentId == student.Id).Select(x => x.CourseId);
 
+            var passedCoursesGrade = new Dictionary<Course, decimal>();
+            //var pass = new List<Course>();
+            var curr = new List<Course>();
+            
             foreach (var item in passedStudentCourses)
             {
                 var course = _context.Courses.FirstOrDefault(x => x.Id == item.CourseId);
-                pass.Add(course);
+                //pass.Add(course);
                 passedCoursesGrade.Add(course, item.FinalGrade);
             }
+
             foreach (var item in currentStudentCourses)
             {
                 var course = _context.Courses.FirstOrDefault(x => x.Id == item.CourseId);
@@ -70,9 +69,7 @@ namespace MMUniGraduation.Controllers
 
             var viewModel = new Student
             {
-                //CurrentCourse = _context.Courses.FirstOrDefault(x => x.Id == student.CurrentCourseId),
-                //Passed = await _context.StudentCourses.Where(x => x.StudentId == student.Id).ToListAsync(),
-                PassedCourses = pass,
+                //PassedCourses = pass,
                 CurrentCourses = curr,
                 Id = student.Id,
                 UserId = user.Id,

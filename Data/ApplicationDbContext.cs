@@ -22,7 +22,7 @@ namespace MMUniGraduation.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<Lector> Lectors { get; set; }
         public DbSet<StudentCourses> StudentCourses { get; set; }
-        public DbSet<LectorStudyProgram> LectorStudyProgram { get; set; }
+        //public DbSet<LectorStudyProgram> LectorStudyProgram { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -53,16 +53,16 @@ namespace MMUniGraduation.Data
             builder.Entity<StudentCourses>()
                 .HasOne(sc => sc.Course);
 
-            builder.Entity<LectorStudyProgram>()
-                .HasKey(sc => new { sc.LectorId, sc.StudyProgramId });
-            builder.Entity<LectorStudyProgram>()
-                .HasOne(sc => sc.Lector)
-                .WithMany(s => s.LectorStudyPrograms)
-                .HasForeignKey(sc => sc.LectorId);
-            builder.Entity<LectorStudyProgram>()
-                .HasOne(sc => sc.StudyProgram)
-                .WithMany(c => c.LectorStudyPrograms)
-                .HasForeignKey(sc => sc.StudyProgramId);
+            //builder.Entity<LectorStudyProgram>()
+            //    .HasKey(sc => new { sc.LectorId, sc.StudyProgramId });
+            //builder.Entity<LectorStudyProgram>()
+            //    .HasOne(sc => sc.Lector)
+            //    .WithMany(s => s.LectorStudyPrograms)
+            //    .HasForeignKey(sc => sc.LectorId);
+            //builder.Entity<LectorStudyProgram>()
+            //    .HasOne(sc => sc.StudyProgram)
+            //    .WithMany(c => c.LectorStudyPrograms)
+            //    .HasForeignKey(sc => sc.StudyProgramId);
 
         }
     }

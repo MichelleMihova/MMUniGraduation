@@ -21,7 +21,6 @@ namespace MMUniGraduation.Models
         public string Description { get; set; }
         public int ParetntId { get; set; }
         public int NextCourseId { get; set; }
-        //public string UserId { get; set; }
         public string CreatorId { get; set; }
         public bool SkipCourse { get; set; }
         public ICollection<LectureFile> SkippingCourseMaterials { get; set; }

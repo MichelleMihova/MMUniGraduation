@@ -4,14 +4,16 @@ using MMUniGraduation.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MMUniGraduation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230522124001_RemoveCurrentCourseIdFromStudent")]
+    partial class RemoveCurrentCourseIdFromStudent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,11 +32,20 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("CurrentCourseId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -111,10 +122,15 @@ namespace MMUniGraduation.Migrations
                     b.Property<bool>("SkipCourse")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("StudentId")
+                        .HasColumnType("int");
+
                     b.Property<int>("StudyProgramId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
 
                     b.HasIndex("StudyProgramId");
 
@@ -200,6 +216,21 @@ namespace MMUniGraduation.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Lectors");
+                });
+
+            modelBuilder.Entity("MMUniGraduation.Models.LectorStudyProgram", b =>
+                {
+                    b.Property<int>("LectorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudyProgramId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LectorId", "StudyProgramId");
+
+                    b.HasIndex("StudyProgramId");
+
+                    b.ToTable("LectorStudyProgram");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Lecture", b =>
@@ -327,8 +358,14 @@ namespace MMUniGraduation.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndDateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
@@ -512,6 +549,10 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Course", b =>
                 {
+                    b.HasOne("MMUniGraduation.Models.Student", null)
+                        .WithMany("CurrentCourses")
+                        .HasForeignKey("StudentId");
+
                     b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
                         .WithMany("Courses")
                         .HasForeignKey("StudyProgramId")
@@ -535,6 +576,25 @@ namespace MMUniGraduation.Migrations
                     b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
                         .WithMany("Images")
                         .HasForeignKey("StudyProgramId");
+
+                    b.Navigation("StudyProgram");
+                });
+
+            modelBuilder.Entity("MMUniGraduation.Models.LectorStudyProgram", b =>
+                {
+                    b.HasOne("MMUniGraduation.Models.Lector", "Lector")
+                        .WithMany("LectorStudyPrograms")
+                        .HasForeignKey("LectorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
+                        .WithMany("LectorStudyPrograms")
+                        .HasForeignKey("StudyProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lector");
 
                     b.Navigation("StudyProgram");
                 });
@@ -602,6 +662,11 @@ namespace MMUniGraduation.Migrations
                     b.Navigation("SkippingCourseMaterials");
                 });
 
+            modelBuilder.Entity("MMUniGraduation.Models.Lector", b =>
+                {
+                    b.Navigation("LectorStudyPrograms");
+                });
+
             modelBuilder.Entity("MMUniGraduation.Models.Lecture", b =>
                 {
                     b.Navigation("Homeworks");
@@ -611,6 +676,8 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Student", b =>
                 {
+                    b.Navigation("CurrentCourses");
+
                     b.Navigation("Passed");
                 });
 
@@ -619,6 +686,8 @@ namespace MMUniGraduation.Migrations
                     b.Navigation("Courses");
 
                     b.Navigation("Images");
+
+                    b.Navigation("LectorStudyPrograms");
                 });
 #pragma warning restore 612, 618
         }

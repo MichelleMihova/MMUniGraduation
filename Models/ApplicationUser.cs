@@ -14,10 +14,10 @@ namespace MMUniGraduation.Models
         //    return userIdentity;
         //}
 
-        public int CurrentCourseId { get; set; }
+        //public int CurrentCourseId { get; set; }
 
         public string TeacherToken { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        //public string FirstName { get; set; }
+        //public string LastName { get; set; }
     }
 }

@@ -102,7 +102,7 @@ namespace MMUniGraduation.Services
                 studentCourse.IsPassed = true;
                 studentCourse.FinalGrade = finalGrade;
 
-                student.CurrentCourseId = null;
+                //student.CurrentCourseId = null;
 
                 await _db.SaveChangesAsync();
             }
@@ -273,7 +273,7 @@ namespace MMUniGraduation.Services
             //check first if we have final lectire for this course
             if (hasFinalLecture != null && homework.HomeworkTitle.ToUpper() != "EXAM")
             {
-                IsPassed(lecture, homework.StudentId);
+                await IsPassed(lecture, homework.StudentId);
             }
         }
         public async Task EditSkippingAssignment(string skippingAssignmentId, decimal grade, string comment)
