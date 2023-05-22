@@ -75,7 +75,7 @@ namespace MMUniGraduation.Controllers
             //return RedirectToAction("Index", "Home");
             return RedirectToAction("Index", "Course", new { courseId = currLecture.CourseId });
         }
-
+        
         public async Task<IActionResult> AddHomework(IFormFile file, int lectureId)
         {
             var user = await _userManager.GetUserAsync(this.User);
@@ -122,6 +122,16 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Assessment", "Lector");
         }
 
+        public async Task<IActionResult> EditSkippingAssignment(AssessmentsViewModel input)
+        {
+            await _lectureService.EditSkippingAssignment(input.HomeworkId, input.HomeworkGrade, input.HomeworkComment);
+
+            //var hw = await _context.Homeworks.FirstOrDefaultAsync(x => x.Id == input.HomeworkId);
+            //var student = await _context.Students.FirstOrDefaultAsync(x => x.UserId == hw.StudentId);
+            //var lecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == hw.LectureId);
+
+            return RedirectToAction("Assessment", "Lector");
+        }
         public async Task<IActionResult> EditLecture(EditCourseViewModel input)
         {
             await _lectureService.EditLecture(input);

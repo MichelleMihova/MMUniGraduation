@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,10 @@ namespace MMUniGraduation.Controllers
             {
                 path = Path.Combine(_webHost.WebRootPath, "examSolutions/") + fileName;
             }
+            else if (type == "skippingExamSolution")
+            {
+                path = Path.Combine(_webHost.WebRootPath, "skippingExamSolutions/") + fileName;
+            }
             else
             {
                 path = Path.Combine(_webHost.WebRootPath, "files/") + fileName;
@@ -66,20 +71,26 @@ namespace MMUniGraduation.Controllers
             var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
             currentCourse.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
 
-            //currentCourse.SkipCourse = goToExam;
+            var studentCurrentCourse = new StudentCourses();
+
             DateTime? EndDateTimeForSkipExam = null;
-            if (student != null)
-            {
-                EndDateTimeForSkipExam = student.EndDateTime;
-            }
 
             var textMaterial = new List<LectureFile>();
             var homeworkMaterial = new List<LectureFile>();
+            var skippingMaterial = new List<LectureFile>();
+            var skippingAssignments = new List<SkippingAssignment>();
 
             foreach (var lecture in currentCourse.Lectures)
             {
                 if (student != null)
                 {
+                    studentCurrentCourse = _context.StudentCourses.FirstOrDefault(x => x.StudentId == student.Id && x.CourseId == currentCourse.Id);
+
+                    if (studentCurrentCourse != null && studentCurrentCourse.EndDateTimeForSkipping != null)
+                    {
+                        EndDateTimeForSkipExam = studentCurrentCourse.EndDateTimeForSkipping;
+                    }
+
                     var hw = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.StudentId == student.UserId).ToList();
                     decimal avarageHWgrade = 0;
                     int cnt = 0;
@@ -89,30 +100,33 @@ namespace MMUniGraduation.Controllers
                         avarageHWgrade += item.Grade;
                         cnt++;
                     }
-                    //avarageHWgrade /= cnt;
+                    avarageHWgrade /= cnt;
 
-                    //if (currentCourse.SkipCourse && lecture.IsExam)
-                    if (goToExam && lecture.IsExam)
+                    if (goToExam || studentCurrentCourse.EndDateTimeForSkipping != null)
                     {
-                        if (student.EndDateTime == null)
+                        if (studentCurrentCourse.EndDateTimeForSkipping == null)
                         {
-                            student.EndDateTime = System.DateTime.Now + (lecture.EndDateTimeForHW - lecture.DateTimeToShow);
+                            studentCurrentCourse.EndDateTimeForSkipping = System.DateTime.Now.AddHours(3);
                             _context.SaveChanges();
                         }
+                        skippingMaterial = _context.LectureFiles.Where(x => x.LectureId == null && x.CourseId == currentCourse.Id && x.FileTitle == "SKIPPINGEXAM").ToList();
+                        currentCourse.SkippingCourseMaterials = skippingMaterial;
 
-                        textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade && l.FileTitle == "LECTURE").ToList();
-                        homeworkMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.FileTitle == "HOMEWORK").ToList();
+                        skippingAssignments = _context.SkippingAssignments.Where(x => x.CourseId == currentCourse.Id && x.StudentId == student.UserId).ToList();
+                        currentCourse.SkippingAssignments = skippingAssignments;
+
                     }
-                    else
-                    {
-                        textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade && l.DateTimeToShow <= System.DateTime.Now && l.FileTitle == "LECTURE").ToList();
-                        homeworkMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.FileTitle == "HOMEWORK").ToList();
-                    }
+
+                    textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade && l.DateTimeToShow <= System.DateTime.Now && l.FileTitle == "LECTURE").ToList();
+                    homeworkMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.FileTitle == "HOMEWORK").ToList();
                 }
                 else
                 {
                     textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.FileTitle == "LECTURE").ToList();
                     homeworkMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.FileTitle == "HOMEWORK").ToList();
+
+                    skippingMaterial = _context.LectureFiles.Where(x => x.LectureId == null && x.CourseId == currentCourse.Id && x.FileTitle == "SKIPPINGEXAM").ToList();
+                    currentCourse.SkippingCourseMaterials = skippingMaterial;
                 }
 
                 lecture.TextMaterials = textMaterial;
@@ -134,14 +148,11 @@ namespace MMUniGraduation.Controllers
                 EndDateTime = EndDateTimeForSkipExam,
                 SkipCourse = goToExam,
                 Student = student,
-                HWMaterials = homeworkMaterial
+                HWMaterials = homeworkMaterial,
+                StudentCourse = studentCurrentCourse
             };
 
-            //TO DO..
-            //this.TempData["Message"] = "You have been sucessfully assigned to this course !";
-
             return View(viewModel);
-            //return View(currentCourse);
         }
 
         [Authorize(Roles = "Admin, Teacher")]
@@ -189,7 +200,7 @@ namespace MMUniGraduation.Controllers
             {
                 //get current courseId from selected program for logged user
                 var currentCoursesId = _context.StudentCourses.FirstOrDefault(x => x.StudentId == student.Id && x.IsPassed == false && x.ProgramId == studyProgramId);
-                
+
                 if (currentCoursesId != null)
                 {
                     currCourse = _context.Courses.FirstOrDefault(x => x.Id == currentCoursesId.CourseId);
@@ -197,7 +208,7 @@ namespace MMUniGraduation.Controllers
 
                 //get all passed courseId's from selected program for logged user
                 var passedCoursesId = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == true && x.ProgramId == studyProgramId).Select(x => x.CourseId);
-                
+
                 if (passedCoursesId.Any())
                 {
                     foreach (var item in passedCoursesId)
@@ -347,7 +358,8 @@ namespace MMUniGraduation.Controllers
             var editViewModel = new EditCourseViewModel
             {
                 Course = _context.Courses.FirstOrDefault(x => x.Id == courseId),
-                Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList()
+                Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList(),
+                SkippingCourseMaterials = _context.LectureFiles.Where(x => x.CourseId == courseId && x.FileTitle == "SKIPPINGEXAM" && x.LectureId == null).ToList()
             };
 
             var textMaterial = new List<LectureFile>();
@@ -363,7 +375,8 @@ namespace MMUniGraduation.Controllers
             }
 
             editViewModel.Course.Lectures = editViewModel.Lectures;
-            
+            editViewModel.Course.SkippingCourseMaterials = _context.LectureFiles.Where(x => x.CourseId == courseId && x.FileTitle == "SKIPPINGEXAM" && x.LectureId == null).ToList();
+
             return View(editViewModel);
         }
 
@@ -388,11 +401,30 @@ namespace MMUniGraduation.Controllers
                 course.SkipCoursEndDate = input.SkipCoursEndDate;
             }
 
+            if (input.SkippingCourseFiles != null)
+            {
+                await _lectureService.CreateLectureFile(null, input.SkippingCourseFiles, "SKIPPINGEXAM", course);
+            }
+
+            if (input.RequiredSkippingCourseGrade != null && input.RequiredSkippingCourseGrade != course.RequiredSkippingCourseGrade)
+                course.RequiredSkippingCourseGrade = input.RequiredSkippingCourseGrade;
+
             await _context.SaveChangesAsync();
             await _lectureService.EditLecture(input);
 
             //return View(editViewModel);
             return RedirectToAction("Edit", new { courseId = input.CourseId });
+        }
+        public async Task<IActionResult> AddSkippingExamSolution(IFormFile file, int courseId)
+        {
+            var user = await _userManager.GetUserAsync(this.User);
+            var currCourse = await _context.Courses.FirstOrDefaultAsync(x => x.Id == courseId);
+
+            await _courseService.AddSkippingExamSolutionToCourse(courseId, file, user.Id);
+
+            this.TempData["Message"] = "Skipping exam solution added successfully!";
+
+            return RedirectToAction("Index", "Course", new { courseId = courseId });
         }
 
         [Authorize(Roles = "Admin, Teacher")]

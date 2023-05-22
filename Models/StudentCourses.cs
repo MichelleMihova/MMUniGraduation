@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,5 +17,9 @@ namespace MMUniGraduation.Models
 
         public bool IsPassed { get; set; }
         public decimal FinalGrade { get; set; }
+
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? EndDateTimeForSkipping { get; set; }
     }
 }

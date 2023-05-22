@@ -4,14 +4,16 @@ using MMUniGraduation.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MMUniGraduation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230520121730_Fix")]
+    partial class Fix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,6 +101,9 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("LectorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -107,9 +112,6 @@ namespace MMUniGraduation.Migrations
 
                     b.Property<int>("ParetntId")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("RequiredSkippingCourseGrade")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Signature")
                         .HasColumnType("nvarchar(max)");
@@ -127,6 +129,8 @@ namespace MMUniGraduation.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LectorId");
 
                     b.HasIndex("StudentId");
 
@@ -286,9 +290,6 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("CourseId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DateTimeToShow")
                         .HasColumnType("datetime2");
 
@@ -309,44 +310,9 @@ namespace MMUniGraduation.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseId");
-
                     b.HasIndex("LectureId");
 
                     b.ToTable("LectureFiles");
-                });
-
-            modelBuilder.Entity("MMUniGraduation.Models.SkippingAssignment", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Extension")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Grade")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("SkippingAssignments");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Student", b =>
@@ -377,11 +343,17 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Photo")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("ShowTextMaterials")
                         .HasColumnType("bit");
 
                     b.Property<bool>("ShowVideoMaterials")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Town")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
@@ -401,9 +373,6 @@ namespace MMUniGraduation.Migrations
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("EndDateTimeForSkipping")
-                        .HasColumnType("datetime2");
-
                     b.Property<decimal>("FinalGrade")
                         .HasColumnType("decimal(18,2)");
 
@@ -418,6 +387,21 @@ namespace MMUniGraduation.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("StudentCourses");
+                });
+
+            modelBuilder.Entity("MMUniGraduation.Models.StudentStudyProgram", b =>
+                {
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudyProgramId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StudentId", "StudyProgramId");
+
+                    b.HasIndex("StudyProgramId");
+
+                    b.ToTable("StudentStudyProgram");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.StudyProgram", b =>
@@ -552,6 +536,10 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Course", b =>
                 {
+                    b.HasOne("MMUniGraduation.Models.Lector", null)
+                        .WithMany("Courses")
+                        .HasForeignKey("LectorId");
+
                     b.HasOne("MMUniGraduation.Models.Student", null)
                         .WithMany("CurrentCourses")
                         .HasForeignKey("StudentId");
@@ -615,26 +603,11 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.LectureFile", b =>
                 {
-                    b.HasOne("MMUniGraduation.Models.Course", "Course")
-                        .WithMany("SkippingCourseMaterials")
-                        .HasForeignKey("CourseId");
-
                     b.HasOne("MMUniGraduation.Models.Lecture", "Lecture")
                         .WithMany("TextMaterials")
                         .HasForeignKey("LectureId");
 
-                    b.Navigation("Course");
-
                     b.Navigation("Lecture");
-                });
-
-            modelBuilder.Entity("MMUniGraduation.Models.SkippingAssignment", b =>
-                {
-                    b.HasOne("MMUniGraduation.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId");
-
-                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Student", b =>
@@ -665,15 +638,34 @@ namespace MMUniGraduation.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MMUniGraduation.Models.StudentStudyProgram", b =>
+                {
+                    b.HasOne("MMUniGraduation.Models.Student", "Student")
+                        .WithMany("CompleatedStudyPrograms")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
+                        .WithMany("StudentStudyProgram")
+                        .HasForeignKey("StudyProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("StudyProgram");
+                });
+
             modelBuilder.Entity("MMUniGraduation.Models.Course", b =>
                 {
                     b.Navigation("Lectures");
-
-                    b.Navigation("SkippingCourseMaterials");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Lector", b =>
                 {
+                    b.Navigation("Courses");
+
                     b.Navigation("LectorStudyPrograms");
                 });
 
@@ -686,6 +678,8 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Student", b =>
                 {
+                    b.Navigation("CompleatedStudyPrograms");
+
                     b.Navigation("CurrentCourses");
 
                     b.Navigation("Passed");
@@ -698,6 +692,8 @@ namespace MMUniGraduation.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("LectorStudyPrograms");
+
+                    b.Navigation("StudentStudyProgram");
                 });
 #pragma warning restore 612, 618
         }

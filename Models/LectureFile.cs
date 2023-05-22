@@ -21,9 +21,8 @@ namespace MMUniGraduation.Models
 
         public int? LectureId { get; set; }
         public virtual Lecture Lecture { get; set; }
+        public int? CourseId { get; set; }
+        public virtual Course Course { get; set; }
 
-        //public string AddedByUserId { get; set; }
-
-        //public virtual ApplicationUser AddedByUser { get; set; }
     }
 }

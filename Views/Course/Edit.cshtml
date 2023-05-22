@@ -1,6 +1,6 @@
 ﻿@model MMUniGraduation.ViewModels.EditCourseViewModel
 @{
-    ViewData["Title"] = "Edit course";
+//ViewData["Title"] = "Edit course";
 }
 @*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
@@ -20,12 +20,39 @@
     </div>
     <br />
     <label for="party">Change @Model.Course.CourseStartDate date and time for start of the course:</label>
-    <input class="form-control" asp-for="CourseStartDate" type="datetime-local"/>
+    <input class="form-control" asp-for="CourseStartDate" type="datetime-local" />
     <label>Change @Model.Course.SkipCoursEndDate date and time for end of the skipping course option:</label>
-    <input class="form-control" asp-for="SkipCoursEndDate" type="datetime-local"/>
+    <input class="form-control" asp-for="SkipCoursEndDate" type="datetime-local" />
     @*<span asp-validation-for="SkipCoursEndDate" class="text-danger"></span>*@
     @*<input class="form-control" asp-for="@Model.Course.SkipCoursEndDate" asp-format="{0:yyyy-MM-ddTHH:mm}" />
         <span asp-validation-for="SkipCoursEndDate" class="text-danger"></span>*@
+    <br />
+    @if (Model.SkippingCourseMaterials.Any())
+    {
+        <li>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+            </svg>
+            <i class="bi bi-file-earmark-text-fill">Skipping course materials:</i>
+        </li>
+        @foreach (var file in Model.SkippingCourseMaterials)
+        {
+            @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
+            <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
+            </a>
+        }
+    }
+    <br />
+    <div class="input-group">
+        <div class="custom-file">
+            <input asp-for="SkippingCourseFiles" type="file" class="custom-file-input" id="inputGroupFile04">
+            <label class="custom-file-label" for="inputGroupFile04">Add new skipping course material</label>
+        </div>
+    </div>
+    <br />
+    <label>Change required grade for skipping course:</label>
+    <input asp-for="RequiredSkippingCourseGrade" class="form-control" type="number" min="2" max="6" placeholder="Required grade" value="">
     <br />
     <input type="hidden" name="CourseId" value="@Model.Course.Id" />
     <button class="btn btn-outline-secondary btn-outline-info" style="text-align:right; margin-bottom: 1em;">Upload</button>
@@ -103,7 +130,7 @@
                                                                 <div class="modal-body">
                                                                     <div class="form-group">
                                                                         <label>Date & Time to show lecture material:</label>
-                                                                        <input class="form-control" asp-for="DateTimeToShowFile" form="ConstraintsForm" type="datetime-local" />
+                                                                        <input class="form-control" asp-for="DateTimeToShowFile" type="datetime-local" form="ConstraintsForm" />
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Select minimal grade:</label>
@@ -123,6 +150,16 @@
 
                                             </ul>
                                         }
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input asp-for="Files" type="file" class="custom-file-input" id="inputGroupFile04">
+                                                <label class="custom-file-label" for="inputGroupFile04">Add new lecture materials</label>
+                                            </div>
+                                            @*<div class="input-group-append">
+                                                <button class="btn btn-outline-info" type="button">Upload</button>
+                                                </div>*@
+                                        </div>
+                                        <br />
                                         <li>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
                                                 <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
@@ -138,17 +175,6 @@
                                                 </a>
                                             </ul>
                                         }
-
-                                        <div class="input-group">
-                                            <div class="custom-file">
-                                                <input asp-for="Files" type="file" class="custom-file-input" id="inputGroupFile04">
-                                                <label class="custom-file-label" for="inputGroupFile04">Add new lecture materials</label>
-                                            </div>
-                                            @*<div class="input-group-append">
-                                                <button class="btn btn-outline-info" type="button">Upload</button>
-                                                </div>*@
-                                        </div>
-                                        <br />
 
                                         <div class="input-group">
                                             <div class="custom-file form-control">

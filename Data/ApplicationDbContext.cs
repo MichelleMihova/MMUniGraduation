@@ -17,14 +17,12 @@ namespace MMUniGraduation.Data
         public DbSet<Lecture> Lectures { get; set; }
         public DbSet<LectureFile> LectureFiles { get; set; }
         public DbSet<Homework> Homeworks { get; set; }
+        public DbSet<SkippingAssignment> SkippingAssignments { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Lector> Lectors { get; set; }
         public DbSet<StudentCourses> StudentCourses { get; set; }
         public DbSet<LectorStudyProgram> LectorStudyProgram { get; set; }
-
-        //public DbSet<StudentCourse> StudentCourses { get; set; }
-        //public DbSet<SkippingAssignment> SkippingAssignments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -35,16 +33,16 @@ namespace MMUniGraduation.Data
             builder.Entity<IdentityUserToken<string>>()
                 .HasKey(x => x.UserId);
 
-            builder.Entity<StudentStudyProgram>()
-                .HasKey(sc => new { sc.StudentId, sc.StudyProgramId });
-            builder.Entity<StudentStudyProgram>()
-                .HasOne(sc => sc.Student)
-                .WithMany(s => s.CompleatedStudyPrograms)
-                .HasForeignKey(sc => sc.StudentId);
-            builder.Entity<StudentStudyProgram>()
-                .HasOne(sc => sc.StudyProgram)
-                .WithMany(c => c.StudentStudyProgram)
-                .HasForeignKey(sc => sc.StudyProgramId);
+            //builder.Entity<StudentStudyProgram>()
+            //    .HasKey(sc => new { sc.StudentId, sc.StudyProgramId });
+            //builder.Entity<StudentStudyProgram>()
+            //    .HasOne(sc => sc.Student)
+            //    .WithMany(s => s.CompleatedStudyPrograms)
+            //    .HasForeignKey(sc => sc.StudentId);
+            //builder.Entity<StudentStudyProgram>()
+            //    .HasOne(sc => sc.StudyProgram)
+            //    .WithMany(c => c.StudentStudyProgram)
+            //    .HasForeignKey(sc => sc.StudyProgramId);
 
             builder.Entity<StudentCourses>()
                 .HasKey(sc => new { sc.StudentId, sc.CourseId });

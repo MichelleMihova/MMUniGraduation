@@ -1,8 +1,12 @@
-﻿using MMUniGraduation.Data;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using MMUniGraduation.Data;
 using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,10 +14,17 @@ namespace MMUniGraduation.Services
 {
     public class CourseService: ICourseService
     {
+        private readonly string[] allowedExtensions = new[] { "doc", "docx", "txt", "pptx", "pptm", "pdf" };
+
         private readonly ApplicationDbContext _db;
-        public CourseService(ApplicationDbContext db)
+        private readonly IWebHostEnvironment _webHost;
+        private readonly ILectureService _lectureService;
+
+        public CourseService(ApplicationDbContext db, IWebHostEnvironment webHost, ILectureService lectureService)
         {
             _db = db;
+            _webHost = webHost;
+            _lectureService = lectureService;
         }
 
         public async Task CreateCourseAsync(CreateCourse input, ApplicationUser user)
@@ -27,8 +38,11 @@ namespace MMUniGraduation.Services
                 ParetntId = input.ParetntId,
                 CourseStartDate = input.CourseStartDate,
                 SkipCoursEndDate = input.SkipCoursEndDate,
-                CreatorId = user.Id
+                CreatorId = user.Id,
+                RequiredSkippingCourseGrade = input.RequiredSkippingCourseGrade
             };
+
+            await _lectureService.CreateLectureFile(null, input.SkippingCourseFiles, "SKIPPINGEXAM", course);
             await _db.Courses.AddAsync(course);
             await _db.SaveChangesAsync();
 
@@ -36,6 +50,34 @@ namespace MMUniGraduation.Services
             {
                 SetNextCourseId(input, course);
             }
+        }
+        public async Task AddSkippingExamSolutionToCourse(int courseId, IFormFile file, string userId)
+        {
+            var currCourse = _db.Courses.FirstOrDefault(x => x.Id == courseId);
+
+            var extension = Path.GetExtension(file.FileName).TrimStart('.');
+            var wwwrootPath = _webHost.WebRootPath;
+
+            if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+            {
+                throw new Exception($"Invalid file extension {extension} !");
+            }
+
+            var skippingAssignmentFile = new SkippingAssignment
+            {
+                Extension = extension,
+                Name = file.FileName,
+                StudentId = userId,
+                Title = "SkippingExam"
+            };
+
+            currCourse.SkippingAssignments.Add(skippingAssignmentFile);
+
+            var physicalPath = $"{wwwrootPath}/skippingExamSolutions/{skippingAssignmentFile.Id}.{extension}";
+            await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
+            await file.CopyToAsync(fileStream);
+
+            await _db.SaveChangesAsync();
         }
         private async void SetNextCourseId(CreateCourse input, Course course)
         {
@@ -135,6 +177,7 @@ namespace MMUniGraduation.Services
             }
             return Name;
         }
+
         public async Task DeleteCourse(int courseId)
         {
             var course = _db.Courses.FirstOrDefault(c => c.Id == courseId);
@@ -144,5 +187,6 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
     }
 }

@@ -4,14 +4,16 @@ using MMUniGraduation.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MMUniGraduation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230521165046_ChangesInCourseAndSkippingAssignment")]
+    partial class ChangesInCourseAndSkippingAssignment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -377,11 +379,17 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Photo")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("ShowTextMaterials")
                         .HasColumnType("bit");
 
                     b.Property<bool>("ShowVideoMaterials")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Town")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
@@ -400,9 +408,6 @@ namespace MMUniGraduation.Migrations
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("EndDateTimeForSkipping")
-                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("FinalGrade")
                         .HasColumnType("decimal(18,2)");

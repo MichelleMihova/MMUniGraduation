@@ -19,7 +19,7 @@ namespace MMUniGraduation.Controllers
         private readonly IStudyProgramService _studyProgramService;
         private readonly ILectureService _lectureService;
         private readonly UserManager<ApplicationUser> _userManager;
-        public LectorController(ApplicationDbContext context, ICourseService courseService, 
+        public LectorController(ApplicationDbContext context, ICourseService courseService,
             IStudyProgramService studyProgramService, ILectureService lectureService,
             UserManager<ApplicationUser> userManager)
         {
@@ -50,22 +50,36 @@ namespace MMUniGraduation.Controllers
                 Lectures = _lectureService.GetAllAsKeyValuePairs()
             };
 
-            var lectures = new List<Lecture>(); 
+            var lectures = new List<Lecture>();
             var homeworks = new List<Homework>();
             var students = new List<Student>();
+            var skippingAssessments = new List<SkippingAssignment>();
 
             foreach (var course in viewModel.AllCourses)
             {
-                lectures = _context.Lectures.Where(l => l.CourseId == course.Id).ToList();
+                lectures = _context.Lectures.Where(x => x.CourseId == course.Id).ToList();
 
                 course.Lectures = lectures;
-                
+
+                skippingAssessments = _context.SkippingAssignments.Where(x => x.CourseId == course.Id && x.Grade == 0).ToList();
+                course.SkippingAssignments = skippingAssessments;
+
+                var studentsId = _context.SkippingAssignments.Select(x => x.StudentId).ToList();
+                foreach (var id in studentsId)
+                {
+                    var student = _context.Students.FirstOrDefault(x => x.UserId == id);
+                    if (!students.Contains(student))
+                    {
+                        students.Add(student);
+                    }
+                }
+
                 foreach (var lecture in course.Lectures)
                 {
-                    homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
+                    homeworks = _context.Homeworks.Where(x => x.LectureId == lecture.Id && x.Grade == 0).ToList();
                     lecture.Homeworks = homeworks;
 
-                    var studentsId = _context.Homeworks.Select(x => x.StudentId).ToList();
+                    studentsId = _context.Homeworks.Select(x => x.StudentId).ToList();
                     foreach (var id in studentsId)
                     {
                         var student = _context.Students.FirstOrDefault(x => x.UserId == id);
@@ -106,38 +120,58 @@ namespace MMUniGraduation.Controllers
             var lectures = new List<Lecture>();
             var homeworks = new List<Homework>();
             var students = new List<Student>();
+            var skippingAssesments = new List<SkippingAssignment>();
 
             //TO DO..
             //Show assessments only for current user
             foreach (var course in viewModel.AllCourses)
             {
-                lectures = _context.Lectures.Where(l => l.CourseId == course.Id && l.Id == input.LectureId).ToList();
-                course.Lectures = lectures;
-
-                foreach (var lecture in course.Lectures)
+                if (input.KindOfAssessment.ToUpper() == "SKIPPINGEXAMSOLUTIONS")
                 {
-                    if (input.KindOfAssessment.ToUpper() == "HOMEWORKS")
-                    {
-                        homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() != "EXAM").ToList();
-                    }
-                    else if (input.KindOfAssessment.ToUpper() == "EXAMSOLUTIONS")
-                    {
-                        homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() == "EXAM").ToList();
-                    }
-                    else
-                    {
-                        homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
-                    }
-                    
-                    lecture.Homeworks = homeworks;
+                    skippingAssesments = _context.SkippingAssignments.Where(x => x.CourseId == course.Id && x.Grade == 0).ToList();
 
-                    var studentsId = _context.Homeworks.Select(x => x.StudentId).ToList();
+                    course.SkippingAssignments = skippingAssesments;
+                    var studentsId = _context.SkippingAssignments.Select(x => x.StudentId).ToList();
+
                     foreach (var id in studentsId)
                     {
                         var student = _context.Students.FirstOrDefault(x => x.UserId == id);
                         if (!students.Contains(student))
                         {
                             students.Add(student);
+                        }
+                    }
+                }
+                else
+                {
+                    lectures = _context.Lectures.Where(l => l.CourseId == course.Id && l.Id == input.LectureId).ToList();
+                    course.Lectures = lectures;
+
+                    foreach (var lecture in course.Lectures)
+                    {
+                        if (input.KindOfAssessment.ToUpper() == "HOMEWORKS")
+                        {
+                            homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() != "EXAM").ToList();
+                        }
+                        else if (input.KindOfAssessment.ToUpper() == "EXAMSOLUTIONS")
+                        {
+                            homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() == "EXAM").ToList();
+                        }
+                        else if (input.KindOfAssessment.ToUpper() == "ALLASSESSMENTS")
+                        {
+                            homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
+                        }
+
+                        lecture.Homeworks = homeworks;
+
+                        var studentsId = _context.Homeworks.Select(x => x.StudentId).ToList();
+                        foreach (var id in studentsId)
+                        {
+                            var student = _context.Students.FirstOrDefault(x => x.UserId == id);
+                            if (!students.Contains(student))
+                            {
+                                students.Add(student);
+                            }
                         }
                     }
                 }

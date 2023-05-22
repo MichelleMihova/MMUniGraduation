@@ -21,6 +21,7 @@ namespace MMUniGraduation.Models
         //public List<Lecture> Assignments { get; set; }
         [NotMapped]
         public ICollection<LectorStudyProgram> LectorStudyPrograms { get; set; }
+        [NotMapped]
         public IEnumerable<Course> Courses { get; set; }
     }
 }

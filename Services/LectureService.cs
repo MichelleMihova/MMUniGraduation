@@ -27,7 +27,7 @@ namespace MMUniGraduation.Services
             _webHost = webHost;
             _userManager = userManager;
         }
-        public async Task CreateLectureFile(Lecture lecture, IEnumerable<IFormFile> files, string type)
+        public async Task CreateLectureFile(Lecture lecture, IEnumerable<IFormFile> files, string type, Course course)
         {
             foreach (var file in files)
             {
@@ -46,7 +46,15 @@ namespace MMUniGraduation.Services
                     FileTitle = type
                 };
 
-                lecture.TextMaterials.Add(lectureFile);
+                if (lecture != null)
+                {
+                    lecture.TextMaterials.Add(lectureFile);
+                }
+
+                if (course != null)
+                {
+                    course.SkippingCourseMaterials.Add(lectureFile);
+                }
 
                 var physicalPath = $"{wwwrootPath}/files/{lectureFile.Id}.{extension}";
                 await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
@@ -124,8 +132,8 @@ namespace MMUniGraduation.Services
                 lecture.IsExam = false;
             }
 
-            await CreateLectureFile(lecture, input.Files, "LECTURE");
-            await CreateLectureFile(lecture, input.HWFiles, "HOMEWORK");
+            await CreateLectureFile(lecture, input.Files, "LECTURE", null);
+            await CreateLectureFile(lecture, input.HWFiles, "HOMEWORK", null);
 
             await _db.Lectures.AddAsync(lecture);
             await _db.SaveChangesAsync();
@@ -215,7 +223,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
+        
         public async Task AddHomeworkToLecture(int lectureId, IFormFile file, string userId)
         {
             var currLectire = _db.Lectures.FirstOrDefault(x => x.Id == lectureId);
@@ -268,6 +276,36 @@ namespace MMUniGraduation.Services
                 IsPassed(lecture, homework.StudentId);
             }
         }
+        public async Task EditSkippingAssignment(string skippingAssignmentId, decimal grade, string comment)
+        {
+            var skippingAssignment = _db.SkippingAssignments.FirstOrDefault(x => x.Id == skippingAssignmentId);
+            var course = _db.Courses.FirstOrDefault(x => x.Id == skippingAssignment.CourseId);
+            var student = _db.Students.FirstOrDefault(x => x.UserId == skippingAssignment.StudentId);
+
+            if (grade > 0)
+            {
+                skippingAssignment.Grade = grade;
+            }
+
+            if (comment != null)
+            {
+                skippingAssignment.Comment = comment;
+            }
+
+            await _db.SaveChangesAsync();
+
+            if (grade >= course.RequiredSkippingCourseGrade)
+            {
+                //mark course as passed
+                var studentCourse = _db.StudentCourses.FirstOrDefault(x => x.CourseId == course.Id && !x.IsPassed && x.StudentId == student.Id);
+                //finalGrade /= cnt;
+
+                studentCourse.IsPassed = true;
+                studentCourse.FinalGrade = grade;
+
+                await _db.SaveChangesAsync();
+            }
+        }
 
         public async Task EditLectureFile(EditCourseViewModel input)
         {
@@ -278,7 +316,7 @@ namespace MMUniGraduation.Services
                 lectureFile.MinHWGrade = input.MinHWGrade;
             }
 
-            if (lectureFile != null && input.DateTimeToShowFile != lectureFile.DateTimeToShow)
+            if (lectureFile != null && input.DateTimeToShowFile != lectureFile.DateTimeToShow && input.DateTimeToShowFile != Convert.ToDateTime("1.1.0001 г. 0:00:00"))
             {
                 lectureFile.DateTimeToShow = input.DateTimeToShowFile;
             }
@@ -306,10 +344,10 @@ namespace MMUniGraduation.Services
             }
 
             if (input.Files != null)
-                await CreateLectureFile(lecture, input.Files, "LECTURE");
+                await CreateLectureFile(lecture, input.Files, "LECTURE", null);
 
             if (input.HWFiles != null)
-                await CreateLectureFile(lecture, input.HWFiles, "HOMEWORK");
+                await CreateLectureFile(lecture, input.HWFiles, "HOMEWORK", null);
 
             await _db.SaveChangesAsync();
         }

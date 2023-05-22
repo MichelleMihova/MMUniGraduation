@@ -76,6 +76,17 @@
                 <span asp-validation-for="SkipCoursEndDate" class="text-danger"></span>
             </div>
             <br />
+            <label>Skip course materials</label>
+            <div class="input-group">
+                <div class="custom-file form-control">
+                    <input asp-for="SkippingCourseFiles" class="custom-file-input form-control" id="inputGroupFile04">
+                    <label class="custom-file-label form-control" for="inputGroupFile04">Choose skipping course materials</label>
+                </div>
+            </div>
+            <br />
+            <label>Required grade for skipping course:</label>
+            <input asp-for="RequiredSkippingCourseGrade" class="form-control" type="number" min="2" max="6" placeholder="Required grade" value="">
+            <br />
         </div>
         <br />
         <button class="btn info">Create</button>

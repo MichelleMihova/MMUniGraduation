@@ -19,6 +19,8 @@ namespace MMUniGraduation.ViewModels
         public string VideoUrl { get; set; }
         public IEnumerable<IFormFile> Files { get; set; }
         public IEnumerable<IFormFile> HWFiles { get; set; }
+        public IEnumerable<IFormFile> SkippingCourseFiles { get; set; }
+        public decimal RequiredSkippingCourseGrade { get; set; }
 
         public string LectureFileId { get; set; }
         public decimal MinHWGrade { get; set; }
@@ -44,5 +46,6 @@ namespace MMUniGraduation.ViewModels
 
         public Course Course { get; set; }
         public virtual ICollection<Lecture> Lectures { get; set; }
+        public virtual ICollection<LectureFile> SkippingCourseMaterials { get; set; }
     }
 }

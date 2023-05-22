@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,6 +11,8 @@ namespace MMUniGraduation.Models
         public Course()
         {
             this.Lectures = new List<Lecture>();
+            this.SkippingCourseMaterials = new HashSet<LectureFile>();
+            this.SkippingAssignments = new HashSet<SkippingAssignment>();
         }
 
         public int Id { get; set; }
@@ -20,14 +23,9 @@ namespace MMUniGraduation.Models
         public int NextCourseId { get; set; }
         //public string UserId { get; set; }
         public string CreatorId { get; set; }
-
-        //TODO !!!
-        //public string SkippingCourseSignature { get; set; }
         public bool SkipCourse { get; set; }
-        //public string Exam { get; set; }
-        //public decimal ExamGrade { get; set; }
-        //public decimal FinalHomeworkGrade { get; set; }
-
+        public ICollection<LectureFile> SkippingCourseMaterials { get; set; }
+        public decimal RequiredSkippingCourseGrade { get; set; }
 
 
         [DataType(DataType.DateTime)]
@@ -43,5 +41,6 @@ namespace MMUniGraduation.Models
         public int StudyProgramId { get; set; }
         public virtual StudyProgram StudyProgram { get; set; }
         public virtual ICollection<Lecture> Lectures { get; set; }
+        public ICollection<SkippingAssignment> SkippingAssignments { get; set; }
     }
 }

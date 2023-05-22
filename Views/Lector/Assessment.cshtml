@@ -49,6 +49,7 @@
             <select asp-for="KindOfAssessment" class="form-control">
                 <option value="Homeworks">Homeworks</option>
                 <option value="ExamSolutions">Exam solutions</option>
+                <option value="SkippingExamSolutions">Skipping exam solutions</option>
                 <option value="AllAssessments">All</option>
             </select>
             <br />
@@ -71,6 +72,34 @@
     <h4 style="text-align: center; padding-top: 1em;">Аssessment tasks</h4>
     @foreach (var course in Model.AllCourses)
     {
+        @foreach (var file in course.SkippingAssignments)
+        {
+            <hr />
+            <div class="row">
+                <div class="col">
+                    <p>Course: @course.Signature @course.Name</p>
+                    <p>Skipping аssignment solutions:</p>
+                    <ul>
+                        @Html.ActionLink(file.Name, "DownloadFile", new { Controller = "Course", fileName = file.Id + '.' + file.Extension, type = "skippingExamSolution" })
+                    </ul>
+                </div>
+                <div class="col">
+                    <form asp-controller="Lecture" asp-action="EditSkippingAssignment" enctype="multipart/form-data">
+                        <p>Student ID: @file.StudentId</p>
+                        <p>Student Name: @Model.Students.FirstOrDefault(x => x.UserId == file.StudentId).FirstName @Model.Students.FirstOrDefault(x => x.UserId == file.StudentId).LastName </p>
+                        <label>Grade/Points:</label>
+                        <input asp-for="HomeworkGrade" type="text" class="form-control" placeholder="@file.Grade" value="@file.Grade"><br />
+                        <label>Comment:</label>
+                        <textarea asp-for="HomeworkComment" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="@file.Comment"></textarea>
+                        <input asp-for="HomeworkId" value="@file.Id" class="form-control" style="visibility:hidden;" \>
+                        <button class="btn btn-outline-info" style="text-align:right;"><i class="fa fa-save"></i> Save</button>
+                        <input asp-for="CourseId" value="@course.Id" class="form-control" style="visibility:hidden;" \>
+                    </form>
+                </div>
+
+            </div>
+        }
+
         @foreach (var lecture in course.Lectures)
         {
             foreach (var file in lecture.Homeworks)

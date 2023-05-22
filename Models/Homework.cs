@@ -15,7 +15,6 @@ namespace MMUniGraduation.Models
         public decimal Grade { get; set; }
         public string Comment { get; set; }
         public string StudentId { get; set; }
-        //public Student Student { get; set; }
         
         public int? LectureId { get; set; }
         public virtual Lecture Lecture { get; set; }
