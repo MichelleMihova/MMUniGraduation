@@ -51,31 +51,35 @@
             <h5>@course.Signature @course.Name</h5>
             <p class="p-desc">@course.Description</p>
             @if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
-            { 
-                @if (Model.PassedCourses.Contains(course))
+            {
+                @if (course.CourseStartDate <= DateTime.Now)
                 {
-                    <div>
-                        <a class="btn btn-outline-dark" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="AssignUserToCourse" style="text-decoration: none;">Passed</a>
-                    </div>
+                    @if (Model.PassedCourses.Contains(course))
+                    {
+                        <div>
+                            <a class="btn btn-outline-dark" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="AssignUserToCourse" style="text-decoration: none;">Passed</a>
+                        </div>
+                    }
+                    else if (Model.CurrentUserCourse != null && Model.CurrentUserCourse.Equals(course))
+                    {
+                        <div>
+                            <a class="btn btn-outline-success" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="AssignUserToCourse" style="text-decoration: none;">View it</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div>
+                            <a class="btn btn-outline-info" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="AssignUserToCourse" style="text-decoration: none;">Start now!</a>
+                        </div>
+                    }
                 }
-                else if (Model.CurrentUserCourse != null && Model.CurrentUserCourse.Equals(course))
-                {
-                    <div>
-                        <a class="btn btn-outline-success" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="AssignUserToCourse" style="text-decoration: none;">View it</a>
-                    </div>
-                }
-                else
-                {
-                    <div>
-                        <a class="btn btn-outline-info" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="AssignUserToCourse" style="text-decoration: none;">Start now!</a>
-                    </div>
-                }
+
             }
             else
             {
-            <div>
-                <a class="btn btn-outline-info" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="AssignUserToCourse" style="text-decoration: none;">View</a>
-            </div>
+                <div>
+                    <a class="btn btn-outline-info" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="AssignUserToCourse" style="text-decoration: none;">View</a>
+                </div>
             }
         </div>
     </div>

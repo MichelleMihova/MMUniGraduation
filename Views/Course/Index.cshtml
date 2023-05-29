@@ -17,7 +17,7 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <label>Skip the course by passing the exam before @Model.Course.SkipCoursEndDate </label>
+            <label>Skip the course by passing the exam before: @Model.Course.SkipCoursEndDate.ToString("dd/mm/yyyy HH:MM") </label>
         </div>
         <div class="col">
             <div class="form-check" style="text-align:right;">
@@ -30,14 +30,15 @@
         </div>
     </div>
     <br />
-    @if (Model.StudentCourse.EndDateTimeForSkipping != null && User.IsInRole("Student") || User.IsInRole("Teacher") || User.IsInRole("Admin"))
+    @if (Model.StudentCourse.EndDateTimeForSkipping != null && Model.StudentCourse.EndDateTimeForSkipping >= DateTime.Now && User.IsInRole("Student") || User.IsInRole("Teacher") || User.IsInRole("Admin"))
     {
         <div class="row">
             <div class="col">
                 @foreach (var file in Model.Course.SkippingCourseMaterials)
                 {
                     @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
-         (Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
+                                      (Model.StudentCourse.EndDateTimeForSkipping != null))
+                    //(Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
                     {
                         <ul>
                             @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
@@ -47,7 +48,7 @@
             </div>
             <div class="col">
                 @if (Model.Course.SkipCoursEndDate >= DateTime.Now && Model.StudentCourse.EndDateTimeForSkipping >= DateTime.Now &&
-                 !Model.Course.SkippingAssignments.Any())
+              !Model.Course.SkippingAssignments.Any())
                 {
                     @using (Html.BeginForm("AddSkippingExamSolution", "Course", FormMethod.Post, new { enctype = "multipart/form-data" }))
                     {
@@ -89,20 +90,24 @@
                         <div class="card-body">
                             @lecture.Description
                         </div>
-                        @if (lecture.IsExam == false)
-                        {
-                            <div class="card-body">
-                                Date of performance: @lecture.DateTimeToShow
-                                <br />
-                                @if (User.IsInRole("Teacher") || User.IsInRole("Admin") || Model.Student.ShowVideoMaterials)
-                                {
-                                    <div class="embed-responsive embed-responsive-16by9">
-                                        <iframe class="embed-responsive-item" src="@lecture.VideoUrl" allowfullscreen></iframe>
-                                    </div>
-                                }
+                        @*@if (lecture.IsFinal == true)*@
 
-                            </div>
-                        }
+                        <div class="card-body">
+                            @if (lecture.IsFinal == true)
+                            {
+                                <p>Date of performance: @lecture.DateTimeToShow.ToString("dd/mm/yyyy HH:MM")</p>
+                                <br />
+                            }
+
+                            @if (User.IsInRole("Teacher") || User.IsInRole("Admin") || Model.Student.ShowVideoMaterials)
+                            {
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <iframe class="embed-responsive-item" src="@lecture.VideoUrl" allowfullscreen></iframe>
+                                </div>
+                            }
+
+                        </div>
+
                         <div class="container">
                             <div class="row">
                                 <div class="col">
@@ -119,7 +124,7 @@
                                         @foreach (var file in lecture.TextMaterials)
                                         {
                                             @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
-                                       (Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
+                                    (Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
                                             {
                                                 <ul>
                                                     @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
@@ -151,6 +156,7 @@
                                                 </svg>
                                                 <i class="bi bi-file-earmark-text-fill">Exam solution:</i>
                                             </li>
+                                            <br />
                                             @if (lecture.Homeworks.Any())
                                             {
                                                 @foreach (var file in lecture.Homeworks)
@@ -158,14 +164,14 @@
                                                     <ul>
                                                         @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "examSolution" })
                                                         <br />
-                                                        <label>Grade/Points: @file.Grade</label>
+                                                        <label>Grade: @file.Grade</label>
                                                         <br />
                                                         <label>Comment: @file.Comment</label>
                                                         <br />
                                                     </ul>
                                                 }
                                             }
-                                            @if (lecture.EndDateTimeForHW >= DateTime.Now && lecture.Homeworks.Count() == 0 && !Model.SkipCourse)
+                                            @if (lecture.EndDateTimeForHW >= DateTime.Now && lecture.Homeworks.Count() == 0)
                                             {
                                                 @using (Html.BeginForm("AddExamSolution", "Lecture", FormMethod.Post, new { enctype = "multipart/form-data" }))
                                                 {
@@ -174,7 +180,7 @@
                                                     <input type="submit" value="Upload" />
                                                 }
                                             }
-                                            else if (Model.EndDateTime >= DateTime.Now && lecture.Homeworks.Count() == 0 && Model.SkipCourse)
+                                            @*else if (Model.EndDateTime >= DateTime.Now && lecture.Homeworks.Count() == 0 && Model.SkipCourse)
                                             {
                                                 @using (Html.BeginForm("AddExamSolution", "Lecture", FormMethod.Post, new { enctype = "multipart/form-data" }))
                                                 {
@@ -182,7 +188,7 @@
                                                     <input type="text" name="lectureId" value="@lecture.Id" style="visibility:hidden;" />
                                                     <input type="submit" value="Upload" />
                                                 }
-                                            }
+                                            }*@
                                         </div>
                                     }
                                     else
@@ -194,14 +200,21 @@
                                                 </svg>
                                                 <i class="bi bi-file-earmark-text-fill">Homework:</i>
                                             </li>
+                                            <br />
                                             @if (lecture.Homeworks.Any())
                                             {
                                                 @foreach (var file in lecture.Homeworks)
                                                 {
                                                     <ul>
                                                         @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "homework" })
+                                                        @if (file.Grade == 0 && lecture.EndDateTimeForHW >= DateTime.Now)
+                                                        {
+                                                            <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureId="@file.LectureId" asp-route-courseId="@Model.Course.Id" asp-route-name="Index" asp-controller="Lecture" asp-action="DeleteHomework">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
+                                                            </a>
+                                                        }
                                                         <br />
-                                                        <label>Grade/Points: @file.Grade</label>
+                                                        <label>Grade: @file.Grade</label>
                                                         <br />
                                                         <label>Comment: @file.Comment</label>
                                                         <br />
@@ -231,6 +244,7 @@
         i++;
     }
 }
+<br />
 <div>
     <a asp-controller="Course" asp-action="AllCourses" asp-route-studyProgramId="@Model.Course.StudyProgramId">Go Back</a>
 </div>

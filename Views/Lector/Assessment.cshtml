@@ -128,7 +128,7 @@
                         <form asp-controller="Lecture" asp-action="EditHomework" enctype="multipart/form-data">
                             <p>Student ID: @file.StudentId</p>
                             <p>Student Name: @Model.Students.FirstOrDefault(x => x.UserId == file.StudentId).FirstName @Model.Students.FirstOrDefault(x => x.UserId == file.StudentId).LastName </p>
-                            <label>Grade/Points:</label>
+                            <label>Grade:</label>
                             <input asp-for="HomeworkGrade" type="text" class="form-control" placeholder="@file.Grade" value="@file.Grade"><br />
                             <label>Comment:</label>
                             <textarea asp-for="HomeworkComment" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="@file.Comment"></textarea>

@@ -94,13 +94,15 @@ namespace MMUniGraduation.Controllers
                     var hw = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.StudentId == student.UserId).ToList();
                     decimal avarageHWgrade = 0;
                     int cnt = 0;
-
-                    foreach (var item in hw)
+                    if (hw.Any())
                     {
-                        avarageHWgrade += item.Grade;
-                        cnt++;
+                        foreach (var item in hw)
+                        {
+                            avarageHWgrade += item.Grade;
+                            cnt++;
+                        }
+                        avarageHWgrade /= cnt;
                     }
-                    avarageHWgrade /= cnt;
 
                     if (goToExam || studentCurrentCourse.EndDateTimeForSkipping != null)
                     {
@@ -354,6 +356,7 @@ namespace MMUniGraduation.Controllers
         {
             //TO DO..
             //Add or Change criterias who and when can see the lectures
+            //Add remove course for admins only
 
             var editViewModel = new EditCourseViewModel
             {
@@ -430,6 +433,9 @@ namespace MMUniGraduation.Controllers
         public async Task<IActionResult> Delete(int courseId)
         {
             var lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToArray();
+
+            await _courseService.DeleteSkippingCourseMaterial(courseId);
+            await _courseService.DeleteSkippingAssignment(courseId);
 
             foreach (var lecture in lectures)
             {

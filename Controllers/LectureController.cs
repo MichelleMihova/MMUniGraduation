@@ -27,10 +27,10 @@ namespace MMUniGraduation.Controllers
             _courseService = courseService;
             _userManager = userManager;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+        //public IActionResult Index()
+        //{
+        //    return View();
+        //}
 
         [Authorize(Roles = "Admin, Teacher")]
         public IActionResult Create()
@@ -144,10 +144,10 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Edit", "Course", new { courseId = courseId });
         }
         
-        public async Task<IActionResult> DeleteHomework(int lectureId, int courseId)
+        public async Task<IActionResult> DeleteHomework(int lectureId, int courseId, string name)
         {
             await _lectureService.DeleteHomework(lectureId);
-            return RedirectToAction("Edit", "Course", new { courseId = courseId });
+            return RedirectToAction(name, "Course", new { courseId = courseId });
         }
 
         public async Task<IActionResult> DeleteLecture(int lectureId, int courseId)

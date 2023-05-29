@@ -13,6 +13,8 @@ namespace MMUniGraduation.Services.Interfaces
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs();
         //public string GetNextCourseSuggestion(Student user);
         public string GetNextCourseSuggestion(Student user, int programId);
+        public Task DeleteSkippingCourseMaterial(int courseId);
+        public Task DeleteSkippingAssignment(int courseId);
         public Task DeleteCourse(int courseId);
     }
 }

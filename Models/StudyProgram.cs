@@ -8,7 +8,7 @@ namespace MMUniGraduation.Models
         public StudyProgram()
         {
             //this.StudentStudyProgram = new List<StudentStudyProgram>();
-            this.LectorStudyPrograms = new List<LectorStudyProgram>();
+            //this.LectorStudyPrograms = new List<LectorStudyProgram>();
             this.Courses = new HashSet<Course>();
             this.Images = new HashSet<Image>();
         }
@@ -19,7 +19,7 @@ namespace MMUniGraduation.Models
         public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<Course> Courses { get; set; }
         //public virtual ICollection<StudentStudyProgram> StudentStudyProgram { get; set; }
-        [NotMapped]
-        public virtual ICollection<LectorStudyProgram> LectorStudyPrograms { get; set; }
+        //[NotMapped]
+        //public virtual ICollection<LectorStudyProgram> LectorStudyPrograms { get; set; }
     }
 }

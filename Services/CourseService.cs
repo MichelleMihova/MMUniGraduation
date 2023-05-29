@@ -178,6 +178,30 @@ namespace MMUniGraduation.Services
             return Name;
         }
 
+        public async Task DeleteSkippingCourseMaterial(int courseId)
+        {
+            var lectureFiles = _db.LectureFiles.Where(x => x.CourseId == courseId).ToArray();
+
+            foreach (var file in lectureFiles)
+            {
+                _db.LectureFiles.Remove(file);
+            }
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task DeleteSkippingAssignment(int courseId)
+        {
+            var skippingAssignments = _db.SkippingAssignments.Where(x => x.CourseId == courseId).ToArray();
+
+            foreach (var skippingAssignment in skippingAssignments)
+            {
+                _db.SkippingAssignments.Remove(skippingAssignment);
+            }
+
+            await _db.SaveChangesAsync();
+        }
+
         public async Task DeleteCourse(int courseId)
         {
             var course = _db.Courses.FirstOrDefault(c => c.Id == courseId);

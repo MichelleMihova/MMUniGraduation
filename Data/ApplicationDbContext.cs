@@ -22,6 +22,7 @@ namespace MMUniGraduation.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<Lector> Lectors { get; set; }
         public DbSet<StudentCourses> StudentCourses { get; set; }
+        //public DbSet<IdentityUser> IdentityUser { get; set; }
         //public DbSet<LectorStudyProgram> LectorStudyProgram { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -32,7 +33,7 @@ namespace MMUniGraduation.Data
                 .HasKey(x => x.UserId);
             builder.Entity<IdentityUserToken<string>>()
                 .HasKey(x => x.UserId);
-
+            
             //builder.Entity<StudentStudyProgram>()
             //    .HasKey(sc => new { sc.StudentId, sc.StudyProgramId });
             //builder.Entity<StudentStudyProgram>()
