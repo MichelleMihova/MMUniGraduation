@@ -168,6 +168,10 @@ namespace MMUniGraduation.Services
                     {
                         Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == currCourseId).Name.ToString();
                     }
+                    else
+                    {
+                        Name = "Congrats! You compleate the program!";
+                    }
                 }
                 
             }
@@ -177,7 +181,6 @@ namespace MMUniGraduation.Services
             }
             return Name;
         }
-
         public async Task DeleteSkippingCourseMaterial(int courseId)
         {
             var lectureFiles = _db.LectureFiles.Where(x => x.CourseId == courseId).ToArray();
@@ -189,7 +192,6 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
         public async Task DeleteSkippingAssignment(int courseId)
         {
             var skippingAssignments = _db.SkippingAssignments.Where(x => x.CourseId == courseId).ToArray();
@@ -201,7 +203,6 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
         public async Task DeleteCourse(int courseId)
         {
             var course = _db.Courses.FirstOrDefault(c => c.Id == courseId);
