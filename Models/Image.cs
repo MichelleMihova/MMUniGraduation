@@ -12,6 +12,8 @@ namespace MMUniGraduation.Models
         public string Extension { get; set; }
         public int? StudyProgramId { get; set; }
         public virtual StudyProgram StudyProgram { get; set; }
+        public int? UserId { get; set; }
+        public virtual Student User { get; set; }
 
         //public string AddedByUserId { get; set; }
 

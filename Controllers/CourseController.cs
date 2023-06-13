@@ -181,6 +181,17 @@ namespace MMUniGraduation.Controllers
             }
 
             var user = await _userManager.GetUserAsync(this.User);
+            var courseNames = _context.Courses.Select(x => x.Name);
+
+            if (courseNames.Contains(input.Name))
+            {
+                this.TempData["Message"] = "The course has not been created yet! There is an existing course with the same name!";
+
+                input.StudyPrograms = _studyProgramService.GetAllAsKeyValuePairs();
+                input.Courses = _courseService.GetAllAsKeyValuePairs();
+
+                return this.View(input);
+            }
 
             await _courseService.CreateCourseAsync(input, user);
 

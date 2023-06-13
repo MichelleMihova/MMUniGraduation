@@ -27,10 +27,6 @@ namespace MMUniGraduation.Controllers
             _courseService = courseService;
             _userManager = userManager;
         }
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
 
         [Authorize(Roles = "Admin, Teacher")]
         public IActionResult Create()
@@ -54,7 +50,13 @@ namespace MMUniGraduation.Controllers
                 input.AllLectures = _lectureService.GetAllAsKeyValuePairs();
             }
             var user = await _userManager.GetUserAsync(this.User);
-          
+            var lectureNames = _context.Lectures.Where(x => x.CourseId == input.CourseId).Select(x => x.Name);
+
+            if (lectureNames.Contains(input.Name))
+            {
+                this.TempData["Message"] = "The lecture has not been created yet! There is an existing lecture with the same name!";
+                return View(input);
+            }
             await _lectureService.CreateLectureAsync(input, user);
 
             this.TempData["Message"] = "Lecture created successfully!";

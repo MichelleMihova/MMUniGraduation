@@ -21,7 +21,7 @@
     }
         /* Green */
         .success:hover {
-        background-color: #46a049;
+            background-color: #46a049;
         }
 
     .info {
@@ -29,9 +29,16 @@
     }
         /* Blue */
         .info:hover {
-    background: #0b7dda;
+            background: #0b7dda;
         }
 </style>
+
+@if (this.TempData.ContainsKey("Message"))
+{
+    <div class="alert alert-heading alert-dismissible" style="color: darkred; font-weight: bold; text-align: center; border-block: solid; border-color: darkred;">
+        @this.TempData["Message"]
+    </div>
+}
 
 <h1 style="padding-top:25px; text-align:center;">Create Course</h1>
 
@@ -57,7 +64,7 @@
         <div>
             <label>Select parent course</label>
             <select asp-for="ParetntId" class="form-control" asp-items="courses">
-                <option asp-for="ParetntId" value="0" >No inheritance</option>
+                <option asp-for="ParetntId" value="0">No inheritance</option>
             </select>
         </div>
         <hr /><br />

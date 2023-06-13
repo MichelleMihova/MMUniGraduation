@@ -11,6 +11,7 @@ namespace MMUniGraduation.Models
         {
             this.CurrentCourses = new List<Course>();
             this.Passed = new List<StudentCourses>();
+            this.Photos = new HashSet<Image>();
         }
 
         public int Id { get; set; }
@@ -20,18 +21,9 @@ namespace MMUniGraduation.Models
         [Phone]
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        //public string Town { get; set; }
-        //public DateTime DateOfBirth { get; set; }
         public bool ShowTextMaterials { get; set; }
         public bool ShowVideoMaterials { get; set; }
-
-        //remove Photo
-        //public string Photo { get; set; }
-        //public virtual ICollection<Image> Images { get; set; }
-
-        //[DataType(DataType.DateTime)]
-        //[DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
-        //public DateTime? EndDateTime { get; set; }
+        public virtual ICollection<Image> Photos { get; set; }
 
         //[NotMapped]
         //public ICollection<Course> PassedCourses { get; set; }

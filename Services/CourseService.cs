@@ -117,7 +117,7 @@ namespace MMUniGraduation.Services
         public string GetNextCourseSuggestion(Student user, int programId)
         {
             string Name = null;
-            string suggestionText = "The more appropriate course for you is ";
+            string suggestionText = "The more appropriate next course for you is ";
             var currCourseId = 0;
             
             //if we have user and some curr courses for the same program
@@ -158,7 +158,10 @@ namespace MMUniGraduation.Services
                     }
                     else
                     {
-                        Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                        if (_db.Courses.Any())
+                        {
+                            Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                        }
                     }
                 }
                 else
@@ -177,7 +180,11 @@ namespace MMUniGraduation.Services
             }
             else
             {
-                Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                if (_db.Courses.Any())
+                {
+                    Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                }
+                //Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
             }
             return Name;
         }

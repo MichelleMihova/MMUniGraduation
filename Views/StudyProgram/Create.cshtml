@@ -24,7 +24,15 @@
         .info:hover {
             background: #0b7dda;
         }
+
 </style>
+
+@if (this.TempData.ContainsKey("Message"))
+{
+    <div class="alert alert-heading alert-dismissible" style="color: darkred; font-weight: bold; text-align: center; border-block: solid; border-color: darkred;">
+        @this.TempData["Message"]
+    </div>
+}
 
 <h1 style="padding-top:25px; text-align:center;">Create Program</h1>
 
@@ -45,12 +53,12 @@
         @*<input asp-for="Images" class="form-control" />*@
         <div class="input-group">
             <div class="custom-file form-control">
-                <input asp-for="Images" class="custom-file-input form-control" id="inputGroupFile04">
+                <input asp-for="Images" class="custom-file-input form-control" id="inputGroupFile04" type  ="file">
                 <label class="custom-file-label form-control" for="inputGroupFile04">Choose image</label>
+                @*<span id="imageName" class="text-muted"></span>*@
             </div>
         </div>
         <br />
-
         <button class="btn info">Create</button>
 
     </form>

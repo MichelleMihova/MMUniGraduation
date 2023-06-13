@@ -1,4 +1,4 @@
-﻿@model MMUniGraduation.Models.Student
+﻿@model MMUniGraduation.ViewModels.IndexStudentViewModel
 @{
     ViewData["Title"] = "Profile Page";
 }
@@ -6,9 +6,8 @@
 <h1 style="text-align:center; padding:1em;">@ViewData["Title"]</h1>
 
 <div class="container">
-    <!--
-        <a class="navbar-brand d-flex align-items-center" href="./"><img src="./img/gifs/hearteyes.gif" alt="Example Navbar 1" class="mr-2" height="30"> Lazy Kit</a>
-     -->
+
+    @* <a class="navbar-brand d-flex align-items-center" href="./"><img src="./img/gifs/hearteyes.gif" alt="Example Navbar 1" class="mr-2" height="30"> Lazy Kit</a>*@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown-3" aria-controls="navbarNavDropdown-3"
             aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -39,9 +38,10 @@
 <div class="container">
     <div class="info">
         <div class="row">
-            @*<div class="col-12 col-md-4 text-center">
-                <img src="./img/misha.jpg" alt="Raised circle image" class="img-fluid rounded-circle shadow-lg" style="width: 180px;">
-            </div>*@
+            <div class="col-12 col-md-4 text-center">
+                @*<img src="./img/misha.jpg" alt="Raised circle image" class="img-fluid rounded-circle shadow-lg" style="width: 180px;">*@
+                <img src="~/img/@Model.Image" alt="Raised circle image" class="img-fluid rounded-circle shadow-lg" style="width: 180px;" alt="Responsive image">
+            </div>
             <div class="col-12 col-md-8 d-flex flex-column align-items-center align-items-lg-start">
                 <div class="d-flex flex-row align-items-start mt-3 mt-lg-0">
                     <div class="name">
@@ -51,7 +51,7 @@
                 <div class="stats d-flex flex-row align-items-center align-items-lg-start text-center text-lg-left">
                     <div class="posts ml-2 ml-lg-0">
                         <p class="lead">
-                            <b>@Model.PassedCoursesGrade.Keys.Count</b> passed courses | 
+                            <b>@Model.PassedCoursesGrade.Keys.Count</b> passed courses |
                         </p>
                     </div>
                     <div class="posts">
@@ -65,32 +65,15 @@
                         }
                     </div>
                     @*<div class="posts"><p class="lead"><b>6.6m</b> followers</p></div>
-                        <div class="posts"><p class="lead"><b>201</b> following</p></div>*@
+                    <div class="posts"><p class="lead"><b>201</b> following</p></div>*@
                 </div>
                 @*<p class="lead mb-0 mt-2"><b>Ella Yelich-O'Connor</b></p>
-                    <p class="lead text-center text-lg-left">Let's let things come out of the woodwork.  I'll give you my best side, tell you all my best lies.  Yeah, awesome right?</p>*@
+                <p class="lead text-center text-lg-left">Let's let things come out of the woodwork.  I'll give you my best side, tell you all my best lies.  Yeah, awesome right?</p>*@
             </div>
         </div>
-        <form asp-controller="Student" asp-action="Edit" enctype="multipart/form-data">
-            @*<h3 style="padding-bottom:25px; text-align:center;">@Model.Course.Signature @Model.Course.Name Course</h3>*@
-            <label for="party">First name:</label>
-            <input class="form-control" asp-for="@Model.FirstName" type="text" placeholder="@Model.FirstName" />
-            <label for="party">Last name:</label>
-            <input class="form-control" asp-for="@Model.LastName" type="text" placeholder="@Model.LastName" />
-            <hr />
-            <h6>Choose what kind of lecture materials you want to see:</h6>
-            <label>Text Materials: </label>
-            @Html.EditorFor(x => x.ShowTextMaterials)
-            @*<label>Exam</label>*@
-            <br />
-            <label>Video Materials: </label>
-            @Html.EditorFor(x => x.ShowVideoMaterials)
-            <br />
-            <br />
-            <input type="hidden" name="Id" asp-for="@Model.Id" value="@Model.Id" />
-
-            <button class="btn btn-outline-secondary btn-outline-info" style="text-align:right; margin-bottom: 1em;">Update</button>
-        </form>
+        <div style="text-align:right;">
+            <a class="btn btn-outline-info" asp-controller="Student" asp-action="Edit" style="text-decoration: none;">Edit profile information</a>
+        </div>
     </div>
     <hr />
     <div class="navigation d-flex justify-content-center">
