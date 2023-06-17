@@ -14,6 +14,7 @@ namespace MMUniGraduation.Services.Interfaces
         public Task IsPassed(Lecture lecture, string studentId);
         public Task CreateLectureAsync(CreateLecture input, ApplicationUser user);
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs();
+        public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs(int courseId);
         public Task AddExamSolutionToLecture(int lectureId, IFormFile file, string userId);
         public Task AddHomeworkToLecture(int lectureId, IFormFile file, string userId);
         public Task EditHomework(string homeworkId, decimal homeworkGrade, string homeworkComment);

@@ -114,6 +114,18 @@ namespace MMUniGraduation.Services
                 .ToList()
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Signature + " "+ x.Name));
         }
+        public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs(int programId)
+        {
+            return this._db.Courses.Where(x => x.StudyProgramId == programId).Select(x => new
+            {
+                x.Id,
+                x.Name,
+                x.Signature
+            })
+                .OrderBy(x => x.Name)
+                .ToList()
+                .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Signature + " " + x.Name));
+        }
         public string GetNextCourseSuggestion(Student user, int programId)
         {
             string Name = null;

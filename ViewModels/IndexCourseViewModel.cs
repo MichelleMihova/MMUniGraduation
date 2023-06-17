@@ -12,6 +12,7 @@ namespace MMUniGraduation.ViewModels
         public bool SkipCourse { get; set; }
         public bool ShowVideoMaterials { get; set; }
         public bool ShowTextMaterials { get; set; }
+        public string Image { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]

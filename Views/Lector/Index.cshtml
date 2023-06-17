@@ -1,74 +1,169 @@
-﻿@model MMUniGraduation.ViewModels.AllCoursesViewModel
+﻿@model MMUniGraduation.ViewModels.IndexLectorViewModel
 @{
+    ViewData["Title"] = "Profile Page";
 }
 
-<style>
-    .img-box {
-        width: 100%;
-        height: 100%;
-    }
+<h1 style="text-align:center; padding:1em;">@ViewData["Title"]</h1>
 
-    .p-desc {
-        text-align: justify;
-    }
-
-    button {
-        border-radius: 1em;
-    }
-
-    hr {
-        border-color: lightblue;
-    }
-
-    .info {
-        background-color: #2196F3;
-    }
-        /* Blue */
-        .info:hover {
-            background: #0b7dda;
-        }
-</style>
-
-
-<h2 style="text-align: center; padding-top: 1em; ">Edit courses</h2>
-<!-- <h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>   -->
-<!--<div style="text-align: center; padding-top: 1em;">
-    <h3>Filters</h3>
-
-    <div>-->
-        <!--
-        <label>Course program</label>
-        <select asp-for="StudyProgramId" class="form-control" asp-items="studyPrograms"></select>
-        <br />
-        -->
-        <!--@using (Html.BeginForm())
-        {
-            <p>
-                Find by name: @Html.TextBox("SearchString")
-                <input type="submit" value="Search"  class="btn btn-outline-info" />
-            </p>
-        }
-
-        <button type="button" class="btn btn-outline-info">search</button>
-    </div>
-</div>-->
-
-<br />
 <div class="container">
-    @*<h4 style="text-align: center; padding-top: 1em;">Courses</h4>*@
-    <hr />
-    @foreach (var course in Model.AllCourses)
-    {
-        <div class="row">
-            <div class="col">
-                <p>Course: @course.Signature @course.Name</p>
-            </div>
-            <hr />
-            <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Index"><i class="fa fa-save"></i> View</a>
-            <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Edit"><i class="fa fa-save"></i> Edit</a>
-            <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Delete"><i class="fa fa-save"></i> Delete</a>
-        </div>
-        <hr />
-    }
+
+    @* <a class="navbar-brand d-flex align-items-center" href="./"><img src="./img/gifs/hearteyes.gif" alt="Example Navbar 1" class="mr-2" height="30"> Lazy Kit</a>*@
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown-3" aria-controls="navbarNavDropdown-3"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse mr-auto" id="navbarNavDropdown-3">
+        <ul class="navbar-nav ml-auto text-center">
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="far fa-compass"></i>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="far fa-heart"></i>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="far fa-user"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>
+
+<div class="container">
+    <div class="info">
+        <div class="row">
+            <div class="col-12 col-md-4 text-center">
+                <img src="~/img/@Model.Image" alt="Upload image" class="img-fluid rounded-circle shadow-lg" style="width: 180px;">
+            </div>
+            <div class="col-12 col-md-8 d-flex flex-column align-items-center align-items-lg-start">
+                <div class="d-flex flex-row align-items-start mt-3 mt-lg-0">
+                    <div class="name">
+                        <h2 class="mb-0">@User.Identity.Name.ToString().Split('@')[0]</h2>
+                    </div>
+                </div>
+                <div class="stats d-flex flex-row align-items-center align-items-lg-start text-center text-lg-left">
+                    <div class="posts ml-2 ml-lg-0">
+                        <p class="lead">
+                            <b>@Model.ProgramCourses.Keys.Count</b> study programs | 
+                        </p>
+                    </div>
+                    <div class="posts">
+                        @if (@Model.Courses.Count() == 1)
+                        {
+                            <p class="lead"><b> @Model.Courses.Count()</b> course </p>
+                        }
+                        else
+                        {
+                            <p class="lead"><b> @Model.Courses.Count()</b> courses </p>
+                        }
+                    </div>
+                </div>
+                <h5>Bio</h5>
+                <p class="lead text-center text-lg-left">Let's let things come out of the woodwork.  I'll give you my best side, tell you all my best lies.  Yeah, awesome right?</p>
+            </div>
+        </div>
+        <div style="text-align:right;">
+            <a class="btn btn-outline-info" asp-controller="Lector" asp-action="EditProfile" style="text-decoration: none;">Edit profile information</a>
+        </div>
+    </div>
+    <hr />
+    <div class="navigation d-flex justify-content-center">
+        <ul class="nav nav-primary nav-tabs mt-3 d-flex flex-column flex-md-row">
+            @{int i = 0;
+                foreach (var item in Model.ProgramCourses.Keys)
+                {
+                    if (i == 0)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#accordion_@i">
+                                <i class="far fa-bookmark"></i> @item
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#accordion_@i">
+                                <i class="far fa-bookmark"></i> @item
+                            </a>
+                        </li>
+                    }
+                    i++;
+                }
+            }
+        </ul>
+    </div>
+    <div class="profile-tabs tab-content">
+        @{ int j = 0;
+            foreach (var program in Model.ProgramCourses)
+            {
+                if (j == 0)
+                {
+                    <div class="tab-pane fade show active text-center" id="accordion_@j">
+
+                        @foreach (var item in program.Value)
+                        {
+                            <div class="card">
+                                @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
+                                <div class="card-body">
+                                    <h5 class="card-title">@item.Signature @item.Name</h5>
+                                    <p class="card-text">@item.Description</p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-footer">
+                                        @*<small class="text-muted">Last updated 3 mins ago</small>*@
+                                        <a class="nav-link text-dark" asp-route-courseId="@item.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <br />
+                    </div>
+                }
+                else
+                {
+                    <div class="tab-pane fade text-center" id="accordion_@j">
+
+                        @foreach (var item in program.Value)
+                        {
+                            <div class="card">
+                                @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
+                                <div class="card-body">
+                                    <h5 class="card-title">@item.Signature @item.Name</h5>
+                                    <p class="card-text">@item.Description</p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-footer">
+                                        @*<small class="text-muted">Last updated 3 mins ago</small>*@
+                                        <a class="nav-link text-dark" asp-route-courseId="@item.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <br />
+                    </div>
+                }
+                j++;
+            }
+        }
+    </div>
+
+</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="./assets/vendor/jquery/jquery.min.js"></script>
+<script src="./assets/vendor/popper/popper.min.js"></script>
+<script src="./assets/vendor/bootstrap/bootstrap.min.js"></script>
+
+<!-- optional plugins -->
+<script src="./assets/vendor/nouislider/js/nouislider.min.js"></script>
+
+<!--   lazy javascript -->
+<script src="./assets/js/lazy.js"></script>
 

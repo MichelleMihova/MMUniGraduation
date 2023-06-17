@@ -11,7 +11,7 @@ namespace MMUniGraduation.Services.Interfaces
         public Task CreateCourseAsync(CreateCourse input, ApplicationUser user);
         public Task AddSkippingExamSolutionToCourse(int courseId, IFormFile file, string userId);
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs();
-        //public string GetNextCourseSuggestion(Student user);
+        public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs(int programId);
         public string GetNextCourseSuggestion(Student user, int programId);
         public Task DeleteSkippingCourseMaterial(int courseId);
         public Task DeleteSkippingAssignment(int courseId);

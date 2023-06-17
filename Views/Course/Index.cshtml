@@ -9,13 +9,33 @@
 
 <h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>
 <div style="text-align:center;">
-    <h3>@Model.Course.Signature @Model.Course.Name</h3>
-    <p>@Model.Course.Description</p>
+    <h3>@Model.Course.Signature </h3>
+    <h3>@Model.Course.Name</h3>
+    @*<p>@Model.Course.Description</p>*@
 </div>
 <br />
 <hr />
 <div class="container">
+    <div class="row" style="text-align:center">
+        <div class="col" style="text-align:left">
+            <h6>Course info:</h6>
+            <p>@Model.Course.Description</p>
+        </div>
+        <div class="col" style="text-align:center">
+            <img src="~/img/@Model.Image" alt="Upload image" class="img-fluid rounded-circle shadow-lg" style="width: 180px;">
+        </div>
+        <div class="col" style="text-align:right">
+            <h6>Lector Name</h6>
+            <p>Lector Bio: Students are introduced to database concepts and learn how to connect Java applications to databases using Java Database Connectivity (JDBC). They also learn how to perform database operations such as querying, inserting, updating, and deleting data.</p>
+
+        </div>
+    </div>
+    <hr />
     <div class="row">
+        @*<div class="col">
+                <img src="~/img/@Model.Image" alt="Upload image" class="img-fluid rounded-circle shadow-lg" style="width: 180px;">
+                <p>Database Connectivity: Students are introduced to database concepts and learn how to connect Java applications to databases using Java Database Connectivity (JDBC). They also learn how to perform database operations such as querying, inserting, updating, and deleting data.</p>
+            </div>*@
         <div class="col">
             <label>Skip the course by passing the exam before: @Model.Course.SkipCoursEndDate.ToString("dd/mm/yyyy HH:MM") </label>
         </div>
@@ -37,7 +57,7 @@
                 @foreach (var file in Model.Course.SkippingCourseMaterials)
                 {
                     @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
-                                      (Model.StudentCourse.EndDateTimeForSkipping != null))
+                                (Model.StudentCourse.EndDateTimeForSkipping != null))
                     //(Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
                     {
                         <ul>
@@ -48,7 +68,7 @@
             </div>
             <div class="col">
                 @if (Model.Course.SkipCoursEndDate >= DateTime.Now && Model.StudentCourse.EndDateTimeForSkipping >= DateTime.Now &&
-              !Model.Course.SkippingAssignments.Any())
+        !Model.Course.SkippingAssignments.Any())
                 {
                     @using (Html.BeginForm("AddSkippingExamSolution", "Course", FormMethod.Post, new { enctype = "multipart/form-data" }))
                     {
@@ -124,7 +144,7 @@
                                         @foreach (var file in lecture.TextMaterials)
                                         {
                                             @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
-                                    (Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
+                                (Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
                                             {
                                                 <ul>
                                                     @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
@@ -181,14 +201,14 @@
                                                 }
                                             }
                                             @*else if (Model.EndDateTime >= DateTime.Now && lecture.Homeworks.Count() == 0 && Model.SkipCourse)
-                                            {
-                                                @using (Html.BeginForm("AddExamSolution", "Lecture", FormMethod.Post, new { enctype = "multipart/form-data" }))
                                                 {
-                                                    @Html.TextBox("file", "", new { type = "file" })
-                                                    <input type="text" name="lectureId" value="@lecture.Id" style="visibility:hidden;" />
-                                                    <input type="submit" value="Upload" />
-                                                }
-                                            }*@
+                                                    @using (Html.BeginForm("AddExamSolution", "Lecture", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                                    {
+                                                        @Html.TextBox("file", "", new { type = "file" })
+                                                        <input type="text" name="lectureId" value="@lecture.Id" style="visibility:hidden;" />
+                                                        <input type="submit" value="Upload" />
+                                                    }
+                                                }*@
                                         </div>
                                     }
                                     else
@@ -230,7 +250,7 @@
                                                     <input type="submit" value="Upload" />
                                                 }
                                             }
-                                        <br />
+                                            <br />
 
                                         </div>
                                     }

@@ -194,7 +194,17 @@ namespace MMUniGraduation.Services
                 .ToList()
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name));
         }
-
+        public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs(int courseId)
+        {
+            return this._db.Lectures.Where(x => x.CourseId == courseId).Select(x => new
+            {
+                x.Id,
+                x.Name
+            })
+                .OrderBy(x => x.Name)
+                .ToList()
+                .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name));
+        }
         public async Task AddExamSolutionToLecture(int lectureId, IFormFile file, string userId)
         {
             var currLectire = _db.Lectures.FirstOrDefault(x => x.Id == lectureId);

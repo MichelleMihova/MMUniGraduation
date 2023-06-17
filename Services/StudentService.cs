@@ -25,7 +25,7 @@ namespace MMUniGraduation.Services
         public async Task EditStudent(EditStudentViewModel input)
         {
             var currStudent = _db.Students.FirstOrDefault(x => x.Id == input.Id);
-            var studentPhoto = _db.Images.FirstOrDefault(x => x.UserId == currStudent.Id);
+            var studentPhoto = _db.Images.FirstOrDefault(x => x.StudentId == currStudent.Id);
 
             if (input.FirstName != null && input.FirstName != currStudent.FirstName)
             {

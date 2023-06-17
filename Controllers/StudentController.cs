@@ -50,21 +50,7 @@ namespace MMUniGraduation.Controllers
                 curr.Add(course);
             }
 
-            var photo = _context.Images.Where(x => x.UserId == student.Id).Select(x => x.Id + '.' + x.Extension).FirstOrDefault();
-            
-            //var view = new Student
-            // {
-            //     //PassedCourses = pass,
-            //     CurrentCourses = curr,
-            //     Id = student.Id,
-            //     UserId = user.Id,
-            //     FirstName = student.FirstName,
-            //     LastName = student.LastName,
-            //     Photos = student.Photos,
-            //     ShowTextMaterials = student.ShowTextMaterials,
-            //     ShowVideoMaterials = student.ShowVideoMaterials,
-            //     PassedCoursesGrade = passedCoursesGrade
-            // };
+            var photo = _context.Images.Where(x => x.StudentId == student.Id).Select(x => x.Id + '.' + x.Extension).FirstOrDefault();
             var viewModel = new IndexStudentViewModel
             {
                 CurrentCourses = curr,

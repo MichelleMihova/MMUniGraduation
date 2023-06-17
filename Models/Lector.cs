@@ -7,8 +7,8 @@ namespace MMUniGraduation.Models
     {
         public Lector()
         {
-            //this.LectorStudyPrograms = new List<LectorStudyProgram>();
             Courses = new HashSet<Course>();
+            this.Photos = new HashSet<Image>();
         }
         public int Id { get; set; }
         public string UserId { get; set; }
@@ -17,10 +17,11 @@ namespace MMUniGraduation.Models
         public string Email { get; set; }
         public string Bio { get; set; }
         public string PhoneNumber { get; set; }
-        //public List<Course> Courses { get; set; }
-        //public List<Lecture> Assignments { get; set; }
-        //public ICollection<LectorStudyProgram> LectorStudyPrograms { get; set; }
+        public virtual ICollection<Image> Photos { get; set; }
+
         [NotMapped]
         public IEnumerable<Course> Courses { get; set; }
+        [NotMapped]
+        public Dictionary<string, List<Course>> ProgramCourses { get; set; }
     }
 }

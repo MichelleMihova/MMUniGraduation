@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Data;
 using MMUniGraduation.Models;
@@ -144,6 +145,9 @@ namespace MMUniGraduation.Controllers
                 }
             }
 
+            var lector = _context.Lectors.FirstOrDefault(x => x.UserId == currentCourse.CreatorId);
+            var photo = _context.Images.Where(x => x.LectorId == lector.Id).Select(x => x.Id + '.' + x.Extension).FirstOrDefault();
+
             var viewModel = new IndexCourseViewModel
             {
                 Course = currentCourse,
@@ -151,7 +155,8 @@ namespace MMUniGraduation.Controllers
                 SkipCourse = goToExam,
                 Student = student,
                 HWMaterials = homeworkMaterial,
-                StudentCourse = studentCurrentCourse
+                StudentCourse = studentCurrentCourse,
+                Image = photo
             };
 
             return View(viewModel);
@@ -168,7 +173,24 @@ namespace MMUniGraduation.Controllers
 
             return this.View(viewModel);
         }
+        [HttpGet]
+        public ActionResult GetCourses(int programId)
+        {
+            //var courses = _context.Courses.Where(x=> x.StudyProgramId == programId).Select(x => new
+            //{
+            //    x.Id,
+            //    x.Name,
+            //    x.Signature
+            //})
+            //    .OrderBy(x => x.Name)
+            //    .ToList()
+            //    .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Signature + " " + x.Name));
 
+            var courses = _courseService.GetAllAsKeyValuePairs(programId);
+            IEnumerable<SelectListItem> dropdownData = courses.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
+            
+            return Json(new SelectList( dropdownData, "Value", "Text"));
+        }
         [Authorize(Roles = "Admin, Teacher")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateCourse input)

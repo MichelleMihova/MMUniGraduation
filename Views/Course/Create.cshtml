@@ -7,6 +7,8 @@
         .Select(x => new SelectListItem(x.Value, x.Key));
 }
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <style>
     .btn {
         border: none;
@@ -52,7 +54,13 @@
         <br />
 
         <label>Course program</label>
-        <select asp-for="StudyProgramId" class="form-control" asp-items="studyPrograms"></select>
+        @*<select id="programsDropdown" onchange="myFunction()" asp-for="StudyProgramId" class="form-control" asp-items="studyPrograms"></select>*@
+        @Html.DropDownListFor(x => Model.StudyProgramId, new SelectList(studyPrograms, "Value", "Text"), "---Select Program---", htmlAttributes: new { @class = "form-control", id = "Program" })
+
+
+        @*@Html.DropDownListFor(x => Model.StudyProgramId, new SelectList(studyPrograms, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "Program" })*@
+        @*@Html.DropDownListFor(x => Model.ParetntId, new SelectList(courses, "Value", "Text"), htmlAttributes: new { @class = "form-control", @id = "Region" })*@
+
         <br />
 
         <label>Course description</label>
@@ -63,11 +71,13 @@
         <h4>Course inheritance</h4>
         <div>
             <label>Select parent course</label>
-            <select asp-for="ParetntId" class="form-control" asp-items="courses">
-                <option asp-for="ParetntId" value="0">No inheritance</option>
-            </select>
+            @*<select id="coursesDropdown" asp-for="ParetntId" class="form-control" asp-items="courses">
+                    <option asp-for="ParetntId" value="0">No inheritance</option>
+                </select>*@
+            @Html.DropDownListFor(x => Model.ParetntId, new SelectList(courses, "Value", "Text"), "---No course inheritance---", htmlAttributes: new { @class = "form-control", @id = "Course" })
+
         </div>
-        <hr /><br />
+        <br /><hr /><br />
 
         <h4>Course criteria</h4>
         <div>
@@ -107,4 +117,31 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+    $('#Program').change(function () {
+                //we get selected value of programs
+        var selectedProgram = $("#Program").val();
+                var coursesSelect = $('#Course');
+        coursesSelect.empty();
+        coursesSelect.append($('<option/>', {
+            value: 0,
+            text: "---No course inheritance---"
+        }));
+        if (selectedProgram != null && selectedProgram != '') {
+                    //the result from GetCourses(int programId) is stored in courses object
+            $.getJSON('@Url.Action("GetCourses")', { programId: selectedProgram }, function (dropdownData) {
+                        if (dropdownData != null && !jQuery.isEmptyObject(dropdownData))
+                        {
+                            $.each(dropdownData, function (index, data) {
+                                coursesSelect.append($('<option/>', {
+                                    value: data.value,
+                                    text: data.text
+                                }));
+                            });
+                        };
+                    });
+                }
+            });
+    </script>
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Data;
 using MMUniGraduation.Models;
@@ -18,18 +19,74 @@ namespace MMUniGraduation.Controllers
         private readonly ICourseService _courseService;
         private readonly IStudyProgramService _studyProgramService;
         private readonly ILectureService _lectureService;
+        private readonly ILectorService _lectorService;
+        //private readonly CourseController _courseController;
         private readonly UserManager<ApplicationUser> _userManager;
         public LectorController(ApplicationDbContext context, ICourseService courseService,
-            IStudyProgramService studyProgramService, ILectureService lectureService,
+            IStudyProgramService studyProgramService, ILectureService lectureService, ILectorService lectorService,
             UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _courseService = courseService;
             _studyProgramService = studyProgramService;
             _lectureService = lectureService;
+            _lectorService = lectorService;
+            //_courseController = courseController;
             _userManager = userManager;
         }
         public async Task<IActionResult> Index()
+        {
+            var user = await _userManager.GetUserAsync(this.User);
+            var lector = _context.Lectors.FirstOrDefault(x => x.UserId == user.Id);
+
+            var courses = _context.Courses.Where(x => x.CreatorId == lector.UserId);
+            var programCourses = new Dictionary<string, List<Course>>();
+
+            foreach (var item in courses)
+            {
+                if (!programCourses.Keys.Contains(item.Signature))
+                {
+                    var coursesForProgram = _context.Courses.Where(x => x.CreatorId == lector.UserId && x.Signature == item.Signature).ToList();
+                    programCourses.Add(item.Signature, coursesForProgram);
+                }
+            }
+
+            var photo = _context.Images.Where(x => x.LectorId == lector.Id).Select(x => x.Id + '.' + x.Extension).FirstOrDefault();
+
+            var viewModel = new IndexLectorViewModel
+            {
+                Bio = lector.Bio,
+                PhoneNumber = lector.PhoneNumber,
+                Image = photo,
+                Courses = courses,
+                ProgramCourses = programCourses
+            };
+
+            return View(viewModel);
+
+        }
+        public async Task<IActionResult> EditProfile()
+        {
+            var user = await _userManager.GetUserAsync(this.User);
+            var lector = _context.Lectors.FirstOrDefault(x => x.UserId == user.Id);
+
+            var viewModel = new EditLectorViewModel
+            {
+                Id = lector.Id,
+                FirstName = lector.FirstName,
+                LastName = lector.LastName,
+                Bio = lector.Bio
+            };
+            return View(viewModel);
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditProfile(EditLectorViewModel input)
+        {
+            await _lectorService.EditInfo(input);
+
+            return RedirectToAction("Index", "Lector");
+        }
+        public async Task<IActionResult> EditCourses()
         {
             var user = await _userManager.GetUserAsync(this.User);
 
@@ -94,6 +151,22 @@ namespace MMUniGraduation.Controllers
             viewModel.Students = students;
 
             return View(viewModel);
+        }
+        [HttpGet]
+        public ActionResult RelatedCourses(int programId)
+        {
+            var courses = _courseService.GetAllAsKeyValuePairs(programId);
+            IEnumerable<SelectListItem> dropdownData = courses.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
+
+            return Json(new SelectList(dropdownData, "Value", "Text"));
+        }
+        [HttpGet]
+        public ActionResult RelatedLectures(int courseId)
+        {
+            var lectures = _lectureService.GetAllAsKeyValuePairs(courseId);
+            IEnumerable<SelectListItem> dropdownData = lectures.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
+
+            return Json(new SelectList(dropdownData, "Value", "Text"));
         }
 
         [HttpPost]

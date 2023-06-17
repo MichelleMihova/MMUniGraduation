@@ -25,8 +25,6 @@ namespace MMUniGraduation.Models
         public bool ShowVideoMaterials { get; set; }
         public virtual ICollection<Image> Photos { get; set; }
 
-        //[NotMapped]
-        //public ICollection<Course> PassedCourses { get; set; }
         [NotMapped]
         public ICollection<Course> CurrentCourses { get; set; }
 

@@ -46,12 +46,14 @@
         <br /><hr /><br />
         <h4>Lecture inheritance</h4>
         <label>Select corresponding course</label>
-        <select asp-for="CourseId" class="form-control" asp-items="courses"></select>
+        @*<select asp-for="CourseId" class="form-control" asp-items="courses"></select>*@
+        @Html.DropDownListFor(x => Model.CourseId, new SelectList(courses, "Value", "Text"), "---Select Course---", htmlAttributes: new { @class = "form-control", id = "Course" })
         <br />
         <label>Select parent lecture</label>
-        <select asp-for="ParetntLectureId" class="form-control" asp-items="lectures">
-            <option asp-for="ParetntId" value="0">No inheritance</option>
-        </select>
+        @*<select asp-for="ParetntLectureId" class="form-control" asp-items="lectures">
+                <option asp-for="ParetntId" value="0">No inheritance</option>
+            </select>*@
+        @Html.DropDownListFor(x => Model.ParetntLectureId, new SelectList(lectures, "Value", "Text"), "---No lecture inheritance---", htmlAttributes: new { @class = "form-control", @id = "Lecture" })
 
         <br />
         <hr />
@@ -121,3 +123,34 @@
     @*<br />*@
     <button class="btn info">Create</button>
 </form>
+@section Scripts {
+    @*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
+
+    <script type="text/javascript">
+    $('#Course').change(function () {
+                //we get selected value of programs
+        var selectedCourse = $("#Course").val();
+                var lecturesSelect = $('#Lecture');
+        lecturesSelect.empty();
+        lecturesSelect.append($('<option/>', {
+            value: 0,
+            text: "---No lecture inheritance---"
+        }));
+        if (selectedCourse != null && selectedCourse != '') {
+                    //the result from GetLectures(int programId) is stored in lectures object
+            $.getJSON('@Url.Action("GetLectures")', { courseId: selectedCourse }, function (dropdownData) {
+                        if (dropdownData != null && !jQuery.isEmptyObject(dropdownData))
+                        {
+                            $.each(dropdownData, function (index, data) {
+                                lecturesSelect.append($('<option/>', {
+                                    value: data.value,
+                                    text: data.text
+                                }));
+                            });
+                };
+                    });
+                }
+            });
+    </script>
+}
+

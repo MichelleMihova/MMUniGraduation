@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Data;
 using MMUniGraduation.Models;
@@ -40,6 +41,15 @@ namespace MMUniGraduation.Controllers
             return this.View(viewModel);
         }
 
+        [HttpGet]
+        public ActionResult GetLectures(int courseId)
+        {
+            var lectures = _lectureService.GetAllAsKeyValuePairs(courseId);
+
+            IEnumerable<SelectListItem> dropdownData = lectures.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
+
+            return Json(new SelectList(dropdownData, "Value", "Text"));
+        }
         [Authorize(Roles = "Admin, Teacher")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateLecture input)
