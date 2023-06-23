@@ -29,6 +29,15 @@ namespace MMUniGraduation.Controllers
             _userManager = userManager;
         }
 
+        [HttpGet]
+        public ActionResult GetLectures(int courseId)
+        {
+            var lectures = _lectureService.GetAllAsKeyValuePairs(courseId);
+
+            IEnumerable<SelectListItem> dropdownData = lectures.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
+
+            return Json(new SelectList(dropdownData, "Value", "Text"));
+        }
         [Authorize(Roles = "Admin, Teacher")]
         public IActionResult Create()
         {
@@ -39,16 +48,6 @@ namespace MMUniGraduation.Controllers
             };
 
             return this.View(viewModel);
-        }
-
-        [HttpGet]
-        public ActionResult GetLectures(int courseId)
-        {
-            var lectures = _lectureService.GetAllAsKeyValuePairs(courseId);
-
-            IEnumerable<SelectListItem> dropdownData = lectures.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
-
-            return Json(new SelectList(dropdownData, "Value", "Text"));
         }
         [Authorize(Roles = "Admin, Teacher")]
         [HttpPost]
@@ -107,26 +106,14 @@ namespace MMUniGraduation.Controllers
             var hw = await _context.Homeworks.FirstOrDefaultAsync(x => x.Id == input.HomeworkId);
             var student = await _context.Students.FirstOrDefaultAsync(x => x.UserId == hw.StudentId);
             var lecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == hw.LectureId);
+            var course = await _context.Courses.FirstOrDefaultAsync(x => x.Id == lecture.CourseId);
 
-            if (hw.HomeworkTitle.ToUpper() == "EXAM" && hw.Grade >= lecture.RequiredGrade)
+            //if (hw.HomeworkTitle.ToUpper() == "EXAM" && hw.Grade >= lecture.RequiredGrade)
+            if (hw.HomeworkTitle.ToUpper() == "EXAM" && hw.Grade >= course.MinimalGradeToPass)
             {
-                //TO DO.. change StudentId = student.UserId
-                //move curr course as passed 
-                //var passedCourse = new StudentCourses
-                //{
-                //    StudentId = student.Id,
-                //    CourseId = input.CourseId,
-                //    FinalGrade = input.HomeworkGrade,
-                //    IsPassed = true
-                //};
-
                 var studentCourse = _context.StudentCourses.FirstOrDefault(x => x.CourseId == lecture.CourseId && !x.IsPassed && x.StudentId == student.Id);
                 studentCourse.IsPassed = true;
                 studentCourse.FinalGrade = input.HomeworkGrade;
-                //await _context.StudentCourses.AddAsync(passedCourse);
-                //await _context.SaveChangesAsync();
-
-                //student.CurrentCourseId = null;
 
                 _context.SaveChanges();
             }

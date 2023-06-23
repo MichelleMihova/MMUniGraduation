@@ -39,7 +39,7 @@ namespace MMUniGraduation.Services
                 CourseStartDate = input.CourseStartDate,
                 SkipCoursEndDate = input.SkipCoursEndDate,
                 CreatorId = user.Id,
-                RequiredSkippingCourseGrade = input.RequiredSkippingCourseGrade
+                MinimalGradeToPass = input.MinimalGradeToPass
             };
 
             await _lectureService.CreateLectureFile(null, input.SkippingCourseFiles, "SKIPPINGEXAM", course);

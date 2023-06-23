@@ -52,7 +52,7 @@
     </div>
     <br />
     <label>Change required grade for skipping course:</label>
-    <input asp-for="RequiredSkippingCourseGrade" class="form-control" type="number" min="2" max="6" placeholder="Required grade" value="">
+    <input asp-for="MinimalGradeToPass" class="form-control" type="number" min="2" max="6" placeholder="Required grade" value="">
     <br />
     <input type="hidden" name="CourseId" value="@Model.Course.Id" />
     <button class="btn btn-outline-secondary btn-outline-info" style="text-align:right; margin-bottom: 1em;">Upload</button>

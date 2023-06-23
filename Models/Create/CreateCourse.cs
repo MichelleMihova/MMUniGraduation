@@ -25,7 +25,7 @@ namespace MMUniGraduation.Models.Create
 
         [NotMapped]
         public IEnumerable<IFormFile> SkippingCourseFiles { get; set; }
-        public decimal RequiredSkippingCourseGrade { get; set; }
+        public decimal MinimalGradeToPass { get; set; }
 
         [NotMapped]
         public IEnumerable<KeyValuePair<string, string>> StudyPrograms { get; set; }

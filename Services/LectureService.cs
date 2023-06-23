@@ -68,7 +68,8 @@ namespace MMUniGraduation.Services
             var courseId = lecture.CourseId;
 
             //get all exam lectures lectures
-            var assessmentLecturesId = _db.Lectures.Where(x => x.RequiredGrade != 0 && x.CourseId == courseId && x.IsExam == true).Select(x => x.Id);
+            //var assessmentLecturesId = _db.Lectures.Where(x => x.RequiredGrade != 0 && x.CourseId == courseId && x.IsExemption == true).Select(x => x.Id);
+            var assessmentLecturesId = _db.Lectures.Where(x => x.CourseId == courseId && x.IsExemption == true).Select(x => x.Id);
             var student = _db.Students.FirstOrDefault(x => x.UserId == studentId);
             
             bool passed = true;
@@ -87,22 +88,26 @@ namespace MMUniGraduation.Services
                 finalGrade += avGrade;
                 cnt++;
 
-                if (avGrade < _db.Lectures.FirstOrDefault(x => x.Id == assessmentLectureId).RequiredGrade)
-                {
-                    passed = false;
-                }
+                //if (avGrade < _db.Lectures.FirstOrDefault(x => x.Id == assessmentLectureId).RequiredGrade)
+                //{
+                //    passed = false;
+                //}
+            }
+            finalGrade /= cnt;
+
+            if (finalGrade < _db.Courses.FirstOrDefault(x => x.Id == courseId).MinimalGradeToPass)
+            {
+                passed = false;
             }
 
             if (passed)
             {
                 //mark course as passed
                 var studentCourse = _db.StudentCourses.FirstOrDefault(x => x.CourseId == courseId && !x.IsPassed && x.StudentId == student.Id);
-                finalGrade /= cnt;
+                //finalGrade /= cnt;
 
                 studentCourse.IsPassed = true;
                 studentCourse.FinalGrade = finalGrade;
-
-                //student.CurrentCourseId = null;
 
                 await _db.SaveChangesAsync();
             }
@@ -120,16 +125,17 @@ namespace MMUniGraduation.Services
                 DateTimeToShow = input.DateTimeToShow,
                 EndDateTimeForHW = input.EndDateTimeForHW,
                 CreatorId = user.Id,
-                IsFinal = input.IsFinal,
                 IsExam = input.IsExam,
+                IsExemption = input.IsExemption,
+                IsRetakeExam = input.IsRetakeExam,
                 RequiredGrade = input.RequiredGrade
             };
 
-            var haveFinalLecture =  _db.Lectures.FirstOrDefault(x => x.CourseId == input.CourseId && x.IsFinal == true);
+            var haveFinalLecture =  _db.Lectures.FirstOrDefault(x => x.CourseId == input.CourseId && x.IsExam == true);
             if (haveFinalLecture != null)
             {
-                lecture.IsFinal = false;
                 lecture.IsExam = false;
+                lecture.IsExemption = false;
             }
 
             await CreateLectureFile(lecture, input.Files, "LECTURE", null);
@@ -144,7 +150,7 @@ namespace MMUniGraduation.Services
             }
 
             //Check all lectures that are enought to finish the course when lecture is final
-            if (input.IsFinal)
+            if (input.IsExam)
             {
                 var courseId = lecture.CourseId;
                 var studentsId = _db.StudentCourses.Where(x => x.CourseId == courseId && !x.IsPassed).Select(x => x.StudentId).ToList();
@@ -156,7 +162,6 @@ namespace MMUniGraduation.Services
                 }
             }
         }
-
         private async void SetNextLectureId(CreateLecture input, Lecture lecture)
         {
             //_db.Lectures - all lectures
@@ -164,7 +169,6 @@ namespace MMUniGraduation.Services
             parentLecture.NextLectureId = lecture.Id;
             await _db.SaveChangesAsync();
         }
-
         private async Task RemoveLectureInheritance(int lectureId, Lecture currLecture)
         {
             var lectures = _db.Lectures.Where(x => x.ParetntLectureId == lectureId || x.NextLectureId == lectureId);
@@ -182,7 +186,6 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs()
         {
             return this._db.Lectures.Select(x => new
@@ -233,7 +236,6 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-        
         public async Task AddHomeworkToLecture(int lectureId, IFormFile file, string userId)
         {
             var currLectire = _db.Lectures.FirstOrDefault(x => x.Id == lectureId);
@@ -262,7 +264,6 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
         public async Task EditHomework(string homeworkId, decimal homeworkGrade, string homeworkComment)
         {
             var homework = _db.Homeworks.FirstOrDefault(x => x.Id == homeworkId);
@@ -279,7 +280,7 @@ namespace MMUniGraduation.Services
             await _db.SaveChangesAsync();
 
             var lecture = _db.Lectures.FirstOrDefault(x => x.Id == homework.LectureId);
-            var hasFinalLecture = _db.Lectures.FirstOrDefault(x => x.CourseId == lecture.CourseId && x.IsFinal == true);
+            var hasFinalLecture = _db.Lectures.FirstOrDefault(x => x.CourseId == lecture.CourseId && x.IsExam == true);
             //check first if we have final lectire for this course
             if (hasFinalLecture != null && homework.HomeworkTitle.ToUpper() != "EXAM")
             {
@@ -304,7 +305,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
 
-            if (grade >= course.RequiredSkippingCourseGrade)
+            if (grade >= course.MinimalGradeToPass)
             {
                 //mark course as passed
                 var studentCourse = _db.StudentCourses.FirstOrDefault(x => x.CourseId == course.Id && !x.IsPassed && x.StudentId == student.Id);
@@ -316,7 +317,6 @@ namespace MMUniGraduation.Services
                 await _db.SaveChangesAsync();
             }
         }
-
         public async Task EditLectureFile(EditCourseViewModel input)
         {
             var lectureFile = _db.LectureFiles.FirstOrDefault(x => x.Id == input.LectureFileId);
@@ -333,7 +333,6 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
         public async Task EditLecture(EditCourseViewModel input)
         {
             var lecture = _db.Lectures.FirstOrDefault(l => l.Id == input.LectureId);
@@ -361,7 +360,6 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
         public async Task DeleteLectureMaterial(string lectureFileId)
         {
             var lectureFile = _db.LectureFiles.FirstOrDefault(l => l.Id == lectureFileId);
@@ -370,7 +368,6 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
         public async Task DeleteLectureMaterial(int lectureId)
         {
             var lectureFiles = _db.LectureFiles.Where(l => l.LectureId == lectureId).ToArray();
@@ -382,7 +379,6 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
         public async Task DeleteHomework(int lectureId)
         {
             var homeworks = _db.Homeworks.Where(l => l.LectureId == lectureId).ToArray();
@@ -394,7 +390,6 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
         public async Task DeleteLecture(int lectureId)
         {
             var lecture = _db.Lectures.FirstOrDefault(l => l.Id == lectureId);

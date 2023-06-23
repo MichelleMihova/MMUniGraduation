@@ -156,10 +156,20 @@ namespace MMUniGraduation.Controllers
                 Student = student,
                 HWMaterials = homeworkMaterial,
                 StudentCourse = studentCurrentCourse,
-                Image = photo
+                Image = photo,
+                Lector = lector
             };
 
             return View(viewModel);
+        }
+
+        [HttpGet]
+        public ActionResult GetCourses(int programId)
+        {
+            var courses = _courseService.GetAllAsKeyValuePairs(programId);
+            IEnumerable<SelectListItem> dropdownData = courses.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
+
+            return Json(new SelectList(dropdownData, "Value", "Text"));
         }
 
         [Authorize(Roles = "Admin, Teacher")]
@@ -173,24 +183,7 @@ namespace MMUniGraduation.Controllers
 
             return this.View(viewModel);
         }
-        [HttpGet]
-        public ActionResult GetCourses(int programId)
-        {
-            //var courses = _context.Courses.Where(x=> x.StudyProgramId == programId).Select(x => new
-            //{
-            //    x.Id,
-            //    x.Name,
-            //    x.Signature
-            //})
-            //    .OrderBy(x => x.Name)
-            //    .ToList()
-            //    .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Signature + " " + x.Name));
-
-            var courses = _courseService.GetAllAsKeyValuePairs(programId);
-            IEnumerable<SelectListItem> dropdownData = courses.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
-            
-            return Json(new SelectList( dropdownData, "Value", "Text"));
-        }
+        
         [Authorize(Roles = "Admin, Teacher")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateCourse input)
@@ -442,8 +435,8 @@ namespace MMUniGraduation.Controllers
                 await _lectureService.CreateLectureFile(null, input.SkippingCourseFiles, "SKIPPINGEXAM", course);
             }
 
-            if (input.RequiredSkippingCourseGrade != 0 && input.RequiredSkippingCourseGrade != course.RequiredSkippingCourseGrade)
-                course.RequiredSkippingCourseGrade = input.RequiredSkippingCourseGrade;
+            if (input.MinimalGradeToPass != 0 && input.MinimalGradeToPass != course.MinimalGradeToPass)
+                course.MinimalGradeToPass = input.MinimalGradeToPass;
 
             await _context.SaveChangesAsync();
             await _lectureService.EditLecture(input);

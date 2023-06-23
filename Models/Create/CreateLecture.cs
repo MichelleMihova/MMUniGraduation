@@ -14,10 +14,14 @@ namespace MMUniGraduation.Models.Create
         public int ParetntLectureId { get; set; }
         public string VideoUrl { get; set; }
         public string CreatorId { get; set; }
-        public bool IsFinal { get; set; }
+        //Exam lecture
         public bool IsExam { get; set; }
+        //Exemption lecture
+        public bool IsExemption { get; set; }
+        //Retake exam lecture
+        public bool IsRetakeExam { get; set; }
+        //may remove RequiredGrade or to use it for showing lecture
         public decimal RequiredGrade { get; set; }
-
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]

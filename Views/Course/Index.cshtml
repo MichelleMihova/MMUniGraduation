@@ -25,17 +25,12 @@
             <img src="~/img/@Model.Image" alt="Upload image" class="img-fluid rounded-circle shadow-lg" style="width: 180px;">
         </div>
         <div class="col" style="text-align:right">
-            <h6>Lector Name</h6>
-            <p>Lector Bio: Students are introduced to database concepts and learn how to connect Java applications to databases using Java Database Connectivity (JDBC). They also learn how to perform database operations such as querying, inserting, updating, and deleting data.</p>
-
+            <h6>@Model.Lector.FirstName @Model.Lector.LastName</h6>
+            <p>@Model.Lector.Bio</p>
         </div>
     </div>
     <hr />
     <div class="row">
-        @*<div class="col">
-                <img src="~/img/@Model.Image" alt="Upload image" class="img-fluid rounded-circle shadow-lg" style="width: 180px;">
-                <p>Database Connectivity: Students are introduced to database concepts and learn how to connect Java applications to databases using Java Database Connectivity (JDBC). They also learn how to perform database operations such as querying, inserting, updating, and deleting data.</p>
-            </div>*@
         <div class="col">
             <label>Skip the course by passing the exam before: @Model.Course.SkipCoursEndDate.ToString("dd/mm/yyyy HH:MM") </label>
         </div>
@@ -110,10 +105,8 @@
                         <div class="card-body">
                             @lecture.Description
                         </div>
-                        @*@if (lecture.IsFinal == true)*@
-
                         <div class="card-body">
-                            @if (lecture.IsFinal == true)
+                            @if (lecture.IsExam == true)
                             {
                                 <p>Date of performance: @lecture.DateTimeToShow.ToString("dd/mm/yyyy HH:MM")</p>
                                 <br />
@@ -125,9 +118,7 @@
                                     <iframe class="embed-responsive-item" src="@lecture.VideoUrl" allowfullscreen></iframe>
                                 </div>
                             }
-
                         </div>
-
                         <div class="container">
                             <div class="row">
                                 <div class="col">
@@ -137,7 +128,6 @@
                                                 <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
                                             </svg>
                                             <i class="bi bi-file-earmark-text-fill">Lecture materials:</i>
-
                                         </li>
                                         @*@if (User.IsInRole("Teacher") || User.IsInRole("Admin") || (Model.Student.ShowTextMaterials && lecture))
                                             {*@
@@ -167,7 +157,7 @@
                                 </div>
                                 @if (User.IsInRole("Student"))
                                 {
-                                    @if (lecture.IsFinal)
+                                    @if (lecture.IsExam || lecture.IsRetakeExam)
                                     {
                                         <div class="col">
                                             <li>
@@ -200,15 +190,6 @@
                                                     <input type="submit" value="Upload" />
                                                 }
                                             }
-                                            @*else if (Model.EndDateTime >= DateTime.Now && lecture.Homeworks.Count() == 0 && Model.SkipCourse)
-                                                {
-                                                    @using (Html.BeginForm("AddExamSolution", "Lecture", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                                                    {
-                                                        @Html.TextBox("file", "", new { type = "file" })
-                                                        <input type="text" name="lectureId" value="@lecture.Id" style="visibility:hidden;" />
-                                                        <input type="submit" value="Upload" />
-                                                    }
-                                                }*@
                                         </div>
                                     }
                                     else
@@ -241,7 +222,7 @@
                                                     </ul>
                                                 }
                                             }
-                                            @if (lecture.EndDateTimeForHW >= DateTime.Now || lecture.Homeworks.Count() == 0)
+                                            @if ((lecture.EndDateTimeForHW >= DateTime.Now && lecture.Homeworks.Count() == 0) || (lecture.Homeworks.Count() == 0 && !lecture.IsExemption))
                                             {
                                                 @using (Html.BeginForm("AddHomework", "Lecture", FormMethod.Post, new { enctype = "multipart/form-data" }))
                                                 {

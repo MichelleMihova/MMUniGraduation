@@ -20,7 +20,6 @@ namespace MMUniGraduation.Controllers
         private readonly IStudyProgramService _studyProgramService;
         private readonly ILectureService _lectureService;
         private readonly ILectorService _lectorService;
-        //private readonly CourseController _courseController;
         private readonly UserManager<ApplicationUser> _userManager;
         public LectorController(ApplicationDbContext context, ICourseService courseService,
             IStudyProgramService studyProgramService, ILectureService lectureService, ILectorService lectorService,
@@ -31,7 +30,6 @@ namespace MMUniGraduation.Controllers
             _studyProgramService = studyProgramService;
             _lectureService = lectureService;
             _lectorService = lectorService;
-            //_courseController = courseController;
             _userManager = userManager;
         }
         public async Task<IActionResult> Index()
@@ -55,6 +53,8 @@ namespace MMUniGraduation.Controllers
 
             var viewModel = new IndexLectorViewModel
             {
+                FirstName = lector.FirstName,
+                LastName = lector.LastName,
                 Bio = lector.Bio,
                 PhoneNumber = lector.PhoneNumber,
                 Image = photo,
@@ -96,6 +96,22 @@ namespace MMUniGraduation.Controllers
             };
 
             return View(viewModel);
+        }
+        [HttpGet]
+        public ActionResult RelatedCourses(int programId)
+        {
+            var courses = _courseService.GetAllAsKeyValuePairs(programId);
+            IEnumerable<SelectListItem> dropdownData = courses.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
+
+            return Json(new SelectList(dropdownData, "Value", "Text"));
+        }
+        [HttpGet]
+        public ActionResult RelatedLectures(int courseId)
+        {
+            var lectures = _lectureService.GetAllAsKeyValuePairs(courseId);
+            IEnumerable<SelectListItem> dropdownData = lectures.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
+
+            return Json(new SelectList(dropdownData, "Value", "Text"));
         }
         public IActionResult Assessment()
         {
@@ -152,22 +168,6 @@ namespace MMUniGraduation.Controllers
 
             return View(viewModel);
         }
-        [HttpGet]
-        public ActionResult RelatedCourses(int programId)
-        {
-            var courses = _courseService.GetAllAsKeyValuePairs(programId);
-            IEnumerable<SelectListItem> dropdownData = courses.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
-
-            return Json(new SelectList(dropdownData, "Value", "Text"));
-        }
-        [HttpGet]
-        public ActionResult RelatedLectures(int courseId)
-        {
-            var lectures = _lectureService.GetAllAsKeyValuePairs(courseId);
-            IEnumerable<SelectListItem> dropdownData = lectures.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
-
-            return Json(new SelectList(dropdownData, "Value", "Text"));
-        }
 
         [HttpPost]
         public IActionResult Assessment(AssessmentsViewModel input)
@@ -197,6 +197,19 @@ namespace MMUniGraduation.Controllers
 
             //TO DO..
             //Show assessments only for current user
+            if (input.ProgramId != 0)
+            {
+
+            }
+            else if (input.CourseId != 0)
+            {
+
+            }
+            else if (input.LectureId != 0)
+            {
+
+            }
+
             foreach (var course in viewModel.AllCourses)
             {
                 if (input.KindOfAssessment.ToUpper() == "SKIPPINGEXAMSOLUTIONS")

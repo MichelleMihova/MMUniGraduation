@@ -20,7 +20,7 @@ namespace MMUniGraduation.ViewModels
         public IEnumerable<IFormFile> Files { get; set; }
         public IEnumerable<IFormFile> HWFiles { get; set; }
         public IEnumerable<IFormFile> SkippingCourseFiles { get; set; }
-        public decimal RequiredSkippingCourseGrade { get; set; }
+        public decimal MinimalGradeToPass { get; set; }
 
         public string LectureFileId { get; set; }
         public decimal MinHWGrade { get; set; }
@@ -40,9 +40,6 @@ namespace MMUniGraduation.ViewModels
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateTimeToShowFile { get; set; }
-
-        //public int StudyProgramId { get; set; }
-        //public virtual StudyProgram StudyProgram { get; set; }
 
         public Course Course { get; set; }
         public virtual ICollection<Lecture> Lectures { get; set; }
