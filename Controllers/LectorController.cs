@@ -172,19 +172,19 @@ namespace MMUniGraduation.Controllers
         [HttpPost]
         public IActionResult Assessment(AssessmentsViewModel input)
         {
-            if (!ModelState.IsValid)
-            {
-                input.AllCourses = _context.Courses.ToList();
-                input.StudyPrograms = _studyProgramService.GetAllAsKeyValuePairs();
-                input.Courses = _courseService.GetAllAsKeyValuePairs();
-                input.Lectures = _lectureService.GetAllAsKeyValuePairs();
+            //if (!ModelState.IsValid)
+            //{
+            //    input.AllCourses = _context.Courses.ToList();
+            //    input.StudyPrograms = _studyProgramService.GetAllAsKeyValuePairs();
+            //    input.Courses = _courseService.GetAllAsKeyValuePairs();
+            //    input.Lectures = _lectureService.GetAllAsKeyValuePairs();
 
-                return this.View(input);
-            }
+            //    return this.View(input);
+            //}
 
             var viewModel = new AssessmentsViewModel
             {
-                AllCourses = _context.Courses.Where(c => c.Id == input.CourseId && c.StudyProgramId == input.ProgramId),
+                AllCourses = _context.Courses.ToList(),
                 StudyPrograms = _studyProgramService.GetAllAsKeyValuePairs(),
                 Courses = _courseService.GetAllAsKeyValuePairs(),
                 Lectures = _lectureService.GetAllAsKeyValuePairs()
@@ -197,60 +197,65 @@ namespace MMUniGraduation.Controllers
 
             //TO DO..
             //Show assessments only for current user
-            if (input.ProgramId != 0)
+            List<Course> courses = null;
+            if (input.CourseId != 0 || input.ProgramId != 0)
             {
-
-            }
-            else if (input.CourseId != 0)
-            {
-
-            }
-            else if (input.LectureId != 0)
-            {
-
-            }
-
-            foreach (var course in viewModel.AllCourses)
-            {
-                if (input.KindOfAssessment.ToUpper() == "SKIPPINGEXAMSOLUTIONS")
+                //var courses = _context.Courses.Where(x => x.Id == input.CourseId).ToList();
+                //List<Course> courses;
+                if (input.CourseId != 0)
                 {
-                    skippingAssesments = _context.SkippingAssignments.Where(x => x.CourseId == course.Id && x.Grade == 0).ToList();
-
-                    course.SkippingAssignments = skippingAssesments;
-                    var studentsId = _context.SkippingAssignments.Select(x => x.StudentId).ToList();
-
-                    foreach (var id in studentsId)
-                    {
-                        var student = _context.Students.FirstOrDefault(x => x.UserId == id);
-                        if (!students.Contains(student))
-                        {
-                            students.Add(student);
-                        }
-                    }
+                    courses = _context.Courses.Where(x => x.Id == input.CourseId).ToList();
+                }
+                else if (input.ProgramId != 0)
+                {
+                    courses = _context.Courses.Where(x => x.StudyProgramId == input.ProgramId).ToList();
                 }
                 else
                 {
-                    lectures = _context.Lectures.Where(l => l.CourseId == course.Id && l.Id == input.LectureId).ToList();
-                    course.Lectures = lectures;
+                    courses = _context.Courses.ToList();
+                }
+            }
 
-                    foreach (var lecture in course.Lectures)
+            if (input.LectureId != 0)
+            {
+                var lecture = _context.Lectures.FirstOrDefault(l => l.Id == input.LectureId);
+
+                if (input.KindOfAssessment.ToUpper() == "HOMEWORKS")
+                {
+                    homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() != "EXAM").ToList();
+                }
+                else if (input.KindOfAssessment.ToUpper() == "EXAMSOLUTIONS")
+                {
+                    homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() == "EXAM").ToList();
+                }
+                else if (input.KindOfAssessment.ToUpper() == "ALLASSESSMENTS")
+                {
+                    homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
+                }
+
+                lecture.Homeworks = homeworks;
+
+                var studentsId = _context.Homeworks.Select(x => x.StudentId).ToList();
+                foreach (var id in studentsId)
+                {
+                    var student = _context.Students.FirstOrDefault(x => x.UserId == id);
+                    if (!students.Contains(student))
                     {
-                        if (input.KindOfAssessment.ToUpper() == "HOMEWORKS")
-                        {
-                            homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() != "EXAM").ToList();
-                        }
-                        else if (input.KindOfAssessment.ToUpper() == "EXAMSOLUTIONS")
-                        {
-                            homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() == "EXAM").ToList();
-                        }
-                        else if (input.KindOfAssessment.ToUpper() == "ALLASSESSMENTS")
-                        {
-                            homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
-                        }
+                        students.Add(student);
+                    }
+                }
+            }
+            else
+            {
+                foreach (var course in courses)
+                {
+                    if (input.KindOfAssessment.ToUpper() == "SKIPPINGEXAMSOLUTIONS" || input.KindOfAssessment.ToUpper() == "ALLASSESSMENTS")
+                    {
+                        skippingAssesments = _context.SkippingAssignments.Where(x => x.CourseId == course.Id && x.Grade == 0).ToList();
 
-                        lecture.Homeworks = homeworks;
+                        course.SkippingAssignments = skippingAssesments;
+                        var studentsId = _context.SkippingAssignments.Select(x => x.StudentId).ToList();
 
-                        var studentsId = _context.Homeworks.Select(x => x.StudentId).ToList();
                         foreach (var id in studentsId)
                         {
                             var student = _context.Students.FirstOrDefault(x => x.UserId == id);
@@ -259,9 +264,117 @@ namespace MMUniGraduation.Controllers
                                 students.Add(student);
                             }
                         }
+
+                        if (input.KindOfAssessment.ToUpper() == "ALLASSESSMENTS")
+                        {
+                            lectures = _context.Lectures.Where(l => l.CourseId == course.Id).ToList();
+                            foreach (var lecture in course.Lectures)
+                            {
+                                homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
+                                lecture.Homeworks = homeworks;
+                            }
+
+                            var studentsHWId = _context.Homeworks.Select(x => x.StudentId).ToList();
+                            foreach (var id in studentsHWId)
+                            {
+                                var student = _context.Students.FirstOrDefault(x => x.UserId == id);
+                                if (!students.Contains(student))
+                                {
+                                    students.Add(student);
+                                }
+                            }
+                        }
                     }
+                    else
+                    {
+                        lectures = _context.Lectures.Where(l => l.CourseId == course.Id).ToList();
+                        course.Lectures = lectures;
+
+                        foreach (var lecture in course.Lectures)
+                        {
+                            if (input.KindOfAssessment.ToUpper() == "HOMEWORKS")
+                            {
+                                homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() != "EXAM").ToList();
+                            }
+                            else if (input.KindOfAssessment.ToUpper() == "EXAMSOLUTIONS")
+                            {
+                                homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() == "EXAM").ToList();
+                            }
+                            else if (input.KindOfAssessment.ToUpper() == "ALLASSESSMENTS")
+                            {
+                                homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
+                            }
+
+                            lecture.Homeworks = homeworks;
+
+                            var studentsId = _context.Homeworks.Select(x => x.StudentId).ToList();
+                            foreach (var id in studentsId)
+                            {
+                                var student = _context.Students.FirstOrDefault(x => x.UserId == id);
+                                if (!students.Contains(student))
+                                {
+                                    students.Add(student);
+                                }
+                            }
+                        }
+                    }
+
                 }
             }
+
+
+            //foreach (var course in viewModel.AllCourses)
+            //{
+            //    if (input.KindOfAssessment.ToUpper() == "SKIPPINGEXAMSOLUTIONS")
+            //    {
+            //        skippingAssesments = _context.SkippingAssignments.Where(x => x.CourseId == course.Id && x.Grade == 0).ToList();
+
+            //        course.SkippingAssignments = skippingAssesments;
+            //        var studentsId = _context.SkippingAssignments.Select(x => x.StudentId).ToList();
+
+            //        foreach (var id in studentsId)
+            //        {
+            //            var student = _context.Students.FirstOrDefault(x => x.UserId == id);
+            //            if (!students.Contains(student))
+            //            {
+            //                students.Add(student);
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        lectures = _context.Lectures.Where(l => l.CourseId == course.Id && l.Id == input.LectureId).ToList();
+            //        course.Lectures = lectures;
+
+            //        foreach (var lecture in course.Lectures)
+            //        {
+            //            if (input.KindOfAssessment.ToUpper() == "HOMEWORKS")
+            //            {
+            //                homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() != "EXAM").ToList();
+            //            }
+            //            else if (input.KindOfAssessment.ToUpper() == "EXAMSOLUTIONS")
+            //            {
+            //                homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() == "EXAM").ToList();
+            //            }
+            //            else if (input.KindOfAssessment.ToUpper() == "ALLASSESSMENTS")
+            //            {
+            //                homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
+            //            }
+
+            //            lecture.Homeworks = homeworks;
+
+            //            var studentsId = _context.Homeworks.Select(x => x.StudentId).ToList();
+            //            foreach (var id in studentsId)
+            //            {
+            //                var student = _context.Students.FirstOrDefault(x => x.UserId == id);
+            //                if (!students.Contains(student))
+            //                {
+            //                    students.Add(student);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
             viewModel.Students = students;
 
             return View(viewModel);

@@ -14,6 +14,7 @@ namespace MMUniGraduation.Models
         public string FileName { get; set; }
         public string FileTitle { get; set; }
         public decimal MinHWGrade { get; set; }
+        public decimal MaxHWGrade { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

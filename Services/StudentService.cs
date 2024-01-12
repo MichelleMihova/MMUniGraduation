@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MMUniGraduation.Services
 {
-    public class StudentService: IStudentService
+    public class StudentService : IStudentService
     {
         private readonly string[] allowedExtensions = new[] { "jpg", "png", "gif", "jpeg", "tif" };
         private readonly ApplicationDbContext _db;
@@ -47,35 +47,37 @@ namespace MMUniGraduation.Services
                 currStudent.ShowVideoMaterials = input.ShowVideoMaterials;
             }
 
-
-            if (studentPhoto != null)
+            if (input.Photos != null)
             {
-                //add delete from folder
-                _db.Images.Remove(studentPhoto);
-
-                await _db.SaveChangesAsync();
-            }
-
-            foreach (var photo in input.Photos)
-            {
-                var extension = Path.GetExtension(photo.FileName).TrimStart('.');
-                var wwwrootPath = _webHost.WebRootPath;
-
-                if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+                if (studentPhoto != null)
                 {
-                    throw new Exception($"Invalid image extension {extension} !");
+                    //add delete from folder
+                    _db.Images.Remove(studentPhoto);
+
+                    await _db.SaveChangesAsync();
                 }
 
-                var dbImage = new Image
+                foreach (var photo in input.Photos)
                 {
-                    Extension = extension,
-                };
+                    var extension = Path.GetExtension(photo.FileName).TrimStart('.');
+                    var wwwrootPath = _webHost.WebRootPath;
 
-                currStudent.Photos.Add(dbImage);
+                    if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+                    {
+                        throw new Exception($"Invalid image extension {extension} !");
+                    }
 
-                var physicalPath = $"{wwwrootPath}/img/{dbImage.Id}.{extension}";
-                await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
-                await photo.CopyToAsync(fileStream);
+                    var dbImage = new Image
+                    {
+                        Extension = extension,
+                    };
+
+                    currStudent.Photos.Add(dbImage);
+
+                    var physicalPath = $"{wwwrootPath}/img/{dbImage.Id}.{extension}";
+                    await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
+                    await photo.CopyToAsync(fileStream);
+                }
             }
 
             await _db.SaveChangesAsync();

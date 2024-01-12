@@ -23,9 +23,6 @@
     <input class="form-control" asp-for="CourseStartDate" type="datetime-local" />
     <label>Change @Model.Course.SkipCoursEndDate date and time for end of the skipping course option:</label>
     <input class="form-control" asp-for="SkipCoursEndDate" type="datetime-local" />
-    @*<span asp-validation-for="SkipCoursEndDate" class="text-danger"></span>*@
-    @*<input class="form-control" asp-for="@Model.Course.SkipCoursEndDate" asp-format="{0:yyyy-MM-ddTHH:mm}" />
-        <span asp-validation-for="SkipCoursEndDate" class="text-danger"></span>*@
     <br />
     @if (Model.SkippingCourseMaterials.Any())
     {
@@ -133,8 +130,12 @@
                                                                         <input class="form-control" asp-for="DateTimeToShowFile" type="datetime-local" form="ConstraintsForm" />
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>Select minimal homework grade to show lecture material:</label>
+                                                                        <label>Select minimal homework grade to display lecture material:</label>
                                                                         <input asp-for="MinHWGrade" form="ConstraintsForm" class="form-control" placeholder="Grade">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Select maximum homework grade to display lecture material:</label>
+                                                                        <input asp-for="MaxHWGrade" form="ConstraintsForm" class="form-control" placeholder="Grade">
                                                                     </div>
                                                                 </div>
                                                                 <input type="hidden" name="CourseId" value="@Model.Course.Id" />

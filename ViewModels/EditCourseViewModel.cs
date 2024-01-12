@@ -24,6 +24,7 @@ namespace MMUniGraduation.ViewModels
 
         public string LectureFileId { get; set; }
         public decimal MinHWGrade { get; set; }
+        public decimal MaxHWGrade { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]

@@ -46,11 +46,11 @@
             <br />
 
             <label>Select kind of assessment</label>
-            <select asp-for="KindOfAssessment" class="form-control">
+            <select asp-for="KindOfAssessment" class="form-control" id="KindOfAssessment">
+                <option value="AllAssessments">All</option>
                 <option value="Homeworks">Homeworks</option>
                 <option value="ExamSolutions">Exam solutions</option>
-                <option value="SkippingExamSolutions">Skipping exam solutions</option>
-                <option value="AllAssessments">All</option>
+                <option value="SkippingExamSolutions" id="Skip">Skipping exam solutions</option>
             </select>
             <br />
             <br />
@@ -187,6 +187,7 @@
                 };
                     });
                 }
-            });
+        });
+
     </script>
 }

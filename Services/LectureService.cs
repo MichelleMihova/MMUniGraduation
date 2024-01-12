@@ -325,6 +325,11 @@ namespace MMUniGraduation.Services
             {
                 lectureFile.MinHWGrade = input.MinHWGrade;
             }
+            
+            if (lectureFile != null && input.MaxHWGrade != 0)
+            {
+                lectureFile.MinHWGrade = input.MaxHWGrade;
+            }
 
             if (lectureFile != null && input.DateTimeToShowFile != lectureFile.DateTimeToShow && input.DateTimeToShowFile != Convert.ToDateTime("1.1.0001 г. 0:00:00"))
             {

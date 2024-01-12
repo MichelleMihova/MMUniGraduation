@@ -32,7 +32,7 @@
     <hr />
     <div class="row">
         <div class="col">
-            <label>Skip the course by passing the exam before: @Model.Course.SkipCoursEndDate.ToString("dd/mm/yyyy HH:MM") </label>
+            <label>Skip the course by passing the exam before: @Model.Course.SkipCoursEndDate.ToString("dd/MM/yyyy HH:MM") </label>
         </div>
         <div class="col">
             <div class="form-check" style="text-align:right;">
@@ -88,8 +88,24 @@
 <br />
 
 @{ int i = 0;
+    //decimal grade = 0;
     foreach (var lecture in Model.Course.Lectures)
     {
+        //int cnt = 0;
+        //if (lecture.RequiredGrade != 0 && lecture.ParetntLectureId != 0)
+        //{
+        //    if (lecture.RequiredGrade > grade)
+        //    {
+        //        break;
+        //    }
+        //}
+        //foreach (var g in lecture.Homeworks)
+        //{
+        //    grade += g.Grade;
+        //    cnt++;
+        //}
+        //grade /= cnt;
+
         if (lecture.DateTimeToShow <= DateTime.Now || Model.SkipCourse || User.IsInRole("Admin") || User.IsInRole("Teacher"))
         {
             <div class="container">
