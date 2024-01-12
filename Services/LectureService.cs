@@ -21,12 +21,14 @@ namespace MMUniGraduation.Services
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _webHost;
         private readonly UserManager<ApplicationUser> _userManager;
+
         public LectureService(ApplicationDbContext db, IWebHostEnvironment webHost, UserManager<ApplicationUser> userManager)
         {
             _db = db;
             _webHost = webHost;
             _userManager = userManager;
         }
+
         public async Task CreateLectureFile(Lecture lecture, IEnumerable<IFormFile> files, string type, Course course)
         {
             foreach (var file in files)
@@ -63,12 +65,12 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         public async Task IsPassed(Lecture lecture, string studentId)
         {
             var courseId = lecture.CourseId;
 
             //get all exam lectures lectures
-            //var assessmentLecturesId = _db.Lectures.Where(x => x.RequiredGrade != 0 && x.CourseId == courseId && x.IsExemption == true).Select(x => x.Id);
             var assessmentLecturesId = _db.Lectures.Where(x => x.CourseId == courseId && x.IsExemption == true).Select(x => x.Id);
             var student = _db.Students.FirstOrDefault(x => x.UserId == studentId);
             
@@ -87,11 +89,6 @@ namespace MMUniGraduation.Services
                 avGrade /= homeworkGrades.Count();
                 finalGrade += avGrade;
                 cnt++;
-
-                //if (avGrade < _db.Lectures.FirstOrDefault(x => x.Id == assessmentLectureId).RequiredGrade)
-                //{
-                //    passed = false;
-                //}
             }
             finalGrade /= cnt;
 
@@ -104,15 +101,14 @@ namespace MMUniGraduation.Services
             {
                 //mark course as passed
                 var studentCourse = _db.StudentCourses.FirstOrDefault(x => x.CourseId == courseId && !x.IsPassed && x.StudentId == student.Id);
-                //finalGrade /= cnt;
 
                 studentCourse.IsPassed = true;
                 studentCourse.FinalGrade = finalGrade;
 
                 await _db.SaveChangesAsync();
             }
-
         }
+
         public async Task CreateLectureAsync(CreateLecture input, ApplicationUser user)
         {
             var lecture = new Lecture
@@ -132,6 +128,7 @@ namespace MMUniGraduation.Services
             };
 
             var haveFinalLecture =  _db.Lectures.FirstOrDefault(x => x.CourseId == input.CourseId && x.IsExam == true);
+
             if (haveFinalLecture != null)
             {
                 lecture.IsExam = false;
@@ -162,16 +159,18 @@ namespace MMUniGraduation.Services
                 }
             }
         }
+
         private async void SetNextLectureId(CreateLecture input, Lecture lecture)
         {
-            //_db.Lectures - all lectures
             var parentLecture = _db.Lectures.FirstOrDefault(x => x.Id == input.ParetntLectureId);
             parentLecture.NextLectureId = lecture.Id;
             await _db.SaveChangesAsync();
         }
+
         private async Task RemoveLectureInheritance(int lectureId, Lecture currLecture)
         {
             var lectures = _db.Lectures.Where(x => x.ParetntLectureId == lectureId || x.NextLectureId == lectureId);
+
             foreach (var lecture in lectures)
             {
                 if (lecture.NextLectureId == lectureId)
@@ -186,6 +185,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs()
         {
             return this._db.Lectures.Select(x => new
@@ -197,6 +197,7 @@ namespace MMUniGraduation.Services
                 .ToList()
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name));
         }
+
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs(int courseId)
         {
             return this._db.Lectures.Where(x => x.CourseId == courseId).Select(x => new
@@ -208,6 +209,7 @@ namespace MMUniGraduation.Services
                 .ToList()
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name));
         }
+
         public async Task AddExamSolutionToLecture(int lectureId, IFormFile file, string userId)
         {
             var currLectire = _db.Lectures.FirstOrDefault(x => x.Id == lectureId);
@@ -236,6 +238,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         public async Task AddHomeworkToLecture(int lectureId, IFormFile file, string userId)
         {
             var currLectire = _db.Lectures.FirstOrDefault(x => x.Id == lectureId);
@@ -264,6 +267,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         public async Task EditHomework(string homeworkId, decimal homeworkGrade, string homeworkComment)
         {
             var homework = _db.Homeworks.FirstOrDefault(x => x.Id == homeworkId);
@@ -281,12 +285,14 @@ namespace MMUniGraduation.Services
 
             var lecture = _db.Lectures.FirstOrDefault(x => x.Id == homework.LectureId);
             var hasFinalLecture = _db.Lectures.FirstOrDefault(x => x.CourseId == lecture.CourseId && x.IsExam == true);
+
             //check first if we have final lectire for this course
             if (hasFinalLecture != null && homework.HomeworkTitle.ToUpper() != "EXAM")
             {
                 await IsPassed(lecture, homework.StudentId);
             }
         }
+
         public async Task EditSkippingAssignment(string skippingAssignmentId, decimal grade, string comment)
         {
             var skippingAssignment = _db.SkippingAssignments.FirstOrDefault(x => x.Id == skippingAssignmentId);
@@ -309,7 +315,6 @@ namespace MMUniGraduation.Services
             {
                 //mark course as passed
                 var studentCourse = _db.StudentCourses.FirstOrDefault(x => x.CourseId == course.Id && !x.IsPassed && x.StudentId == student.Id);
-                //finalGrade /= cnt;
 
                 studentCourse.IsPassed = true;
                 studentCourse.FinalGrade = grade;
@@ -317,6 +322,7 @@ namespace MMUniGraduation.Services
                 await _db.SaveChangesAsync();
             }
         }
+
         public async Task EditLectureFile(EditCourseViewModel input)
         {
             var lectureFile = _db.LectureFiles.FirstOrDefault(x => x.Id == input.LectureFileId);
@@ -338,6 +344,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         public async Task EditLecture(EditCourseViewModel input)
         {
             var lecture = _db.Lectures.FirstOrDefault(l => l.Id == input.LectureId);
@@ -365,6 +372,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         public async Task DeleteLectureMaterial(string lectureFileId)
         {
             var lectureFile = _db.LectureFiles.FirstOrDefault(l => l.Id == lectureFileId);
@@ -373,6 +381,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         public async Task DeleteLectureMaterial(int lectureId)
         {
             var lectureFiles = _db.LectureFiles.Where(l => l.LectureId == lectureId).ToArray();
@@ -384,6 +393,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         public async Task DeleteHomework(int lectureId)
         {
             var homeworks = _db.Homeworks.Where(l => l.LectureId == lectureId).ToArray();
@@ -395,6 +405,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         public async Task DeleteLecture(int lectureId)
         {
             var lecture = _db.Lectures.FirstOrDefault(l => l.Id == lectureId);
@@ -404,6 +415,5 @@ namespace MMUniGraduation.Services
             _db.Lectures.Remove(lecture);
             await _db.SaveChangesAsync();
         }
-
     }
 }

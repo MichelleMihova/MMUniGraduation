@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MMUniGraduation.ViewModels
 {
@@ -23,7 +21,6 @@ namespace MMUniGraduation.ViewModels
         public Lector Lector { get; set; }
         public virtual ICollection<Lecture> Lectures { get; set; }
         public virtual ICollection<LectureFile> HWMaterials { get; set; }
-        //public virtual ICollection<LectureFile> SkippingCourseMaterials { get; set; }
         public virtual StudentCourses StudentCourse { get; set; }
     }
 }

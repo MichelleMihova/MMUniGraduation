@@ -8,6 +8,7 @@ namespace MMUniGraduation.Models
         {
             this.Id = Guid.NewGuid().ToString();
         }
+
         public string Id { get; set; }
         public string HomeworkName { get; set; }
         public string Extension { get; set; }
@@ -15,7 +16,6 @@ namespace MMUniGraduation.Models
         public decimal Grade { get; set; }
         public string Comment { get; set; }
         public string StudentId { get; set; }
-        
         public int? LectureId { get; set; }
         public virtual Lecture Lecture { get; set; }
     }

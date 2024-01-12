@@ -45,6 +45,7 @@ namespace MMUniGraduation.Services
                 .To<T>()
                 .ToList();
         }
+
         public IEnumerable<T> GetAllPrograms<T>()
         {
             var allProgramsCount = _db.StudyPrograms.Count();

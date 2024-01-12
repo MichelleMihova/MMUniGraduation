@@ -23,7 +23,6 @@ namespace MMUniGraduation.Models
         public int NextCourseId { get; set; }
         public string CreatorId { get; set; }
         public ICollection<LectureFile> SkippingCourseMaterials { get; set; }
-        //rename RequiredSkippingCourseGrade -> RequiredGradeToPass
         public decimal MinimalGradeToPass { get; set; }
 
 

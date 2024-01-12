@@ -10,6 +10,7 @@ namespace MMUniGraduation.Models
             Courses = new HashSet<Course>();
             this.Photos = new HashSet<Image>();
         }
+
         public int Id { get; set; }
         public string UserId { get; set; }
         public string FirstName { get; set; }
@@ -21,6 +22,7 @@ namespace MMUniGraduation.Models
 
         [NotMapped]
         public IEnumerable<Course> Courses { get; set; }
+
         [NotMapped]
         public Dictionary<string, List<Course>> ProgramCourses { get; set; }
     }

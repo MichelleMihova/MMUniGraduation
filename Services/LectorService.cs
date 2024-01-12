@@ -4,7 +4,6 @@ using MMUniGraduation.Models;
 using MMUniGraduation.Services.Interfaces;
 using MMUniGraduation.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,11 +15,13 @@ namespace MMUniGraduation.Services
         private readonly string[] allowedExtensions = new[] { "jpg", "png", "gif", "jpeg", "tif" };
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _webHost;
+
         public LectorService(ApplicationDbContext db, IWebHostEnvironment webHost)
         {
             _db = db;
             _webHost = webHost;
         }
+
         public async Task EditInfo(EditLectorViewModel input)
         {
             var currLector = _db.Lectors.FirstOrDefault(x => x.Id == input.Id);
@@ -77,7 +78,5 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
     }
-
 }

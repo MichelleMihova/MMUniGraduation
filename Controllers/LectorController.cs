@@ -21,6 +21,7 @@ namespace MMUniGraduation.Controllers
         private readonly ILectureService _lectureService;
         private readonly ILectorService _lectorService;
         private readonly UserManager<ApplicationUser> _userManager;
+
         public LectorController(ApplicationDbContext context, ICourseService courseService,
             IStudyProgramService studyProgramService, ILectureService lectureService, ILectorService lectorService,
             UserManager<ApplicationUser> userManager)
@@ -63,8 +64,8 @@ namespace MMUniGraduation.Controllers
             };
 
             return View(viewModel);
-
         }
+
         public async Task<IActionResult> EditProfile()
         {
             var user = await _userManager.GetUserAsync(this.User);
@@ -79,6 +80,7 @@ namespace MMUniGraduation.Controllers
             };
             return View(viewModel);
         }
+
         [HttpPost]
         public async Task<IActionResult> EditProfile(EditLectorViewModel input)
         {
@@ -86,6 +88,7 @@ namespace MMUniGraduation.Controllers
 
             return RedirectToAction("Index", "Lector");
         }
+
         public async Task<IActionResult> EditCourses()
         {
             var user = await _userManager.GetUserAsync(this.User);
@@ -97,6 +100,7 @@ namespace MMUniGraduation.Controllers
 
             return View(viewModel);
         }
+
         [HttpGet]
         public ActionResult RelatedCourses(int programId)
         {
@@ -105,6 +109,7 @@ namespace MMUniGraduation.Controllers
 
             return Json(new SelectList(dropdownData, "Value", "Text"));
         }
+
         [HttpGet]
         public ActionResult RelatedLectures(int courseId)
         {
@@ -113,6 +118,7 @@ namespace MMUniGraduation.Controllers
 
             return Json(new SelectList(dropdownData, "Value", "Text"));
         }
+
         public IActionResult Assessment()
         {
             var viewModel = new AssessmentsViewModel
@@ -172,16 +178,6 @@ namespace MMUniGraduation.Controllers
         [HttpPost]
         public IActionResult Assessment(AssessmentsViewModel input)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    input.AllCourses = _context.Courses.ToList();
-            //    input.StudyPrograms = _studyProgramService.GetAllAsKeyValuePairs();
-            //    input.Courses = _courseService.GetAllAsKeyValuePairs();
-            //    input.Lectures = _lectureService.GetAllAsKeyValuePairs();
-
-            //    return this.View(input);
-            //}
-
             var viewModel = new AssessmentsViewModel
             {
                 AllCourses = _context.Courses.ToList(),
@@ -195,13 +191,9 @@ namespace MMUniGraduation.Controllers
             var students = new List<Student>();
             var skippingAssesments = new List<SkippingAssignment>();
 
-            //TO DO..
-            //Show assessments only for current user
             List<Course> courses = null;
             if (input.CourseId != 0 || input.ProgramId != 0)
             {
-                //var courses = _context.Courses.Where(x => x.Id == input.CourseId).ToList();
-                //List<Course> courses;
                 if (input.CourseId != 0)
                 {
                     courses = _context.Courses.Where(x => x.Id == input.CourseId).ToList();
@@ -318,63 +310,9 @@ namespace MMUniGraduation.Controllers
                             }
                         }
                     }
-
                 }
             }
 
-
-            //foreach (var course in viewModel.AllCourses)
-            //{
-            //    if (input.KindOfAssessment.ToUpper() == "SKIPPINGEXAMSOLUTIONS")
-            //    {
-            //        skippingAssesments = _context.SkippingAssignments.Where(x => x.CourseId == course.Id && x.Grade == 0).ToList();
-
-            //        course.SkippingAssignments = skippingAssesments;
-            //        var studentsId = _context.SkippingAssignments.Select(x => x.StudentId).ToList();
-
-            //        foreach (var id in studentsId)
-            //        {
-            //            var student = _context.Students.FirstOrDefault(x => x.UserId == id);
-            //            if (!students.Contains(student))
-            //            {
-            //                students.Add(student);
-            //            }
-            //        }
-            //    }
-            //    else
-            //    {
-            //        lectures = _context.Lectures.Where(l => l.CourseId == course.Id && l.Id == input.LectureId).ToList();
-            //        course.Lectures = lectures;
-
-            //        foreach (var lecture in course.Lectures)
-            //        {
-            //            if (input.KindOfAssessment.ToUpper() == "HOMEWORKS")
-            //            {
-            //                homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() != "EXAM").ToList();
-            //            }
-            //            else if (input.KindOfAssessment.ToUpper() == "EXAMSOLUTIONS")
-            //            {
-            //                homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0 && l.HomeworkTitle.ToUpper() == "EXAM").ToList();
-            //            }
-            //            else if (input.KindOfAssessment.ToUpper() == "ALLASSESSMENTS")
-            //            {
-            //                homeworks = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.Grade == 0).ToList();
-            //            }
-
-            //            lecture.Homeworks = homeworks;
-
-            //            var studentsId = _context.Homeworks.Select(x => x.StudentId).ToList();
-            //            foreach (var id in studentsId)
-            //            {
-            //                var student = _context.Students.FirstOrDefault(x => x.UserId == id);
-            //                if (!students.Contains(student))
-            //                {
-            //                    students.Add(student);
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
             viewModel.Students = students;
 
             return View(viewModel);

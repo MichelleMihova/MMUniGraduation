@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MMUniGraduation.Models
 {
@@ -10,6 +9,7 @@ namespace MMUniGraduation.Models
             this.Courses = new HashSet<Course>();
             this.Images = new HashSet<Image>();
         }
+
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

@@ -33,11 +33,11 @@ namespace MMUniGraduation.Models
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateTimeToShow { get; set; }
+
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime EndDateTimeForHW { get; set; }
-
-        //public IList<LearningObject> VideoMaterials { get; set; }
+       
         public ICollection<LectureFile> TextMaterials { get; set; }
         public ICollection<Homework> Homeworks { get; set; }
     }

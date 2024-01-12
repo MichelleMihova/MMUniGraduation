@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MMUniGraduation.Models
 {
@@ -10,6 +8,7 @@ namespace MMUniGraduation.Models
         {
             this.Id = Guid.NewGuid().ToString();
         }
+
         public string Id { get; set; }
         public string Name { get; set; }
         public string Extension { get; set; }
@@ -17,9 +16,7 @@ namespace MMUniGraduation.Models
         public decimal Grade { get; set; }
         public string Comment { get; set; }
         public string StudentId { get; set; }
-
         public int? CourseId { get; set; }
         public virtual Course Course { get; set; }
-
     }
 }

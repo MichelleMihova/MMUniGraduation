@@ -9,6 +9,7 @@ namespace MMUniGraduation.Models
         {
             this.Id = Guid.NewGuid().ToString();
         }
+
         public string Id { get; set; }
         public string Extension { get; set; }
         public string FileName { get; set; }
@@ -24,6 +25,5 @@ namespace MMUniGraduation.Models
         public virtual Lecture Lecture { get; set; }
         public int? CourseId { get; set; }
         public virtual Course Course { get; set; }
-
     }
 }

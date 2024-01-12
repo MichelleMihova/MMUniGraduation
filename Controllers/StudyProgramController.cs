@@ -52,7 +52,7 @@ namespace MMUniGraduation.Controllers
                 return View(model);
             }
 
-            await _studyProgramService.CreateAsync(model/*,user.Id*/);
+            await _studyProgramService.CreateAsync(model);
 
             this.TempData["Message"] = "Program created successfully!";
 

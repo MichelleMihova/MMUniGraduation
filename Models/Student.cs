@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -28,8 +27,8 @@ namespace MMUniGraduation.Models
         [NotMapped]
         public ICollection<Course> CurrentCourses { get; set; }
 
-        // Maybe we need only this and above ones to be removed
         public ICollection<StudentCourses> Passed { get; set; }
+
         [NotMapped]
         public IDictionary<Course, decimal> PassedCoursesGrade { get; set; }
     }

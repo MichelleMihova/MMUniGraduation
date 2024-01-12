@@ -1,10 +1,5 @@
-﻿using AutoMapper;
-using MMUniGraduation.Models;
-using SmartProfil.AutoMapper;
-using System;
+﻿using MMUniGraduation.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MMUniGraduation.ViewModels
 {
@@ -14,7 +9,6 @@ namespace MMUniGraduation.ViewModels
         public string UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        //public string Email { get; set; }
         public string Bio { get; set; }
         public string PhoneNumber { get; set; }
         public string Image { get; set; }
