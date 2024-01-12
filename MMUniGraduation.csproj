@@ -23,7 +23,9 @@
   <ItemGroup>
     <Folder Include="wwwroot\img\" />
     <Folder Include="wwwroot\files\" />
+    <Folder Include="wwwroot\examSolutions\" />
     <Folder Include="wwwroot\homeworks\" />
+    <Folder Include="wwwroot\skippingExamSolutions\" />
   </ItemGroup>
 
 </Project>

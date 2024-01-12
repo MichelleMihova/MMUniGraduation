@@ -1,11 +1,14 @@
-﻿@*@model MMUniGraduation.Models.Course*@
-@model MMUniGraduation.ViewModels.EditCourseViewModel
+﻿@model MMUniGraduation.ViewModels.EditCourseViewModel
 @{
-    ViewData["Title"] = "Edit course";
+//ViewData["Title"] = "Edit course";
 }
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+@*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>*@
+
+<script>
+    $('#exampleModal').modal('show')
+</script>
 
 <form asp-controller="Course" asp-action="Edit" enctype="multipart/form-data">
     @*<h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>*@
@@ -13,14 +16,40 @@
     <h2 style="padding-top:25px; text-align:center;">Edit </h2>
     <h3 style="padding-bottom:25px; text-align:center;">@Model.Course.Signature @Model.Course.Name Course</h3>
     <div style="text-align:center;">
-        @*<textarea class="form-control" id="exampleFormControlTextarea1" rows="3" style="margin-bottom:1em;" placeholder="Course Description..."></textarea>*@
         <textarea asp-for="CourseDescription" class="form-control" type="text" placeholder="@Model.Course.Description"></textarea>
     </div>
     <br />
-    <label for="party">Enter a date and time for start of the course:</label>
-    <input class="form-control" asp-for="@Model.Course.CourseStartDate" asp-format="{0:yyyy-MM-ddTHH:mm}" />
-    <label for="party">Enter a date and time for end of the skipping course option:</label>
-    <input class="form-control" asp-for="@Model.Course.SkipCoursEndDate" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+    <label for="party">Change @Model.Course.CourseStartDate date and time for start of the course:</label>
+    <input class="form-control" asp-for="CourseStartDate" type="datetime-local" />
+    <label>Change @Model.Course.SkipCoursEndDate date and time for end of the skipping course option:</label>
+    <input class="form-control" asp-for="SkipCoursEndDate" type="datetime-local" />
+    <br />
+    @if (Model.SkippingCourseMaterials.Any())
+    {
+        <li>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+            </svg>
+            <i class="bi bi-file-earmark-text-fill">Skipping course materials:</i>
+        </li>
+        @foreach (var file in Model.SkippingCourseMaterials)
+        {
+            @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
+            <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
+            </a>
+        }
+    }
+    <br />
+    <div class="input-group">
+        <div class="custom-file">
+            <input asp-for="SkippingCourseFiles" type="file" class="custom-file-input" id="inputGroupFile04">
+            <label class="custom-file-label" for="inputGroupFile04">Add new skipping course material</label>
+        </div>
+    </div>
+    <br />
+    <label>Change required grade for skipping course:</label>
+    <input asp-for="MinimalGradeToPass" class="form-control" type="number" min="2" max="6" placeholder="Required grade" value="">
     <br />
     <input type="hidden" name="CourseId" value="@Model.Course.Id" />
     <button class="btn btn-outline-secondary btn-outline-info" style="text-align:right; margin-bottom: 1em;">Upload</button>
@@ -60,7 +89,7 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16">
                                                 <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
                                             </svg>
-                                            <i class="bi bi-youtube">Lecture video</i>
+                                            <i class="bi bi-youtube">Lecture embeded video url</i>
                                         </li>
                                         <input class="form-control" asp-for="VideoUrl" value="@lecture.VideoUrl">
                                         <br />
@@ -70,26 +99,22 @@
                                             </svg>
                                             <i class="bi bi-file-earmark-text-fill">Lecture materials:</i>
                                         </li>
-                                        @foreach (var file in lecture.TextMaterials)
+
+                                        @foreach (var file in lecture.TextMaterials.Where(x => x.FileTitle == "LECTURE"))
                                         {
                                             <ul>
                                                 @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
                                                 <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
                                                 </a>
-                                                @*<a class="btn btn-outline-info" id="BtnConstraints" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="SetConstraints">*@
-                                                <a class="btn btn-outline-info" style="text-align:right; margin: 1em;">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders2" viewBox="0 0 16 16">
-                                                        <path fill-rule="evenodd" d="M10.5 1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4H1.5a.5.5 0 0 1 0-1H10V1.5a.5.5 0 0 1 .5-.5ZM12 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Zm-6.5 2A.5.5 0 0 1 6 6v1.5h8.5a.5.5 0 0 1 0 1H6V10a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5ZM1 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 1 8Zm9.5 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V13H1.5a.5.5 0 0 1 0-1H10v-1.5a.5.5 0 0 1 .5-.5Zm1.5 2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z" />
-                                                    </svg>
-                                                </a>
-                                                <a type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#exampleModal">
+                                                <a type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#exampleModal_@i">
                                                     Constraints
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders2" viewBox="0 0 16 16">
                                                         <path fill-rule="evenodd" d="M10.5 1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4H1.5a.5.5 0 0 1 0-1H10V1.5a.5.5 0 0 1 .5-.5ZM12 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Zm-6.5 2A.5.5 0 0 1 6 6v1.5h8.5a.5.5 0 0 1 0 1H6V10a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5ZM1 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 1 8Zm9.5 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V13H1.5a.5.5 0 0 1 0-1H10v-1.5a.5.5 0 0 1 .5-.5Zm1.5 2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z" />
                                                     </svg>
                                                 </a>
-                                                <div id="exampleModal" class="modal" tabindex="-1" role="dialog">
+
+                                                <div id="exampleModal_@i" class="modal" tabindex="-1" role="dialog">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
@@ -98,21 +123,28 @@
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
-                                                            <div class="modal-body">
-                                                                <div class="form-group">
-                                                                    <label>Date & Time to show lecture material:</label>
-                                                                    <input class="form-control" asp-for="DateTimeToShow" type="datetime-local" />
+                                                            <form asp-controller="Lecture" asp-action="SetConstraints" enctype="multipart/form-data" id="ConstraintsForm">
+                                                                <div class="modal-body">
+                                                                    <div class="form-group">
+                                                                        <label>Date & Time to show lecture material:</label>
+                                                                        <input class="form-control" asp-for="DateTimeToShowFile" type="datetime-local" form="ConstraintsForm" />
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Select minimal homework grade to display lecture material:</label>
+                                                                        <input asp-for="MinHWGrade" form="ConstraintsForm" class="form-control" placeholder="Grade">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Select maximum homework grade to display lecture material:</label>
+                                                                        <input asp-for="MaxHWGrade" form="ConstraintsForm" class="form-control" placeholder="Grade">
+                                                                    </div>
                                                                 </div>
-                                                                <div class="form-group">
-                                                                    <label>Select minimal grade:</label>
-
+                                                                <input type="hidden" name="CourseId" value="@Model.Course.Id" />
+                                                                <input type="hidden" name="LectureFileId" value="@file.Id" />
+                                                                <div class="modal-footer">
+                                                                    <button type="submit" class="btn btn-primary" form="ConstraintsForm">Save changes</button>
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                                 </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                @*<button type="submit" class="btn btn-primary" >Save changes</button>*@
-                                                                <a type="submit" class="btn btn-primary" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="SetConstraints" >Save changes</a>
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                            </div>
+                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -122,12 +154,37 @@
                                         <div class="input-group">
                                             <div class="custom-file">
                                                 <input asp-for="Files" type="file" class="custom-file-input" id="inputGroupFile04">
-                                                <label class="custom-file-label" for="inputGroupFile04">Add new materials</label>
+                                                <label class="custom-file-label" for="inputGroupFile04">Add new lecture materials</label>
                                             </div>
                                             @*<div class="input-group-append">
                                                 <button class="btn btn-outline-info" type="button">Upload</button>
                                                 </div>*@
                                         </div>
+                                        <br />
+                                        <li>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                                                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+                                            </svg>
+                                            <i class="bi bi-file-earmark-text-fill">Homework materials:</i>
+                                        </li>
+                                        @foreach (var file in lecture.TextMaterials.Where(x => x.FileTitle == "HOMEWORK"))
+                                        {
+                                            <ul>
+                                                @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
+                                                <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
+                                                </a>
+                                            </ul>
+                                        }
+
+                                        <div class="input-group">
+                                            <div class="custom-file form-control">
+                                                <input asp-for="HWFiles" class="custom-file-input form-control" id="inputGroupFile04">
+                                                <label class="custom-file-label form-control" for="inputGroupFile04">Add new homework materials</label>
+                                            </div>
+                                        </div>
+                                        <br />
+
                                         <input type="hidden" name="CourseId" value="@Model.Course.Id" />
                                         <input type="hidden" name="LectureId" value="@lecture.Id" />
 

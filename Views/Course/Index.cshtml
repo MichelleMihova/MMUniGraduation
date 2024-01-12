@@ -1,4 +1,4 @@
-﻿@model MMUniGraduation.Models.Course
+﻿@model MMUniGraduation.ViewModels.IndexCourseViewModel
 
 @if (this.TempData.ContainsKey("Message"))
 {
@@ -7,94 +7,106 @@
     </div>
 }
 
-@*<style>
-        .embed-responsive {
-            display: none;
-        }
-
-            .embed-responsive :target {
-                display: block;
-            }
-    </style>*@
-<script>
-    //function showVideo() {
-    //    document.getElementById('show-video').style.display = "block";
-    //    document.getElementById('show-svg').style.display = "block";
-    //}
-    //function closeVideo() {
-    //    document.getElementById('show-video').style.display = "none";
-    //    document.getElementById('show-svg').style.display = "none";
-    //}
-
-    // Set the date we're counting down to
-    var countDownDate = new Date("Jan 5, 2023 15:37:25").getTime();
-
-    // Update the count down every 1 second
-    var x = setInterval(function () {
-
-        // Get today's date and time
-        var now = new Date().getTime();
-
-        // Find the distance between now and the count down date
-        var distance = countDownDate - now;
-
-        // Time calculations for days, hours, minutes and seconds
-        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        // Output the result in an element with id="demo"
-        document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
-            + minutes + "m " + seconds + "s ";
-
-        // If the count down is over, write some text
-        if (distance < 0) {
-            clearInterval(x);
-            document.getElementById("countdown").innerHTML = "EXPIRED";
-        }
-    }, 1000);
-</script>
-
 <h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>
 <div style="text-align:center;">
-    <h3>@Model.Signature @Model.Name</h3>
-    <p>@Model.Description</p>
+    <h3>@Model.Course.Signature </h3>
+    <h3>@Model.Course.Name</h3>
+    @*<p>@Model.Course.Description</p>*@
 </div>
 <br />
 <hr />
 <div class="container">
+    <div class="row" style="text-align:center">
+        <div class="col" style="text-align:left">
+            <h6>Course info:</h6>
+            <p>@Model.Course.Description</p>
+        </div>
+        <div class="col" style="text-align:center">
+            <img src="~/img/@Model.Image" alt="Upload image" class="img-fluid rounded-circle shadow-lg" style="width: 180px;">
+        </div>
+        <div class="col" style="text-align:right">
+            <h6>@Model.Lector.FirstName @Model.Lector.LastName</h6>
+            <p>@Model.Lector.Bio</p>
+        </div>
+    </div>
+    <hr />
     <div class="row">
         <div class="col">
-            <div class="row">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar2-check-fill" viewBox="0 0 16 16">
-                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zm9.954 3H2.545c-.3 0-.545.224-.545.5v1c0 .276.244.5.545.5h10.91c.3 0 .545-.224.545-.5v-1c0-.276-.244-.5-.546-.5zm-2.6 5.854a.5.5 0 0 0-.708-.708L7.5 10.793 6.354 9.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z" />
-                </svg>
-                <p id="countdown" style="padding-left:1em;"></p>
-            </div>
+            <label>Skip the course by passing the exam before: @Model.Course.SkipCoursEndDate.ToString("dd/MM/yyyy HH:MM") </label>
         </div>
         <div class="col">
             <div class="form-check" style="text-align:right;">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                <label class="form-check-label" for="flexCheckDefault">
-                    Skip @Model.Name Course
-                </label>
-                <a data-toggle="popover" title="You could go to the next course by passing the exam till the end of coutdown." data-content="Some content">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle-fill" viewBox="0 0 16 16">
-                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z" />
-                    </svg>
-                </a>
+                @if (Model.Course.SkipCoursEndDate >= DateTime.Now && User.IsInRole("Student") && Model.StudentCourse.EndDateTimeForSkipping == null)
+                {
+                    <a class="btn btn-outline-info" asp-route-courseId="@Model.Course.Id" asp-route-goToExam="true" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Start the exam</a>
+                }
+                <br />
             </div>
         </div>
     </div>
+    <br />
+    @if (Model.StudentCourse.EndDateTimeForSkipping != null && Model.StudentCourse.EndDateTimeForSkipping >= DateTime.Now && User.IsInRole("Student") || User.IsInRole("Teacher") || User.IsInRole("Admin"))
+    {
+        <div class="row">
+            <div class="col">
+                @foreach (var file in Model.Course.SkippingCourseMaterials)
+                {
+                    @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
+                                (Model.StudentCourse.EndDateTimeForSkipping != null))
+                    //(Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
+                    {
+                        <ul>
+                            @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
+                        </ul>
+                    }
+                }
+            </div>
+            <div class="col">
+                @if (Model.Course.SkipCoursEndDate >= DateTime.Now && Model.StudentCourse.EndDateTimeForSkipping >= DateTime.Now &&
+        !Model.Course.SkippingAssignments.Any())
+                {
+                    @using (Html.BeginForm("AddSkippingExamSolution", "Course", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.TextBox("file", "", new { type = "file" })
+                        <input type="text" name="courseId" value="@Model.Course.Id" style="visibility:hidden;" />
+                        <input type="submit" value="Upload" />
+                    }
+                }
+
+                @foreach (var file in Model.Course.SkippingAssignments)
+                {
+                    <ul>
+                        @Html.ActionLink(file.Name, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "skippingExamSolution" })
+                    </ul>
+                    <ul><label>Grade: @file.Grade</label></ul>
+                }
+            </div>
+        </div>
+    }
 </div>
 <hr />
 <br />
 
 @{ int i = 0;
-    foreach (var lecture in Model.Lectures)
+    //decimal grade = 0;
+    foreach (var lecture in Model.Course.Lectures)
     {
-        if (lecture.DateTimeToShow <= DateTime.Now)
+        //int cnt = 0;
+        //if (lecture.RequiredGrade != 0 && lecture.ParetntLectureId != 0)
+        //{
+        //    if (lecture.RequiredGrade > grade)
+        //    {
+        //        break;
+        //    }
+        //}
+        //foreach (var g in lecture.Homeworks)
+        //{
+        //    grade += g.Grade;
+        //    cnt++;
+        //}
+        //grade /= cnt;
+
+        if (lecture.DateTimeToShow <= DateTime.Now || Model.SkipCourse || User.IsInRole("Admin") || User.IsInRole("Teacher"))
         {
             <div class="container">
                 <div class="card">
@@ -110,41 +122,48 @@
                             @lecture.Description
                         </div>
                         <div class="card-body">
-                            Date of performance: @lecture.DateTimeToShow
+                            @if (lecture.IsExam == true)
+                            {
+                                <p>Date of performance: @lecture.DateTimeToShow.ToString("dd/mm/yyyy HH:MM")</p>
+                                <br />
+                            }
+
+                            @if (User.IsInRole("Teacher") || User.IsInRole("Admin") || Model.Student.ShowVideoMaterials)
+                            {
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <iframe class="embed-responsive-item" src="@lecture.VideoUrl" allowfullscreen></iframe>
+                                </div>
+                            }
                         </div>
-
                         <div class="container">
-
                             <div class="row">
                                 <div class="col">
                                     <ul>
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16">
-                                                <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
-                                            </svg>
-                                            <i class="bi bi-youtube" @*onclick="showVideo()"*@>Lecture</i>
-                                            <!--<svg id="show-svg"--> @*onclick="closeVideo()" style="display: none;"*@
-                                            <!--xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
-                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                </svg>
-                <div-->
-                                            @*id="show-video"*@
-                                            <!--class="embed-responsive embed-responsive-16by9">
-                    <iframe class="embed-responsive-item" src="@lecture.VideoUrl" allowfullscreen></iframe>
-                </div>-->
-                                        </li>
-                                        <div class="embed-responsive embed-responsive-16by9">
-                                            <iframe class="embed-responsive-item" src="@lecture.VideoUrl" allowfullscreen></iframe>
-                                        </div>
-                                        <br />
                                         <li>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
                                                 <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
                                             </svg>
                                             <i class="bi bi-file-earmark-text-fill">Lecture materials:</i>
                                         </li>
+                                        @*@if (User.IsInRole("Teacher") || User.IsInRole("Admin") || (Model.Student.ShowTextMaterials && lecture))
+                                            {*@
                                         @foreach (var file in lecture.TextMaterials)
+                                        {
+                                            @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
+                                (Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
+                                            {
+                                                <ul>
+                                                    @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
+                                                </ul>
+                                            }
+                                        }
+                                        <li>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                                                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+                                            </svg>
+                                            <i class="bi bi-file-earmark-text-fill">Homework materials:</i>
+                                        </li>
+                                        @foreach (var file in Model.HWMaterials)
                                         {
                                             <ul>
                                                 @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
@@ -154,41 +173,87 @@
                                 </div>
                                 @if (User.IsInRole("Student"))
                                 {
-                                    <div class="col">
-
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-                                                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
-                                            </svg>
-                                            <i class="bi bi-file-earmark-text-fill">Homework:</i>
-                                        </li>
-                                        @if (lecture.Homeworks.Any())
-                                        {
-                                            @foreach (var file in lecture.Homeworks)
+                                    @if (lecture.IsExam || lecture.IsRetakeExam)
+                                    {
+                                        <div class="col">
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+                                                </svg>
+                                                <i class="bi bi-file-earmark-text-fill">Exam solution:</i>
+                                            </li>
+                                            <br />
+                                            @if (lecture.Homeworks.Any())
                                             {
-                                                <ul>
-                                                    @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "homework" })
-                                                    <br />
-                                                    <label>Grade/Points: @file.Grade</label>
-                                                    <br />
-                                                    <label>Comment: @file.Comment</label>
-                                                    <br />
-                                                </ul>
+                                                @foreach (var file in lecture.Homeworks)
+                                                {
+                                                    <ul>
+                                                        @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "examSolution" })
+                                                        <br />
+                                                        <label>Grade: @file.Grade</label>
+                                                        <br />
+                                                        <label>Comment: @file.Comment</label>
+                                                        <br />
+                                                    </ul>
+                                                }
                                             }
-                                        }
+                                            @if (lecture.EndDateTimeForHW >= DateTime.Now && lecture.Homeworks.Count() == 0)
+                                            {
+                                                @using (Html.BeginForm("AddExamSolution", "Lecture", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                                {
+                                                    @Html.TextBox("file", "", new { type = "file" })
+                                                    <input type="text" name="lectureId" value="@lecture.Id" style="visibility:hidden;" />
+                                                    <input type="submit" value="Upload" />
+                                                }
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col">
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+                                                </svg>
+                                                <i class="bi bi-file-earmark-text-fill">Homework:</i>
+                                            </li>
+                                            <br />
+                                            @if (lecture.Homeworks.Any())
+                                            {
+                                                @foreach (var file in lecture.Homeworks)
+                                                {
+                                                    <ul>
+                                                        @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "homework" })
+                                                        @if (file.Grade == 0 && lecture.EndDateTimeForHW >= DateTime.Now)
+                                                        {
+                                                            <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureId="@file.LectureId" asp-route-courseId="@Model.Course.Id" asp-route-name="Index" asp-controller="Lecture" asp-action="DeleteHomework">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
+                                                            </a>
+                                                        }
+                                                        <br />
+                                                        <label>Grade: @file.Grade</label>
+                                                        <br />
+                                                        <label>Comment: @file.Comment</label>
+                                                        <br />
+                                                    </ul>
+                                                }
+                                            }
+                                            @if ((lecture.EndDateTimeForHW >= DateTime.Now && lecture.Homeworks.Count() == 0) || (lecture.Homeworks.Count() == 0 && !lecture.IsExemption))
+                                            {
+                                                @using (Html.BeginForm("AddHomework", "Lecture", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                                {
+                                                    @Html.TextBox("file", "", new { type = "file" })
+                                                    <input type="text" name="lectureId" value="@lecture.Id" style="visibility:hidden;" />
+                                                    <input type="submit" value="Upload" />
+                                                }
+                                            }
+                                            <br />
 
-                                        @using (Html.BeginForm("AddHomework", "Lecture", FormMethod.Post,
-                                         new { enctype = "multipart/form-data" }))
-                                        {
-                                            @Html.TextBox("file", "", new { type = "file" })
-                                            <input type="text" name="lectureId" value="@lecture.Id" />
-                                            <input type="submit" value="Upload" />
-                                        }
-                                        
-                                    </div>
+                                        </div>
+                                    }
                                 }
-                                    @*</form>*@
-                                </div>
+                                @*</form>*@
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -197,3 +262,7 @@
         i++;
     }
 }
+<br />
+<div>
+    <a asp-controller="Course" asp-action="AllCourses" asp-route-studyProgramId="@Model.Course.StudyProgramId">Go Back</a>
+</div>

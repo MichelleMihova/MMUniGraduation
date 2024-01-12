@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,6 +14,7 @@ namespace MMUniGraduation.Models.Create
         public string Description { get; set; }
         public int StudyProgramId { get; set; }
         public int ParetntId { get; set; }
+        public string CreatorId { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
@@ -20,7 +22,11 @@ namespace MMUniGraduation.Models.Create
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
         public DateTime SkipCoursEndDate { get; set; }
-       
+
+        [NotMapped]
+        public IEnumerable<IFormFile> SkippingCourseFiles { get; set; }
+        public decimal MinimalGradeToPass { get; set; }
+
         [NotMapped]
         public IEnumerable<KeyValuePair<string, string>> StudyPrograms { get; set; }
         [NotMapped]

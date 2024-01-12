@@ -1,20 +1,24 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MMUniGraduation.Data;
 using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
 using MMUniGraduation.ViewModels;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MMUniGraduation.Controllers
 {
     public class StudyProgramController : Controller
     {
+        private readonly ApplicationDbContext _context;
         private readonly IStudyProgramService _studyProgramService;
         private readonly UserManager<ApplicationUser> _userManager;
-        public StudyProgramController(IStudyProgramService studyProgramService, UserManager<ApplicationUser> userManager)
+        public StudyProgramController(ApplicationDbContext context, IStudyProgramService studyProgramService, UserManager<ApplicationUser> userManager)
         {
+            _context = context;
             _studyProgramService = studyProgramService;
             _userManager = userManager;
         }
@@ -40,6 +44,13 @@ namespace MMUniGraduation.Controllers
         public async Task<IActionResult> Create(CreateStudyProgram model)
         {
             var user = await _userManager.GetUserAsync(this.User);
+            var programNames = _context.StudyPrograms.Select(x => x.Name);
+
+            if (programNames.Contains(model.Name))
+            {
+                this.TempData["Message"] = "The program has not been created yet! There is an existing program with the same name!";
+                return View(model);
+            }
 
             await _studyProgramService.CreateAsync(model/*,user.Id*/);
 

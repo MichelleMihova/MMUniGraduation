@@ -1,0 +1,74 @@
+﻿@model MMUniGraduation.ViewModels.AllCoursesViewModel
+@{
+}
+
+<style>
+    .img-box {
+        width: 100%;
+        height: 100%;
+    }
+
+    .p-desc {
+        text-align: justify;
+    }
+
+    button {
+        border-radius: 1em;
+    }
+
+    hr {
+        border-color: lightblue;
+    }
+
+    .info {
+        background-color: #2196F3;
+    }
+        /* Blue */
+        .info:hover {
+            background: #0b7dda;
+        }
+</style>
+
+
+<h2 style="text-align: center; padding-top: 1em; ">Edit courses</h2>
+<!-- <h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>   -->
+<!--<div style="text-align: center; padding-top: 1em;">
+    <h3>Filters</h3>
+
+    <div>-->
+        <!--
+        <label>Course program</label>
+        <select asp-for="StudyProgramId" class="form-control" asp-items="studyPrograms"></select>
+        <br />
+        -->
+        <!--@using (Html.BeginForm())
+        {
+            <p>
+                Find by name: @Html.TextBox("SearchString")
+                <input type="submit" value="Search"  class="btn btn-outline-info" />
+            </p>
+        }
+
+        <button type="button" class="btn btn-outline-info">search</button>
+    </div>
+</div>-->
+
+<br />
+<div class="container">
+    @*<h4 style="text-align: center; padding-top: 1em;">Courses</h4>*@
+    <hr />
+    @foreach (var course in Model.AllCourses)
+    {
+        <div class="row">
+            <div class="col">
+                <p>Course: @course.Signature @course.Name</p>
+            </div>
+            <hr />
+            <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Index"><i class="fa fa-save"></i> View</a>
+            <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Edit"><i class="fa fa-save"></i> Edit</a>
+            <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Delete"><i class="fa fa-save"></i> Delete</a>
+        </div>
+        <hr />
+    }
+</div>
+

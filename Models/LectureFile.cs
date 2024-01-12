@@ -13,6 +13,8 @@ namespace MMUniGraduation.Models
         public string Extension { get; set; }
         public string FileName { get; set; }
         public string FileTitle { get; set; }
+        public decimal MinHWGrade { get; set; }
+        public decimal MaxHWGrade { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
@@ -20,9 +22,8 @@ namespace MMUniGraduation.Models
 
         public int? LectureId { get; set; }
         public virtual Lecture Lecture { get; set; }
+        public int? CourseId { get; set; }
+        public virtual Course Course { get; set; }
 
-        //public string AddedByUserId { get; set; }
-
-        //public virtual ApplicationUser AddedByUser { get; set; }
     }
 }

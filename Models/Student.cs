@@ -9,8 +9,9 @@ namespace MMUniGraduation.Models
     {
         public Student()
         {
-            this.CompleatedStudyPrograms = new List<StudentStudyProgram>();
-            this.PassedCourses = new List<Course>();
+            this.CurrentCourses = new List<Course>();
+            this.Passed = new List<StudentCourses>();
+            this.Photos = new HashSet<Image>();
         }
 
         public int Id { get; set; }
@@ -20,18 +21,16 @@ namespace MMUniGraduation.Models
         [Phone]
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        public string Town { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public string Photo { get; set; }
-
-        //[ForeignKey("Course")]
-        public int? CurrentCourseId { get; set; }
-        public virtual Course CurrentCourse { get; set; }
+        public bool ShowTextMaterials { get; set; }
+        public bool ShowVideoMaterials { get; set; }
+        public virtual ICollection<Image> Photos { get; set; }
 
         [NotMapped]
-        public ICollection<StudentStudyProgram> CompleatedStudyPrograms { get; set; }
-        [NotMapped]
-        public ICollection<Course> PassedCourses { get; set; }
+        public ICollection<Course> CurrentCourses { get; set; }
 
+        // Maybe we need only this and above ones to be removed
+        public ICollection<StudentCourses> Passed { get; set; }
+        [NotMapped]
+        public IDictionary<Course, decimal> PassedCoursesGrade { get; set; }
     }
 }

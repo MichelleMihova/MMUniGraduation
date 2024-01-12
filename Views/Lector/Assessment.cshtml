@@ -13,59 +13,48 @@
     hr {
         border-color: lightblue;
     }
-
-    /*.info {
-        background-color: #2196F3;
-    }*/
-        /* Blue */
-        /*.info:hover {
-            background: #0b7dda;
-        }*/
-
-    /*#show-filters {
-        display: none;
-    }
-
-    #close-filters-svg {
-        display: none;
-    }*/
 </style>
+<script>
+    function optionSelectedProgram(value) {
+        alert(value)
+
+    }
+</script>
 
 <h2 style="text-align: center; padding-top: 1em; ">Assessment Page</h2>
 <!-- <h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>   -->
 <div style="padding-top: 1em;">
     <h3 onclick="showFilters()" style="text-align: center; padding-top: 1em; ">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter-circle" viewBox="0 0 16 16">
-            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-            <path d="M7 11.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5z" />
-        </svg>
         Filters
-        @*<svg id="open-filters-svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" />
-        </svg>*@
     </h3>
 
     <form asp-controller="Lector" asp-action="Assessment" enctype="multipart/form-data">
         <div id="show-filters">
             <label>Select program</label>
-            <select asp-for="ProgramId" class="form-control" asp-items="programs"></select>
+            @*k<select asp-for="ProgramId" class="form-control" asp-items="programs" onchange="optionSelectedProgram(this.value)"></select>*@
+            @Html.DropDownListFor(x => Model.ProgramId, new SelectList(programs, "Value", "Text"), "---Select Program---", htmlAttributes: new { @class = "form-control", id = "Program" })
             <br />
 
             <label>Select course</label>
-            <select asp-for="CourseId" class="form-control" asp-items="courses"></select>
+            @*<select asp-for="CourseId" class="form-control" asp-items="courses"></select>*@
+            @Html.DropDownListFor(x => Model.CourseId, new SelectList(courses, "Value", "Text"), "---Select course---", htmlAttributes: new { @class = "form-control", @id = "Course" })
             <br />
 
             <label>Select lecture</label>
-            <select asp-for="LectureId" class="form-control" asp-items="lectures"></select>
+            @*<select asp-for="LectureId" class="form-control" asp-items="lectures"></select>*@
+            @Html.DropDownListFor(x => Model.LectureId, new SelectList(lectures, "Value", "Text"), "---Select lecture---", htmlAttributes: new { @class = "form-control", @id = "Lecture" })
             <br />
 
-            <select class="form-control" placeholder="Lector">
-                <option value="1">Select Lector</option>
-                <option>Pesho</option>
-                <option>Mitko</option>
-                <option>Select from existing Programs in DB</option>
-            </select><br />
-            <button class="btn btn-outline-info" style="text-align:right;" >Search</button>
+            <label>Select kind of assessment</label>
+            <select asp-for="KindOfAssessment" class="form-control" id="KindOfAssessment">
+                <option value="AllAssessments">All</option>
+                <option value="Homeworks">Homeworks</option>
+                <option value="ExamSolutions">Exam solutions</option>
+                <option value="SkippingExamSolutions" id="Skip">Skipping exam solutions</option>
+            </select>
+            <br />
+            <br />
+            <button class="btn btn-outline-info" style="text-align:right;">Search</button>
         </div>
     </form>
 </div>
@@ -75,6 +64,34 @@
     <h4 style="text-align: center; padding-top: 1em;">Аssessment tasks</h4>
     @foreach (var course in Model.AllCourses)
     {
+        @foreach (var file in course.SkippingAssignments)
+        {
+            <hr />
+            <div class="row">
+                <div class="col">
+                    <p>Course: @course.Signature @course.Name</p>
+                    <p>Skipping аssignment solutions:</p>
+                    <ul>
+                        @Html.ActionLink(file.Name, "DownloadFile", new { Controller = "Course", fileName = file.Id + '.' + file.Extension, type = "skippingExamSolution" })
+                    </ul>
+                </div>
+                <div class="col">
+                    <form asp-controller="Lecture" asp-action="EditSkippingAssignment" enctype="multipart/form-data">
+                        <p>Student ID: @file.StudentId</p>
+                        <p>Student Name: @Model.Students.FirstOrDefault(x => x.UserId == file.StudentId).FirstName @Model.Students.FirstOrDefault(x => x.UserId == file.StudentId).LastName </p>
+                        <label>Grade/Points:</label>
+                        <input asp-for="HomeworkGrade" type="text" class="form-control" placeholder="@file.Grade" value="@file.Grade"><br />
+                        <label>Comment:</label>
+                        <textarea asp-for="HomeworkComment" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="@file.Comment"></textarea>
+                        <input asp-for="HomeworkId" value="@file.Id" class="form-control" style="visibility:hidden;" \>
+                        <button class="btn btn-outline-info" style="text-align:right;"><i class="fa fa-save"></i> Save</button>
+                        <input asp-for="CourseId" value="@course.Id" class="form-control" style="visibility:hidden;" \>
+                    </form>
+                </div>
+
+            </div>
+        }
+
         @foreach (var lecture in course.Lectures)
         {
             foreach (var file in lecture.Homeworks)
@@ -84,20 +101,32 @@
                     <div class="col">
                         <p>Course: @course.Signature @course.Name</p>
                         <p>Lecture: @lecture.Name</p>
-                        <p>Homework solutions:</p>
-
-                        <ul>
-                            @Html.ActionLink(file.HomeworkName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "homework" })
-                        </ul>
+                        @if (lecture.IsExam)
+                        {
+                            <p>Exam solution:</p>
+                            <ul>
+                                @Html.ActionLink(file.HomeworkName, "DownloadFile", new { Controller = "Course", fileName = file.Id + '.' + file.Extension, type = "examSolution" })
+                            </ul>
+                        }
+                        else
+                        {
+                            <p>Homework solutions:</p>
+                            <ul>
+                                @Html.ActionLink(file.HomeworkName, "DownloadFile", new { Controller = "Course", fileName = file.Id + '.' + file.Extension, type = "homework" })
+                            </ul>
+                        }
                     </div>
                     <div class="col">
                         <form asp-controller="Lecture" asp-action="EditHomework" enctype="multipart/form-data">
                             <p>Student ID: @file.StudentId</p>
-                            <label>Grade/Points:</label>
+                            <p>Student Name: @Model.Students.FirstOrDefault(x => x.UserId == file.StudentId).FirstName @Model.Students.FirstOrDefault(x => x.UserId == file.StudentId).LastName </p>
+                            <label>Grade:</label>
                             <input asp-for="HomeworkGrade" type="text" class="form-control" placeholder="@file.Grade" value="@file.Grade"><br />
+                            <label>Comment:</label>
                             <textarea asp-for="HomeworkComment" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="@file.Comment"></textarea>
                             <input asp-for="HomeworkId" value="@file.Id" class="form-control" style="visibility:hidden;" \>
                             <button class="btn btn-outline-info" style="text-align:right;"><i class="fa fa-save"></i> Save</button>
+                            <input asp-for="CourseId" value="@course.Id" class="form-control" style="visibility:hidden;" \>
                         </form>
                     </div>
 
@@ -106,3 +135,59 @@
         }
     }
 </div>
+@section Scripts {
+    <script type="text/javascript">
+    $('#Program').change(function () {
+                //we get selected value of programs
+        var selectedProgram = $("#Program").val();
+                var coursesSelect = $('#Course');
+        coursesSelect.empty();
+        coursesSelect.append($('<option/>', {
+            value: 0,
+            text: "---Select course---"
+        }));
+        if (selectedProgram != null && selectedProgram != '') {
+                    //the result from GetCourses(int programId) is stored in courses object
+
+            $.getJSON('@Url.Action("RelatedCourses")', { programId: selectedProgram }, function (dropdownData) {
+            //$.getJSON("./Course/RelatedCourses", { programId: selectedProgram }, function (dropdownData) {
+                        if (dropdownData != null && !jQuery.isEmptyObject(dropdownData))
+                        {
+                            $.each(dropdownData, function (index, data) {
+                                coursesSelect.append($('<option/>', {
+                                    value: data.value,
+                                    text: data.text
+                                }));
+                            });
+                        };
+                    });
+                }
+    });
+
+        $('#Course').change(function () {
+                //we get selected value of programs
+        var selectedCourse = $("#Course").val();
+                var lecturesSelect = $('#Lecture');
+        lecturesSelect.empty();
+        lecturesSelect.append($('<option/>', {
+            value: 0,
+            text: "---Select lecture---"
+        }));
+        if (selectedCourse != null && selectedCourse != '') {
+                    //the result from GetLectures(int programId) is stored in lectures object
+            $.getJSON('@Url.Action("RelatedLectures")', { courseId: selectedCourse }, function (dropdownData) {
+                        if (dropdownData != null && !jQuery.isEmptyObject(dropdownData))
+                        {
+                            $.each(dropdownData, function (index, data) {
+                                lecturesSelect.append($('<option/>', {
+                                    value: data.value,
+                                    text: data.text
+                                }));
+                            });
+                };
+                    });
+                }
+        });
+
+    </script>
+}

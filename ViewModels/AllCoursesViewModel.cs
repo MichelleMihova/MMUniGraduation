@@ -17,6 +17,10 @@ namespace MMUniGraduation.ViewModels
         public string Signature { get; set; }
         public string Description { get; set; }
         public string NextCourseName { get; set; }
+        //for delete:
+        public Course CurrentUserCourse { get; set; }
         public IEnumerable<Course> AllCourses { get; set; }
+        public IEnumerable<Course> PassedCourses { get; set; }
+        public IEnumerable<Course> CurrentCourses { get; set; }
     }
 }

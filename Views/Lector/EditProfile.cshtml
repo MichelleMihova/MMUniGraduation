@@ -1,0 +1,31 @@
+﻿@{
+}
+@model MMUniGraduation.ViewModels.EditLectorViewModel
+
+    <br />
+<h2 style="text-align:center">Edit profile</h2>
+<br />
+<form asp-controller="Lector" asp-action="EditProfile" enctype="multipart/form-data">
+    <label for="party">First name:</label>
+    <input class="form-control" asp-for="@Model.FirstName" type="text" placeholder="@Model.FirstName" />
+    <label for="party">Last name:</label>
+    <input class="form-control" asp-for="@Model.LastName" type="text" placeholder="@Model.LastName" />
+    <label>Bio:</label>
+    <textarea asp-for="Bio" class="form-control" type="text" placeholder="Couse Description"></textarea>
+    <br />
+    <label>Select profile picture:</label>
+    <div class="input-group">
+        <div class="custom-file form-control">
+            <input asp-for="Photos" class="custom-file-input form-control" id="inputGroupFile04" placeholder="Select photo">
+            <label class="custom-file-label form-control" for="inputGroupFile04">Choose image</label>
+        </div>
+    </div>
+    <br />
+    <br />
+    <input type="hidden" name="Id" asp-for="@Model.Id" value="@Model.Id" />
+
+    <button class="btn btn-outline-secondary btn-outline-info" style="text-align:right; margin-bottom: 1em;">Update</button>
+</form>
+<div>
+    <a asp-controller="Lector" asp-action="Index">Go Back</a>
+</div>

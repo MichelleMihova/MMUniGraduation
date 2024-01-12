@@ -30,9 +30,6 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CurrentCourseId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -87,20 +84,14 @@ namespace MMUniGraduation.Migrations
                     b.Property<DateTime>("CourseStartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CreatorId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Exam")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("ExamGrade")
+                    b.Property<decimal>("MinimalGradeToPass")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("FinalHomeworkGrade")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("LectorId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -117,21 +108,10 @@ namespace MMUniGraduation.Migrations
                     b.Property<DateTime>("SkipCoursEndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("SkipCourse")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SkippingCourseSignature")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("StudyProgramId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("LectorId");
 
                     b.HasIndex("StudyProgramId");
 
@@ -140,10 +120,8 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Homework", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
@@ -181,29 +159,24 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Extension")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("LectorId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StudentId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("StudyProgramId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LectorId");
+
+                    b.HasIndex("StudentId");
+
                     b.HasIndex("StudyProgramId");
 
                     b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("MMUniGraduation.Models.LearningObject", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("VideoMaterial")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("LearningObjects");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Lector", b =>
@@ -236,21 +209,6 @@ namespace MMUniGraduation.Migrations
                     b.ToTable("Lectors");
                 });
 
-            modelBuilder.Entity("MMUniGraduation.Models.LectorStudyProgram", b =>
-                {
-                    b.Property<int>("LectorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StudyProgramId")
-                        .HasColumnType("int");
-
-                    b.HasKey("LectorId", "StudyProgramId");
-
-                    b.HasIndex("StudyProgramId");
-
-                    b.ToTable("LectorStudyProgram");
-                });
-
             modelBuilder.Entity("MMUniGraduation.Models.Lecture", b =>
                 {
                     b.Property<int>("Id")
@@ -258,14 +216,11 @@ namespace MMUniGraduation.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("AssignmentGrade")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Assignments")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CreatorId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateTimeToShow")
                         .HasColumnType("datetime2");
@@ -276,6 +231,15 @@ namespace MMUniGraduation.Migrations
                     b.Property<DateTime>("EndDateTimeForHW")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsExam")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsExemption")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRetakeExam")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -284,6 +248,9 @@ namespace MMUniGraduation.Migrations
 
                     b.Property<int>("ParetntLectureId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("RequiredGrade")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("VideoUrl")
                         .HasColumnType("nvarchar(max)");
@@ -300,6 +267,9 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("CourseId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DateTimeToShow")
                         .HasColumnType("datetime2");
 
@@ -315,28 +285,52 @@ namespace MMUniGraduation.Migrations
                     b.Property<int?>("LectureId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("MaxHWGrade")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MinHWGrade")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
 
                     b.HasIndex("LectureId");
 
                     b.ToTable("LectureFiles");
                 });
 
-            modelBuilder.Entity("MMUniGraduation.Models.RestrictAccess", b =>
+            modelBuilder.Entity("MMUniGraduation.Models.SkippingAssignment", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CourseId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Extension")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Grade")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("RestrictAccess");
+                    b.ToTable("SkippingAssignments");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Student", b =>
@@ -345,12 +339,6 @@ namespace MMUniGraduation.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("CurrentCourseId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
@@ -364,35 +352,45 @@ namespace MMUniGraduation.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Photo")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("ShowTextMaterials")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("Town")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("ShowVideoMaterials")
+                        .HasColumnType("bit");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CurrentCourseId");
-
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("MMUniGraduation.Models.StudentStudyProgram", b =>
+            modelBuilder.Entity("MMUniGraduation.Models.StudentCourses", b =>
                 {
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StudyProgramId")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
 
-                    b.HasKey("StudentId", "StudyProgramId");
+                    b.Property<DateTime?>("EndDateTimeForSkipping")
+                        .HasColumnType("datetime2");
 
-                    b.HasIndex("StudyProgramId");
+                    b.Property<decimal>("FinalGrade")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("StudentStudyProgram");
+                    b.Property<bool>("IsPassed")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProgramId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StudentId", "CourseId");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("StudentCourses");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.StudyProgram", b =>
@@ -527,10 +525,6 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Course", b =>
                 {
-                    b.HasOne("MMUniGraduation.Models.Lector", null)
-                        .WithMany("Courses")
-                        .HasForeignKey("LectorId");
-
                     b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
                         .WithMany("Courses")
                         .HasForeignKey("StudyProgramId")
@@ -551,28 +545,21 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Image", b =>
                 {
+                    b.HasOne("MMUniGraduation.Models.Lector", "Lector")
+                        .WithMany("Photos")
+                        .HasForeignKey("LectorId");
+
+                    b.HasOne("MMUniGraduation.Models.Student", "Student")
+                        .WithMany("Photos")
+                        .HasForeignKey("StudentId");
+
                     b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
                         .WithMany("Images")
                         .HasForeignKey("StudyProgramId");
 
-                    b.Navigation("StudyProgram");
-                });
-
-            modelBuilder.Entity("MMUniGraduation.Models.LectorStudyProgram", b =>
-                {
-                    b.HasOne("MMUniGraduation.Models.Lector", "Lector")
-                        .WithMany("LectorStudyPrograms")
-                        .HasForeignKey("LectorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
-                        .WithMany("LectorStudyPrograms")
-                        .HasForeignKey("StudyProgramId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Lector");
+
+                    b.Navigation("Student");
 
                     b.Navigation("StudyProgram");
                 });
@@ -590,60 +577,59 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.LectureFile", b =>
                 {
+                    b.HasOne("MMUniGraduation.Models.Course", "Course")
+                        .WithMany("SkippingCourseMaterials")
+                        .HasForeignKey("CourseId");
+
                     b.HasOne("MMUniGraduation.Models.Lecture", "Lecture")
                         .WithMany("TextMaterials")
                         .HasForeignKey("LectureId");
 
+                    b.Navigation("Course");
+
                     b.Navigation("Lecture");
                 });
 
-            modelBuilder.Entity("MMUniGraduation.Models.RestrictAccess", b =>
+            modelBuilder.Entity("MMUniGraduation.Models.SkippingAssignment", b =>
                 {
                     b.HasOne("MMUniGraduation.Models.Course", "Course")
-                        .WithMany()
+                        .WithMany("SkippingAssignments")
                         .HasForeignKey("CourseId");
 
                     b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("MMUniGraduation.Models.Student", b =>
+            modelBuilder.Entity("MMUniGraduation.Models.StudentCourses", b =>
                 {
-                    b.HasOne("MMUniGraduation.Models.Course", "CurrentCourse")
+                    b.HasOne("MMUniGraduation.Models.Course", "Course")
                         .WithMany()
-                        .HasForeignKey("CurrentCourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("CurrentCourse");
-                });
-
-            modelBuilder.Entity("MMUniGraduation.Models.StudentStudyProgram", b =>
-                {
-                    b.HasOne("MMUniGraduation.Models.Student", "Student")
-                        .WithMany("CompleatedStudyPrograms")
+                    b.HasOne("MMUniGraduation.Models.Student", "User")
+                        .WithMany("Passed")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MMUniGraduation.Models.StudyProgram", "StudyProgram")
-                        .WithMany("StudentStudyProgram")
-                        .HasForeignKey("StudyProgramId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Course");
 
-                    b.Navigation("Student");
-
-                    b.Navigation("StudyProgram");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Course", b =>
                 {
                     b.Navigation("Lectures");
+
+                    b.Navigation("SkippingAssignments");
+
+                    b.Navigation("SkippingCourseMaterials");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Lector", b =>
                 {
-                    b.Navigation("Courses");
-
-                    b.Navigation("LectorStudyPrograms");
+                    b.Navigation("Photos");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.Lecture", b =>
@@ -655,7 +641,9 @@ namespace MMUniGraduation.Migrations
 
             modelBuilder.Entity("MMUniGraduation.Models.Student", b =>
                 {
-                    b.Navigation("CompleatedStudyPrograms");
+                    b.Navigation("Passed");
+
+                    b.Navigation("Photos");
                 });
 
             modelBuilder.Entity("MMUniGraduation.Models.StudyProgram", b =>
@@ -663,10 +651,6 @@ namespace MMUniGraduation.Migrations
                     b.Navigation("Courses");
 
                     b.Navigation("Images");
-
-                    b.Navigation("LectorStudyPrograms");
-
-                    b.Navigation("StudentStudyProgram");
                 });
 #pragma warning restore 612, 618
         }

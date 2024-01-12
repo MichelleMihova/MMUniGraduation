@@ -46,7 +46,9 @@ namespace MMUniGraduation
 
             services.AddTransient<IStudyProgramService, StudyProgramService>();
             services.AddTransient<ICourseService, CourseService>();
+            services.AddTransient<ILectorService, LectorService>();
             services.AddTransient<ILectureService, LectureService>();
+            services.AddTransient<IStudentService, StudentService>();
             services.AddTransient<ApplicationDbContext>();
         }
 

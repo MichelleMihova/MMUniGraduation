@@ -3,8 +3,6 @@ using MMUniGraduation.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MMUniGraduation.ViewModels
 {
@@ -18,27 +16,34 @@ namespace MMUniGraduation.ViewModels
         public int LectureId { get; set; }
         public string LectureName { get; set; }
         public string LectureDescription { get; set; }
-        //public string LectureVideoMaterials { get; set; }
         public string VideoUrl { get; set; }
         public IEnumerable<IFormFile> Files { get; set; }
+        public IEnumerable<IFormFile> HWFiles { get; set; }
+        public IEnumerable<IFormFile> SkippingCourseFiles { get; set; }
+        public decimal MinimalGradeToPass { get; set; }
 
+        public string LectureFileId { get; set; }
+        public decimal MinHWGrade { get; set; }
+        public decimal MaxHWGrade { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
         public DateTime CourseStartDate { get; set; }
 
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime SkipCoursEndDate { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateTimeToShow { get; set; }
-
-        //public int StudyProgramId { get; set; }
-        //public virtual StudyProgram StudyProgram { get; set; }
+        
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime DateTimeToShowFile { get; set; }
 
         public Course Course { get; set; }
         public virtual ICollection<Lecture> Lectures { get; set; }
+        public virtual ICollection<LectureFile> SkippingCourseMaterials { get; set; }
     }
 }

@@ -1,34 +1,47 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
 }
-@model MMUniGraduation.Models.Student
+@model MMUniGraduation.ViewModels.EditStudentViewModel
 
-<h2>Upload photo</h2>
-<div class="input-group">
-    <div class="custom-file">
-        <!--
-        <input type="file" class="custom-file-input" id="inputGroupFile">
-        <label class="custom-file-label" for="inputGroupFile04">Enter Video Lecture url</label>
-            -->
-        <input class="form-control" type="text" placeholder="Select photo"><br />
-
-    </div>
-    <div class="input-group-append">
-        <button class="btn btn-outline-secondary" type="button">Upload</button>
-    </div>
-</div>
-
-Photo
-<form asp-controller="Course" asp-action="Create" enctype="multipart/form-data">
+    <br />
+<h2 style="text-align:center">Edit profile</h2>
+<br />
+<form asp-controller="Student" asp-action="Edit" enctype="multipart/form-data">
+    <label for="party">First name:</label>
+    <input class="form-control" asp-for="@Model.FirstName" type="text" placeholder="@Model.FirstName" />
+    <label for="party">Last name:</label>
+    <input class="form-control" asp-for="@Model.LastName" type="text" placeholder="@Model.LastName" />
+    <br />
+    <label>Select profile picture:</label>
     <div class="input-group">
-        <div class="custom-file">
-            <input type="file" class="custom-file-input" id="inputGroupFile04">
-            <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
-        </div>
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button">Upload</button>
+        <div class="custom-file form-control">
+            <input asp-for="Photos" class="custom-file-input form-control" id="inputGroupFile04" placeholder="Select photo">
+            <label class="custom-file-label form-control" for="inputGroupFile04">Choose image</label>
         </div>
     </div>
+    <br />
+    <hr />
+    <br />
+    <h6>Choose what kind of lecture materials you want to see:</h6><br />
+    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="48" height="48" viewBox="0 0 48 48">
+        <path fill="#90CAF9" d="M40 45L8 45 8 3 30 3 40 13z"></path>
+        <path fill="#E1F5FE" d="M38.5 14L29 14 29 4.5z"></path>
+        <path fill="#1976D2" d="M16 21H33V23H16zM16 25H29V27H16zM16 29H33V31H16zM16 33H29V35H16z"></path>
+    </svg>
+    <label>Text Materials: </label>
+    @Html.EditorFor(x => x.ShowTextMaterials)
+    <br />
+    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="48" height="48" viewBox="0 0 48 48">
+        <path fill="#FF3D00" d="M43.2,33.9c-0.4,2.1-2.1,3.7-4.2,4c-3.3,0.5-8.8,1.1-15,1.1c-6.1,0-11.6-0.6-15-1.1c-2.1-0.3-3.8-1.9-4.2-4C4.4,31.6,4,28.2,4,24c0-4.2,0.4-7.6,0.8-9.9c0.4-2.1,2.1-3.7,4.2-4C12.3,9.6,17.8,9,24,9c6.2,0,11.6,0.6,15,1.1c2.1,0.3,3.8,1.9,4.2,4c0.4,2.3,0.9,5.7,0.9,9.9C44,28.2,43.6,31.6,43.2,33.9z"></path>
+        <path fill="#FFF" d="M20 31L20 17 32 24z"></path>
+    </svg>
+    <label>Video Materials: </label>
+    @Html.EditorFor(x => x.ShowVideoMaterials)
+    <br />
+    <br />
+    <input type="hidden" name="Id" asp-for="@Model.Id" value="@Model.Id" />
+
+    <button class="btn btn-outline-secondary btn-outline-info" style="text-align:right; margin-bottom: 1em;">Update</button>
 </form>
+<div>
+    <a asp-controller="Student" asp-action="Index">Go Back</a>
+</div>

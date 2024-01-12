@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Data;
 using MMUniGraduation.Models;
 using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
 using MMUniGraduation.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,6 +46,14 @@ namespace MMUniGraduation.Controllers
             {
                 path = Path.Combine(_webHost.WebRootPath, "homeworks/") + fileName;
             }
+            else if (type == "examSolution")
+            {
+                path = Path.Combine(_webHost.WebRootPath, "examSolutions/") + fileName;
+            }
+            else if (type == "skippingExamSolution")
+            {
+                path = Path.Combine(_webHost.WebRootPath, "skippingExamSolutions/") + fileName;
+            }
             else
             {
                 path = Path.Combine(_webHost.WebRootPath, "files/") + fileName;
@@ -53,22 +64,76 @@ namespace MMUniGraduation.Controllers
             return File(bytes, "application/octet-stream", fileName);
         }
 
-        public async Task<IActionResult> Index(int courseId)
+        public async Task<IActionResult> Index(int courseId, bool goToExam)
         {
+            var user = await _userManager.GetUserAsync(this.User);
+            var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
+
             var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
             currentCourse.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
 
+            var studentCurrentCourse = new StudentCourses();
+
+            DateTime? EndDateTimeForSkipExam = null;
+
             var textMaterial = new List<LectureFile>();
+            var homeworkMaterial = new List<LectureFile>();
+            var skippingMaterial = new List<LectureFile>();
+            var skippingAssignments = new List<SkippingAssignment>();
 
             foreach (var lecture in currentCourse.Lectures)
             {
-                textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id).ToList();
+                if (student != null)
+                {
+                    studentCurrentCourse = _context.StudentCourses.FirstOrDefault(x => x.StudentId == student.Id && x.CourseId == currentCourse.Id);
+
+                    if (studentCurrentCourse != null && studentCurrentCourse.EndDateTimeForSkipping != null)
+                    {
+                        EndDateTimeForSkipExam = studentCurrentCourse.EndDateTimeForSkipping;
+                    }
+
+                    var hw = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.StudentId == student.UserId).ToList();
+                    decimal avarageHWgrade = 0;
+                    int cnt = 0;
+                    if (hw.Any())
+                    {
+                        foreach (var item in hw)
+                        {
+                            avarageHWgrade += item.Grade;
+                            cnt++;
+                        }
+                        avarageHWgrade /= cnt;
+                    }
+
+                    if (goToExam || studentCurrentCourse.EndDateTimeForSkipping != null)
+                    {
+                        if (studentCurrentCourse.EndDateTimeForSkipping == null)
+                        {
+                            studentCurrentCourse.EndDateTimeForSkipping = System.DateTime.Now.AddHours(3);
+                            _context.SaveChanges();
+                        }
+                        skippingMaterial = _context.LectureFiles.Where(x => x.LectureId == null && x.CourseId == currentCourse.Id && x.FileTitle == "SKIPPINGEXAM").ToList();
+                        currentCourse.SkippingCourseMaterials = skippingMaterial;
+
+                        skippingAssignments = _context.SkippingAssignments.Where(x => x.CourseId == currentCourse.Id && x.StudentId == student.UserId).ToList();
+                        currentCourse.SkippingAssignments = skippingAssignments;
+
+                    }
+
+                    textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade && l.DateTimeToShow <= System.DateTime.Now && l.FileTitle == "LECTURE").ToList();
+                    homeworkMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.FileTitle == "HOMEWORK").ToList();
+                }
+                else
+                {
+                    textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.FileTitle == "LECTURE").ToList();
+                    homeworkMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.FileTitle == "HOMEWORK").ToList();
+
+                    skippingMaterial = _context.LectureFiles.Where(x => x.LectureId == null && x.CourseId == currentCourse.Id && x.FileTitle == "SKIPPINGEXAM").ToList();
+                    currentCourse.SkippingCourseMaterials = skippingMaterial;
+                }
 
                 lecture.TextMaterials = textMaterial;
             }
-
-            var user = await _userManager.GetUserAsync(this.User);
-            var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
 
             var homework = new List<Homework>();
             foreach (var lecture in currentCourse.Lectures)
@@ -76,15 +141,35 @@ namespace MMUniGraduation.Controllers
                 if (student != null)
                 {
                     homework = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.StudentId == student.UserId).ToList();
+                    lecture.Homeworks = homework;
                 }
-                
-                lecture.Homeworks = homework;
             }
 
-            //TO DO..
-            this.TempData["Message"] = "You have been sucessfully assigned to this course !";
+            var lector = _context.Lectors.FirstOrDefault(x => x.UserId == currentCourse.CreatorId);
+            var photo = _context.Images.Where(x => x.LectorId == lector.Id).Select(x => x.Id + '.' + x.Extension).FirstOrDefault();
 
-            return View(currentCourse);
+            var viewModel = new IndexCourseViewModel
+            {
+                Course = currentCourse,
+                EndDateTime = EndDateTimeForSkipExam,
+                SkipCourse = goToExam,
+                Student = student,
+                HWMaterials = homeworkMaterial,
+                StudentCourse = studentCurrentCourse,
+                Image = photo,
+                Lector = lector
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpGet]
+        public ActionResult GetCourses(int programId)
+        {
+            var courses = _courseService.GetAllAsKeyValuePairs(programId);
+            IEnumerable<SelectListItem> dropdownData = courses.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
+
+            return Json(new SelectList(dropdownData, "Value", "Text"));
         }
 
         [Authorize(Roles = "Admin, Teacher")]
@@ -98,7 +183,7 @@ namespace MMUniGraduation.Controllers
 
             return this.View(viewModel);
         }
-
+        
         [Authorize(Roles = "Admin, Teacher")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateCourse input)
@@ -110,9 +195,20 @@ namespace MMUniGraduation.Controllers
                 return this.View(input);
             }
 
-            //var user = await _userManager.GetUserAsync(this.User);
+            var user = await _userManager.GetUserAsync(this.User);
+            var courseNames = _context.Courses.Select(x => x.Name);
 
-            await _courseService.CreateCourseAsync(input);
+            if (courseNames.Contains(input.Name))
+            {
+                this.TempData["Message"] = "The course has not been created yet! There is an existing course with the same name!";
+
+                input.StudyPrograms = _studyProgramService.GetAllAsKeyValuePairs();
+                input.Courses = _courseService.GetAllAsKeyValuePairs();
+
+                return this.View(input);
+            }
+
+            await _courseService.CreateCourseAsync(input, user);
 
             this.TempData["Message"] = "Course created successfully!";
 
@@ -125,10 +221,41 @@ namespace MMUniGraduation.Controllers
             var user = await _userManager.GetUserAsync(this.User);
             var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
 
+            var currCourse = new Course();
+            var passedCourses = new List<Course>();
+            //var currentCourses = new List<Course>();
+            if (student != null)
+            {
+                //get current courseId from selected program for logged user
+                var currentCoursesId = _context.StudentCourses.FirstOrDefault(x => x.StudentId == student.Id && x.IsPassed == false && x.ProgramId == studyProgramId);
+
+                if (currentCoursesId != null)
+                {
+                    currCourse = _context.Courses.FirstOrDefault(x => x.Id == currentCoursesId.CourseId);
+                }
+
+                //get all passed courseId's from selected program for logged user
+                var passedCoursesId = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == true && x.ProgramId == studyProgramId).Select(x => x.CourseId);
+
+                if (passedCoursesId.Any())
+                {
+                    foreach (var item in passedCoursesId)
+                    {
+                        var course = _context.Courses.FirstOrDefault(x => x.Id == item);
+                        passedCourses.Add(course);
+                    }
+                }
+            }
+
             var viewModel = new AllCoursesViewModel
             {
-                NextCourseName = _courseService.GetNextCourseSuggestion(student),
-                AllCourses = await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync()
+                //NextCourseName = _courseService.GetNextCourseSuggestion(student),
+                NextCourseName = _courseService.GetNextCourseSuggestion(student, studyProgramId),
+                AllCourses = await _context.Courses.Where(c => c.StudyProgramId == studyProgramId).ToListAsync(),
+                Signature = _context.StudyPrograms.FirstOrDefault(x => x.Id == studyProgramId).Name,
+                PassedCourses = passedCourses,
+                //CurrentCourses = currentCourses,
+                CurrentUserCourse = currCourse
             };
 
             if (message != null)
@@ -143,38 +270,126 @@ namespace MMUniGraduation.Controllers
         public async Task<IActionResult> AssignUserToCourse(int courseId)
         {
             var user = await _userManager.GetUserAsync(this.User);
-            var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
 
-            if (student != null && student.CurrentCourseId == 0)
+            var student = _context.Students.FirstOrDefault(x => x.UserId == user.Id);
+            var course = _context.Courses.FirstOrDefault(x => x.Id == courseId);
+
+            if (student != null)
             {
-                //student.CurrentCourse.Id = courseId;
-                student.CurrentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
-                _context.SaveChanges();
-            }
-            else if (student != null && student.CurrentCourseId != courseId)
-            {
-                var course = _context.Courses.FirstOrDefault(x => x.Id == courseId);
-                return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You are already assigned to {course.Name}" });
+                var passedCoursesId = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == true && x.ProgramId == course.StudyProgramId).Select(x => x.CourseId);
+                var passedCourses = new List<Course>();
+
+                if (passedCoursesId.Any())
+                {
+                    foreach (var id in passedCoursesId)
+                    {
+                        var c = _context.Courses.FirstOrDefault(x => x.Id == id);
+                        passedCourses.Add(c);
+                    }
+                }
+                //var currCourses = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == false);
+                var currentCoursesId = _context.StudentCourses.Where(x => x.StudentId == student.Id && x.IsPassed == false && x.ProgramId == course.StudyProgramId).Select(x => x.CourseId);
+                var currentCourses = new List<Course>();
+
+                if (currentCoursesId.Any())
+                {
+                    foreach (var id in currentCoursesId)
+                    {
+                        var c = _context.Courses.FirstOrDefault(x => x.Id == id);
+                        currentCourses.Add(c);
+                    }
+                }
+                //check if we have course that's not passed with the same programId - we cannot have two curr courses from one program
+                if (!currentCourses.Any())
+                {
+                    //check if we have already passed this course
+                    if (!passedCourses.Contains(course) && passedCourses.Any())
+                    {
+                        //check if it is the next course
+                        var f = false;
+                        foreach (var passedCourse in passedCourses)
+                        {
+                            //check if some of passed courses has the new courseId as nextCourseId
+                            //if yes - then we add the course as curr
+                            if (passedCourse.NextCourseId == courseId)
+                            {
+                                var currCourse = new StudentCourses
+                                {
+                                    StudentId = student.Id,
+                                    CourseId = course.Id,
+                                    IsPassed = false,
+                                    ProgramId = course.StudyProgramId
+                                };
+
+                                await _context.StudentCourses.AddAsync(currCourse);
+                                await _context.SaveChangesAsync();
+
+                                f = true;
+                            }
+                        }
+
+                        //suggest the proper next course
+                        if (!f)
+                        {
+                            return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have to continue with {_courseService.GetNextCourseSuggestion(student, course.StudyProgramId)} course" });
+                        }
+                    }
+                    else if (!passedCourses.Any())
+                    {
+                        //check if it is the first course
+                        if (course.ParetntId == 0)
+                        {
+                            var currCourse = new StudentCourses
+                            {
+                                StudentId = student.Id,
+                                CourseId = course.Id,
+                                IsPassed = false,
+                                ProgramId = course.StudyProgramId
+                            };
+
+                            await _context.StudentCourses.AddAsync(currCourse);
+                            await _context.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have to continue with {_courseService.GetNextCourseSuggestion(student, course.StudyProgramId)} course" });
+                        }
+                    }
+                    else
+                    {
+                        //the course is already passed
+                        //return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You have already passed {course.Name} course" });
+                        return RedirectToAction("Index", new { courseId = courseId });
+                    }
+                }
+                else
+                {
+                    //we already have curr course from the same program
+                    if (currentCourses.Contains(course))
+                    {
+                        return RedirectToAction("Index", new { courseId = courseId });
+                    }
+                    else if (!passedCourses.Contains(course))
+                    {
+                        return RedirectToAction("AllCourses", new { studyProgramId = course.StudyProgramId, message = $"You are already assigned to course from this program" });
+                    }
+                }
             }
 
             return RedirectToAction("Index", new { courseId = courseId });
         }
-
         public IActionResult Edit(int courseId)
         {
             //TO DO..
             //Add or Change criterias who and when can see the lectures
-
-            //var currentCourse = _context.Courses.FirstOrDefault(x => x.Id == courseId);
-            //currentCourse.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
+            //Add remove course for admins only
 
             var editViewModel = new EditCourseViewModel
             {
                 Course = _context.Courses.FirstOrDefault(x => x.Id == courseId),
-                Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList()
+                Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList(),
+                SkippingCourseMaterials = _context.LectureFiles.Where(x => x.CourseId == courseId && x.FileTitle == "SKIPPINGEXAM" && x.LectureId == null).ToList()
             };
-
-            //editViewModel.Course.Lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToList();
 
             var textMaterial = new List<LectureFile>();
 
@@ -189,6 +404,7 @@ namespace MMUniGraduation.Controllers
             }
 
             editViewModel.Course.Lectures = editViewModel.Lectures;
+            editViewModel.Course.SkippingCourseMaterials = _context.LectureFiles.Where(x => x.CourseId == courseId && x.FileTitle == "SKIPPINGEXAM" && x.LectureId == null).ToList();
 
             return View(editViewModel);
         }
@@ -203,25 +419,49 @@ namespace MMUniGraduation.Controllers
             {
                 course.Description = input.CourseDescription;
             }
-            await _context.SaveChangesAsync();
 
-            var editViewModel = new EditCourseViewModel
+            if (input.CourseStartDate != Convert.ToDateTime("1.1.0001 г. 0:00:00"))
             {
-                Course = _context.Courses.FirstOrDefault(x => x.Id == input.CourseId),
-                Lectures = _context.Lectures.Where(l => l.CourseId == input.CourseId).ToList()
-            };
-            var currLecture = _context.Lectures.Where(l => l.CourseId == input.CourseId && l.Id == input.LectureId);
+                course.CourseStartDate = input.CourseStartDate;
+            }
 
+            if (input.SkipCoursEndDate != Convert.ToDateTime("1.1.0001 г. 0:00:00"))
+            {
+                course.SkipCoursEndDate = input.SkipCoursEndDate;
+            }
+
+            if (input.SkippingCourseFiles != null)
+            {
+                await _lectureService.CreateLectureFile(null, input.SkippingCourseFiles, "SKIPPINGEXAM", course);
+            }
+
+            if (input.MinimalGradeToPass != 0 && input.MinimalGradeToPass != course.MinimalGradeToPass)
+                course.MinimalGradeToPass = input.MinimalGradeToPass;
+
+            await _context.SaveChangesAsync();
             await _lectureService.EditLecture(input);
 
-            //return View(editViewModel);
             return RedirectToAction("Edit", new { courseId = input.CourseId });
+        }
+        public async Task<IActionResult> AddSkippingExamSolution(IFormFile file, int courseId)
+        {
+            var user = await _userManager.GetUserAsync(this.User);
+            var currCourse = await _context.Courses.FirstOrDefaultAsync(x => x.Id == courseId);
+
+            await _courseService.AddSkippingExamSolutionToCourse(courseId, file, user.Id);
+
+            this.TempData["Message"] = "Skipping exam solution added successfully!";
+
+            return RedirectToAction("Index", "Course", new { courseId = courseId });
         }
 
         [Authorize(Roles = "Admin, Teacher")]
         public async Task<IActionResult> Delete(int courseId)
         {
             var lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToArray();
+
+            await _courseService.DeleteSkippingCourseMaterial(courseId);
+            await _courseService.DeleteSkippingAssignment(courseId);
 
             foreach (var lecture in lectures)
             {

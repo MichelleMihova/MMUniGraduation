@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MMUniGraduation.Data;
 using MMUniGraduation.Models;
@@ -9,6 +10,7 @@ using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
 using MMUniGraduation.ViewModels;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MMUniGraduation.Controllers
@@ -26,27 +28,27 @@ namespace MMUniGraduation.Controllers
             _courseService = courseService;
             _userManager = userManager;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
 
+        [HttpGet]
+        public ActionResult GetLectures(int courseId)
+        {
+            var lectures = _lectureService.GetAllAsKeyValuePairs(courseId);
+
+            IEnumerable<SelectListItem> dropdownData = lectures.Select(item => new SelectListItem { Value = item.Key, Text = item.Value }).ToList(); ;
+
+            return Json(new SelectList(dropdownData, "Value", "Text"));
+        }
         [Authorize(Roles = "Admin, Teacher")]
         public IActionResult Create()
         {
-            //var courses = _context.Courses.Include(c => c.Name);
-            //return View(courses.ToList());
-
             var viewModel = new CreateLecture
             {
-                //Courses - from model/create/createLecture
                 Courses = _courseService.GetAllAsKeyValuePairs(),
                 AllLectures = _lectureService.GetAllAsKeyValuePairs()
             };
 
             return this.View(viewModel);
         }
-
         [Authorize(Roles = "Admin, Teacher")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateLecture input)
@@ -56,20 +58,35 @@ namespace MMUniGraduation.Controllers
                 input.Courses = _courseService.GetAllAsKeyValuePairs();
                 input.AllLectures = _lectureService.GetAllAsKeyValuePairs();
             }
-            //var user = await _userManager.GetUserAsync(this.User);
-          
-            await _lectureService.CreateLectureAsync(input);
+            var user = await _userManager.GetUserAsync(this.User);
+            var lectureNames = _context.Lectures.Where(x => x.CourseId == input.CourseId).Select(x => x.Name);
+
+            if (lectureNames.Contains(input.Name))
+            {
+                this.TempData["Message"] = "The lecture has not been created yet! There is an existing lecture with the same name!";
+                return View(input);
+            }
+            await _lectureService.CreateLectureAsync(input, user);
 
             this.TempData["Message"] = "Lecture created successfully!";
 
             return RedirectToAction("Index", "Home");
         }
-        // GET: Course
-        public async Task<IActionResult> Index1()
-        {
-            return View(await _context.Lectures.ToListAsync());
-        }
 
+        public async Task<IActionResult> AddExamSolution(IFormFile file, int lectureId)
+        {
+            var user = await _userManager.GetUserAsync(this.User);
+            var currLecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == lectureId);
+
+            await _lectureService.AddExamSolutionToLecture(lectureId, file, user.Id);
+
+            this.TempData["Message"] = "Exam solution added successfully!";
+
+
+            //return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Course", new { courseId = currLecture.CourseId });
+        }
+        
         public async Task<IActionResult> AddHomework(IFormFile file, int lectureId)
         {
             var user = await _userManager.GetUserAsync(this.User);
@@ -77,20 +94,43 @@ namespace MMUniGraduation.Controllers
 
             await _lectureService.AddHomeworkToLecture(lectureId, file, user.Id);
 
-             this.TempData["Message"] = "Homework added successfully!";
+            this.TempData["Message"] = "Homework added successfully!";
 
-            
-            //return RedirectToAction("Index", "Home");
-            return RedirectToAction("Index", "Course", new { courseId = 1 });
+            return RedirectToAction("Index", "Course", new { courseId = currLecture.CourseId });
         }
 
-        public async Task<IActionResult> EditHomework(int homeworkId, decimal homeworkGrade, string homeworkComment)
+        public async Task<IActionResult> EditHomework(AssessmentsViewModel input)
         {
-            await _lectureService.EditHomework(homeworkId, homeworkGrade, homeworkComment);
+            await _lectureService.EditHomework(input.HomeworkId, input.HomeworkGrade, input.HomeworkComment);
+
+            var hw = await _context.Homeworks.FirstOrDefaultAsync(x => x.Id == input.HomeworkId);
+            var student = await _context.Students.FirstOrDefaultAsync(x => x.UserId == hw.StudentId);
+            var lecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == hw.LectureId);
+            var course = await _context.Courses.FirstOrDefaultAsync(x => x.Id == lecture.CourseId);
+
+            //if (hw.HomeworkTitle.ToUpper() == "EXAM" && hw.Grade >= lecture.RequiredGrade)
+            if (hw.HomeworkTitle.ToUpper() == "EXAM" && hw.Grade >= course.MinimalGradeToPass)
+            {
+                var studentCourse = _context.StudentCourses.FirstOrDefault(x => x.CourseId == lecture.CourseId && !x.IsPassed && x.StudentId == student.Id);
+                studentCourse.IsPassed = true;
+                studentCourse.FinalGrade = input.HomeworkGrade;
+
+                _context.SaveChanges();
+            }
+
             return RedirectToAction("Assessment", "Lector");
         }
 
-        //public async Task<IActionResult> EditLecture(int lectureId, string lectureDescription, int courseId)
+        public async Task<IActionResult> EditSkippingAssignment(AssessmentsViewModel input)
+        {
+            await _lectureService.EditSkippingAssignment(input.HomeworkId, input.HomeworkGrade, input.HomeworkComment);
+
+            //var hw = await _context.Homeworks.FirstOrDefaultAsync(x => x.Id == input.HomeworkId);
+            //var student = await _context.Students.FirstOrDefaultAsync(x => x.UserId == hw.StudentId);
+            //var lecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == hw.LectureId);
+
+            return RedirectToAction("Assessment", "Lector");
+        }
         public async Task<IActionResult> EditLecture(EditCourseViewModel input)
         {
             await _lectureService.EditLecture(input);
@@ -103,10 +143,10 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Edit", "Course", new { courseId = courseId });
         }
         
-        public async Task<IActionResult> DeleteHomework(int lectureId, int courseId)
+        public async Task<IActionResult> DeleteHomework(int lectureId, int courseId, string name)
         {
             await _lectureService.DeleteHomework(lectureId);
-            return RedirectToAction("Edit", "Course", new { courseId = courseId });
+            return RedirectToAction(name, "Course", new { courseId = courseId });
         }
 
         public async Task<IActionResult> DeleteLecture(int lectureId, int courseId)
@@ -118,10 +158,12 @@ namespace MMUniGraduation.Controllers
             return RedirectToAction("Edit", "Course", new { courseId = courseId });
         }
 
-        public async Task<IActionResult> SetConstraints(string lectureFileId, int courseId)
+        public async Task<IActionResult> SetConstraints(EditCourseViewModel input)
         {
+            //if homeworkGrade for currStudentId
+            await _lectureService.EditLectureFile(input);
 
-            return RedirectToAction("Edit", "Course", new { courseId = courseId });
+            return RedirectToAction("Edit", "Course", new { courseId = input.CourseId });
         }
             
     }
