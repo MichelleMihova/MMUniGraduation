@@ -10,6 +10,7 @@ using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
 using MMUniGraduation.ViewModels;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,6 +22,9 @@ namespace MMUniGraduation.Controllers
         private readonly ILectureService _lectureService;
         private readonly ICourseService _courseService;
         private readonly UserManager<ApplicationUser> _userManager;
+
+        //private readonly string[] allowedExtensions = new[] { "doc", "docx", "txt", "pptx", "pptm", "pdf" };
+
         public LectureController(ApplicationDbContext context, ILectureService lectureService, ICourseService courseService, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -66,8 +70,47 @@ namespace MMUniGraduation.Controllers
             if (lectureNames.Contains(input.Name))
             {
                 this.TempData["Message"] = "The lecture has not been created yet! There is an existing lecture with the same name!";
+
+                input.Courses = _courseService.GetAllAsKeyValuePairs();
+                input.AllLectures = _lectureService.GetAllAsKeyValuePairs();
+
                 return View(input);
             }
+
+            if (input.Files != null)
+            {
+                foreach (var file in input.Files)
+                {
+                    var extensionMessage = _lectureService.CheckFileExtension(file);
+                    if (extensionMessage != null)
+                    {
+                        this.TempData["Message"] = extensionMessage;
+
+                        input.Courses = _courseService.GetAllAsKeyValuePairs();
+                        input.AllLectures = _lectureService.GetAllAsKeyValuePairs();
+
+                        return this.View(input);
+                    }
+                }
+            }
+
+            if (input.HWFiles != null)
+            {
+                foreach (var file in input.HWFiles)
+                {
+                    var extensionMessage = _lectureService.CheckFileExtension(file);
+                    if (extensionMessage != null)
+                    {
+                        this.TempData["Message"] = extensionMessage;
+
+                        input.Courses = _courseService.GetAllAsKeyValuePairs();
+                        input.AllLectures = _lectureService.GetAllAsKeyValuePairs();
+
+                        return this.View(input);
+                    }
+                }
+            }
+
             await _lectureService.CreateLectureAsync(input, user);
 
             this.TempData["Message"] = "Lecture created successfully!";
@@ -79,6 +122,14 @@ namespace MMUniGraduation.Controllers
         {
             var user = await _userManager.GetUserAsync(this.User);
             var currLecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == lectureId);
+
+            var extensionMessage = _lectureService.CheckFileExtension(file);
+            if (extensionMessage != null)
+            {
+                this.TempData["Message"] = extensionMessage;
+
+                return RedirectToAction("Index", "Course", new { courseId = currLecture.CourseId });
+            }
 
             await _lectureService.AddExamSolutionToLecture(lectureId, file, user.Id);
 
@@ -92,6 +143,14 @@ namespace MMUniGraduation.Controllers
             var user = await _userManager.GetUserAsync(this.User);
             var currLecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == lectureId);
 
+            var extensionMessage = _lectureService.CheckFileExtension(file);
+            if (extensionMessage != null)
+            {
+                this.TempData["Message"] = extensionMessage;
+
+                return RedirectToAction("Index", "Course", new { courseId = currLecture.CourseId });
+            }
+            
             await _lectureService.AddHomeworkToLecture(lectureId, file, user.Id);
 
             this.TempData["Message"] = "Homework added successfully!";

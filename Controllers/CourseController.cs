@@ -27,6 +27,8 @@ namespace MMUniGraduation.Controllers
         private readonly IWebHostEnvironment _webHost;
         private readonly UserManager<ApplicationUser> _userManager;
 
+        //private readonly string[] allowedExtensions = new[] { "doc", "docx", "txt", "pptx", "pptm", "pdf" };
+
         public CourseController(ICourseService courseService, IStudyProgramService studyProgramService,
             ILectureService lectureService, ApplicationDbContext context, IWebHostEnvironment webHost,
             UserManager<ApplicationUser> userManager)
@@ -121,7 +123,10 @@ namespace MMUniGraduation.Controllers
                         currentCourse.SkippingAssignments = skippingAssignments;
                     }
 
-                    textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade && l.DateTimeToShow <= System.DateTime.Now && l.FileTitle == "LECTURE").ToList();
+                    textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade
+                    && l.DateTimeToShow <= System.DateTime.Now && l.FileTitle == "LECTURE").ToList();
+                    //textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade
+                    //&& l.MaxHWGrade >= avarageHWgrade && l.DateTimeToShow <= System.DateTime.Now && l.FileTitle == "LECTURE").ToList();
                     homeworkMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.FileTitle == "HOMEWORK").ToList();
                 }
                 else
@@ -207,6 +212,23 @@ namespace MMUniGraduation.Controllers
                 input.Courses = _courseService.GetAllAsKeyValuePairs();
 
                 return this.View(input);
+            }
+
+            if (input.SkippingCourseFiles != null)
+            {
+                foreach (var file in input.SkippingCourseFiles)
+                {
+                    var extensionMessage = _lectureService.CheckFileExtension(file);
+                    if (extensionMessage != null)
+                    {
+                        this.TempData["Message"] = extensionMessage;
+
+                        input.StudyPrograms = _studyProgramService.GetAllAsKeyValuePairs();
+                        input.Courses = _courseService.GetAllAsKeyValuePairs();
+
+                        return this.View(input);
+                    }
+                }
             }
 
             await _courseService.CreateCourseAsync(input, user);
@@ -426,6 +448,17 @@ namespace MMUniGraduation.Controllers
 
             if (input.SkippingCourseFiles != null)
             {
+                foreach (var file in input.SkippingCourseFiles)
+                {
+                    var extensionMessage = _lectureService.CheckFileExtension(file);
+                    if (extensionMessage != null)
+                    {
+                        this.TempData["Message"] = extensionMessage;
+
+                        return RedirectToAction("Edit", new { courseId = input.CourseId });
+                    }
+                }
+
                 await _lectureService.CreateLectureFile(null, input.SkippingCourseFiles, "SKIPPINGEXAM", course);
             }
 
@@ -433,6 +466,35 @@ namespace MMUniGraduation.Controllers
                 course.MinimalGradeToPass = input.MinimalGradeToPass;
 
             await _context.SaveChangesAsync();
+
+            if (input.Files != null)
+            {
+                foreach (var file in input.Files)
+                {
+                    var extensionMessage = _lectureService.CheckFileExtension(file);
+                    if (extensionMessage != null)
+                    {
+                        this.TempData["Message"] = extensionMessage;
+
+                        return RedirectToAction("Edit", new { courseId = input.CourseId });
+                    }
+                }
+            }
+
+            if (input.HWFiles != null)
+            {
+                foreach (var file in input.HWFiles)
+                {
+                    var extensionMessage = _lectureService.CheckFileExtension(file);
+                    if (extensionMessage != null)
+                    {
+                        this.TempData["Message"] = extensionMessage;
+
+                        return RedirectToAction("Edit", new { courseId = input.CourseId });
+                    }
+                }
+            }
+
             await _lectureService.EditLecture(input);
 
             return RedirectToAction("Edit", new { courseId = input.CourseId });
@@ -442,6 +504,14 @@ namespace MMUniGraduation.Controllers
         {
             var user = await _userManager.GetUserAsync(this.User);
             var currCourse = await _context.Courses.FirstOrDefaultAsync(x => x.Id == courseId);
+
+            var extensionMessage = _lectureService.CheckFileExtension(file);
+            if (extensionMessage != null)
+            {
+                this.TempData["Message"] = extensionMessage;
+
+                return RedirectToAction("Index", "Course", new { courseId = courseId });
+            }
 
             await _courseService.AddSkippingExamSolutionToCourse(courseId, file, user.Id);
 

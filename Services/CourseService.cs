@@ -84,6 +84,15 @@ namespace MMUniGraduation.Services
         private async void SetNextCourseId(CreateCourse input, Course course)
         {
             var parentCourse = _db.Courses.FirstOrDefault(x => x.Id == input.ParetntId);
+
+            if (parentCourse.NextCourseId != 0)
+            {
+                course.NextCourseId = parentCourse.NextCourseId;
+
+                var nextCourse = _db.Courses.FirstOrDefault(x => x.Id == parentCourse.NextCourseId);
+                nextCourse.ParetntId = course.Id;
+            }
+
             parentCourse.NextCourseId = course.Id;
             await _db.SaveChangesAsync();
         }

@@ -4,6 +4,13 @@
     $('#exampleModal').modal('show')
 </script>
 
+@if (this.TempData.ContainsKey("Message"))
+{
+    <div class="alert alert-heading alert-dismissible" style="color: darkred; font-weight: bold; text-align: center; border-block: solid; border-color: darkred;">
+        @this.TempData["Message"]
+    </div>
+}
+
 <form asp-controller="Course" asp-action="Edit" enctype="multipart/form-data">
     <br />
     <h2 style="padding-top:25px; text-align:center;">Edit </h2>

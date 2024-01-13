@@ -29,38 +29,53 @@ namespace MMUniGraduation.Services
             _userManager = userManager;
         }
 
+        public string CheckFileExtension(IFormFile TextMaterial)
+        {
+            var extension = Path.GetExtension(TextMaterial.FileName).TrimStart('.');
+
+            if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+            {
+                return $"Invalid file extension {extension} !";
+            }
+
+            return null;
+        }
+
         public async Task CreateLectureFile(Lecture lecture, IEnumerable<IFormFile> files, string type, Course course)
         {
-            foreach (var file in files)
+            if (files != null)
             {
-                var extension = Path.GetExtension(file.FileName).TrimStart('.');
-                var wwwrootPath = _webHost.WebRootPath;
-
-                if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+                foreach (var file in files)
                 {
-                    throw new Exception($"Invalid file extension {extension} !");
+                    var extension = Path.GetExtension(file.FileName).TrimStart('.');
+                    var wwwrootPath = _webHost.WebRootPath;
+
+                    if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+                    {
+                        throw new Exception($"Invalid file extension {extension} !");
+                    }
+
+                    var lectureFile = new LectureFile
+                    {
+                        Extension = extension,
+                        FileName = file.FileName,
+                        FileTitle = type
+                    };
+
+                    if (lecture != null)
+                    {
+                        lecture.TextMaterials.Add(lectureFile);
+                    }
+
+                    if (course != null)
+                    {
+                        course.SkippingCourseMaterials.Add(lectureFile);
+                    }
+
+                    var physicalPath = $"{wwwrootPath}/files/{lectureFile.Id}.{extension}";
+                    await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
+                    await file.CopyToAsync(fileStream);
                 }
-
-                var lectureFile = new LectureFile
-                {
-                    Extension = extension,
-                    FileName = file.FileName,
-                    FileTitle = type
-                };
-
-                if (lecture != null)
-                {
-                    lecture.TextMaterials.Add(lectureFile);
-                }
-
-                if (course != null)
-                {
-                    course.SkippingCourseMaterials.Add(lectureFile);
-                }
-
-                var physicalPath = $"{wwwrootPath}/files/{lectureFile.Id}.{extension}";
-                await using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
-                await file.CopyToAsync(fileStream);
             }
 
             await _db.SaveChangesAsync();
@@ -73,7 +88,7 @@ namespace MMUniGraduation.Services
             //get all exam lectures lectures
             var assessmentLecturesId = _db.Lectures.Where(x => x.CourseId == courseId && x.IsExemption == true).Select(x => x.Id);
             var student = _db.Students.FirstOrDefault(x => x.UserId == studentId);
-            
+
             bool passed = true;
             decimal finalGrade = 0;
             var cnt = 0;
@@ -127,7 +142,7 @@ namespace MMUniGraduation.Services
                 RequiredGrade = input.RequiredGrade
             };
 
-            var haveFinalLecture =  _db.Lectures.FirstOrDefault(x => x.CourseId == input.CourseId && x.IsExam == true);
+            var haveFinalLecture = _db.Lectures.FirstOrDefault(x => x.CourseId == input.CourseId && x.IsExam == true);
 
             if (haveFinalLecture != null)
             {
@@ -331,10 +346,10 @@ namespace MMUniGraduation.Services
             {
                 lectureFile.MinHWGrade = input.MinHWGrade;
             }
-            
+
             if (lectureFile != null && input.MaxHWGrade != 0)
             {
-                lectureFile.MinHWGrade = input.MaxHWGrade;
+                lectureFile.MaxHWGrade = input.MaxHWGrade;
             }
 
             if (lectureFile != null && input.DateTimeToShowFile != lectureFile.DateTimeToShow && input.DateTimeToShowFile != Convert.ToDateTime("1.1.0001 г. 0:00:00"))
