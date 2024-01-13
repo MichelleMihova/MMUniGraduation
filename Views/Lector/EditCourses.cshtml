@@ -1,6 +1,4 @@
 ﻿@model MMUniGraduation.ViewModels.AllCoursesViewModel
-@{
-}
 
 <style>
     .img-box {
@@ -29,33 +27,10 @@
         }
 </style>
 
-
 <h2 style="text-align: center; padding-top: 1em; ">Edit courses</h2>
-<!-- <h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>   -->
-<!--<div style="text-align: center; padding-top: 1em;">
-    <h3>Filters</h3>
-
-    <div>-->
-        <!--
-        <label>Course program</label>
-        <select asp-for="StudyProgramId" class="form-control" asp-items="studyPrograms"></select>
-        <br />
-        -->
-        <!--@using (Html.BeginForm())
-        {
-            <p>
-                Find by name: @Html.TextBox("SearchString")
-                <input type="submit" value="Search"  class="btn btn-outline-info" />
-            </p>
-        }
-
-        <button type="button" class="btn btn-outline-info">search</button>
-    </div>
-</div>-->
 
 <br />
 <div class="container">
-    @*<h4 style="text-align: center; padding-top: 1em;">Courses</h4>*@
     <hr />
     @foreach (var course in Model.AllCourses)
     {
@@ -71,4 +46,3 @@
         <hr />
     }
 </div>
-

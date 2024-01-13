@@ -6,8 +6,6 @@
 <h1 style="text-align:center; padding:1em;">@ViewData["Title"]</h1>
 
 <div class="container">
-
-    @* <a class="navbar-brand d-flex align-items-center" href="./"><img src="./img/gifs/hearteyes.gif" alt="Example Navbar 1" class="mr-2" height="30"> Lazy Kit</a>*@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown-3" aria-controls="navbarNavDropdown-3"
             aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -73,7 +71,6 @@
                 </div>
                 <h5>Bio</h5>
                 <p class="lead text-center text-lg-left">@Model.Bio</p>
-                @*<p class="lead text-center text-lg-left">Let's let things come out of the woodwork.  I'll give you my best side, tell you all my best lies.  Yeah, awesome right?</p>*@
             </div>
         </div>
         <div style="text-align:right;">
@@ -118,14 +115,12 @@
                         @foreach (var item in program.Value)
                         {
                             <div class="card">
-                                @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
                                 <div class="card-body">
                                     <h5 class="card-title">@item.Signature @item.Name</h5>
                                     <p class="card-text">@item.Description</p>
                                 </div>
                                 <div class="card-footer">
                                     <div class="card-footer">
-                                        @*<small class="text-muted">Last updated 3 mins ago</small>*@
                                         <a class="nav-link text-dark" asp-route-courseId="@item.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
                                     </div>
                                 </div>
@@ -141,14 +136,12 @@
                         @foreach (var item in program.Value)
                         {
                             <div class="card">
-                                @*<img class="card-img-top" src="https://jobspace.bg/company-files/11/177905061520210611114756.png" alt="Card image cap">*@
                                 <div class="card-body">
                                     <h5 class="card-title">@item.Signature @item.Name</h5>
                                     <p class="card-text">@item.Description</p>
                                 </div>
                                 <div class="card-footer">
                                     <div class="card-footer">
-                                        @*<small class="text-muted">Last updated 3 mins ago</small>*@
                                         <a class="nav-link text-dark" asp-route-courseId="@item.Id" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Go to course</a>
                                     </div>
                                 </div>
@@ -161,7 +154,6 @@
             }
         }
     </div>
-
 </div>
 
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -174,4 +166,3 @@
 
 <!--   lazy javascript -->
 <script src="./assets/js/lazy.js"></script>
-

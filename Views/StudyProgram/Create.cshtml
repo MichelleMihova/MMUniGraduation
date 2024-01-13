@@ -24,7 +24,6 @@
         .info:hover {
             background: #0b7dda;
         }
-
 </style>
 
 @if (this.TempData.ContainsKey("Message"))
@@ -50,12 +49,10 @@
         <br />
 
         <label>Image</label>
-        @*<input asp-for="Images" class="form-control" />*@
         <div class="input-group">
             <div class="custom-file form-control">
-                <input asp-for="Images" class="custom-file-input form-control" id="inputGroupFile04" type  ="file">
+                <input asp-for="Images" class="custom-file-input form-control" id="inputGroupFile04" type="file">
                 <label class="custom-file-label form-control" for="inputGroupFile04">Choose image</label>
-                @*<span id="imageName" class="text-muted"></span>*@
             </div>
         </div>
         <br />
@@ -66,7 +63,6 @@
     <div>
         <a asp-controller="Home" asp-action="Index">Back to Home</a>
     </div>
-
 </div>
 
 @section Scripts {

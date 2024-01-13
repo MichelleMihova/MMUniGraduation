@@ -11,7 +11,6 @@
 <div style="text-align:center;">
     <h3>@Model.Course.Signature </h3>
     <h3>@Model.Course.Name</h3>
-    @*<p>@Model.Course.Description</p>*@
 </div>
 <br />
 <hr />
@@ -53,7 +52,6 @@
                 {
                     @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
                                 (Model.StudentCourse.EndDateTimeForSkipping != null))
-                    //(Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
                     {
                         <ul>
                             @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
@@ -91,21 +89,6 @@
     //decimal grade = 0;
     foreach (var lecture in Model.Course.Lectures)
     {
-        //int cnt = 0;
-        //if (lecture.RequiredGrade != 0 && lecture.ParetntLectureId != 0)
-        //{
-        //    if (lecture.RequiredGrade > grade)
-        //    {
-        //        break;
-        //    }
-        //}
-        //foreach (var g in lecture.Homeworks)
-        //{
-        //    grade += g.Grade;
-        //    cnt++;
-        //}
-        //grade /= cnt;
-
         if (lecture.DateTimeToShow <= DateTime.Now || Model.SkipCourse || User.IsInRole("Admin") || User.IsInRole("Teacher"))
         {
             <div class="container">
@@ -145,8 +128,7 @@
                                             </svg>
                                             <i class="bi bi-file-earmark-text-fill">Lecture materials:</i>
                                         </li>
-                                        @*@if (User.IsInRole("Teacher") || User.IsInRole("Admin") || (Model.Student.ShowTextMaterials && lecture))
-                                            {*@
+                                       
                                         @foreach (var file in lecture.TextMaterials)
                                         {
                                             @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
@@ -252,7 +234,6 @@
                                         </div>
                                     }
                                 }
-                                @*</form>*@
                             </div>
                         </div>
                     </div>

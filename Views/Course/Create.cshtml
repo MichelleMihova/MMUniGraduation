@@ -54,13 +54,7 @@
         <br />
 
         <label>Course program</label>
-        @*<select id="programsDropdown" onchange="myFunction()" asp-for="StudyProgramId" class="form-control" asp-items="studyPrograms"></select>*@
         @Html.DropDownListFor(x => Model.StudyProgramId, new SelectList(studyPrograms, "Value", "Text"), "---Select Program---", htmlAttributes: new { @class = "form-control", id = "Program" })
-
-
-        @*@Html.DropDownListFor(x => Model.StudyProgramId, new SelectList(studyPrograms, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "Program" })*@
-        @*@Html.DropDownListFor(x => Model.ParetntId, new SelectList(courses, "Value", "Text"), htmlAttributes: new { @class = "form-control", @id = "Region" })*@
-
         <br />
 
         <label>Course description</label>
@@ -71,9 +65,6 @@
         <h4>Course inheritance</h4>
         <div>
             <label>Select parent course</label>
-            @*<select id="coursesDropdown" asp-for="ParetntId" class="form-control" asp-items="courses">
-                    <option asp-for="ParetntId" value="0">No inheritance</option>
-                </select>*@
             @Html.DropDownListFor(x => Model.ParetntId, new SelectList(courses, "Value", "Text"), "---No course inheritance---", htmlAttributes: new { @class = "form-control", @id = "Course" })
 
         </div>

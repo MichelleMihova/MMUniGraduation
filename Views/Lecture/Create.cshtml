@@ -35,7 +35,6 @@
         }
 </style>
 
-@*<h1 style="padding-top:25px; padding-bottom:1em; text-align:center;">@ViewData["Title"]</h1>*@
 <h1 style="padding-top:25px; text-align:center;">Create Lecture</h1>
 <form asp-action="Create" asp-controller="Lecture" enctype="multipart/form-data">
     <div>
@@ -46,32 +45,20 @@
         <br /><hr /><br />
         <h4>Lecture inheritance</h4>
         <label>Select corresponding course</label>
-        @*<select asp-for="CourseId" class="form-control" asp-items="courses"></select>*@
         @Html.DropDownListFor(x => Model.CourseId, new SelectList(courses, "Value", "Text"), "---Select Course---", htmlAttributes: new { @class = "form-control", id = "Course" })
         <br />
         <label>Select parent lecture</label>
-        @*<select asp-for="ParetntLectureId" class="form-control" asp-items="lectures">
-                <option asp-for="ParetntId" value="0">No inheritance</option>
-            </select>*@
         @Html.DropDownListFor(x => Model.ParetntLectureId, new SelectList(lectures, "Value", "Text"), "---No lecture inheritance---", htmlAttributes: new { @class = "form-control", @id = "Lecture" })
-
         <br />
         <hr />
         <br />
 
         <h4>Lecture materials..</h4>
-        @*<label>HW Files</label>
-            <input asp-for="HWFiles" class="form-control" />
-            <br />*@
-
         <label>Lecture materials</label>
         <div class="input-group">
             <div class="custom-file form-control">
                 <input asp-for="Files" class="custom-file-input form-control" id="inputGroupFile04">
                 <label class="custom-file-label form-control" for="inputGroupFile04">Choose lecture materials</label>
-
-                @*<input asp-for="Files" class="custom-file-input form-control" id="inputGroupFile04">
-                    <label class="custom-file-label form-control" for="inputGroupFile04">Choose lecture materials</label>*@
             </div>
         </div>
         <br />
@@ -98,9 +85,6 @@
             <label>Is lecture retake exam: </label>
             @Html.EditorFor(x => x.IsRetakeExam)
             <br />
-            @*<label>Required grade:</label>
-            <input asp-for="RequiredGrade" class="form-control" type="number" min="2" max="6" placeholder="Required grade" value="">
-            <br />*@
 
             <div class="form-group">
                 <label asp-for="DateTimeToShow" class="control-label"></label>
@@ -117,12 +101,9 @@
         </div>
 
     </div>
-    @*<br />*@
     <button class="btn info">Create</button>
 </form>
 @section Scripts {
-    @*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
-
     <script type="text/javascript">
     $('#Course').change(function () {
                 //we get selected value of programs
@@ -150,4 +131,3 @@
             });
     </script>
 }
-

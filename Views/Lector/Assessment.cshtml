@@ -22,7 +22,7 @@
 </script>
 
 <h2 style="text-align: center; padding-top: 1em; ">Assessment Page</h2>
-<!-- <h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>   -->
+
 <div style="padding-top: 1em;">
     <h3 onclick="showFilters()" style="text-align: center; padding-top: 1em; ">
         Filters
@@ -31,17 +31,14 @@
     <form asp-controller="Lector" asp-action="Assessment" enctype="multipart/form-data">
         <div id="show-filters">
             <label>Select program</label>
-            @*k<select asp-for="ProgramId" class="form-control" asp-items="programs" onchange="optionSelectedProgram(this.value)"></select>*@
             @Html.DropDownListFor(x => Model.ProgramId, new SelectList(programs, "Value", "Text"), "---Select Program---", htmlAttributes: new { @class = "form-control", id = "Program" })
             <br />
 
             <label>Select course</label>
-            @*<select asp-for="CourseId" class="form-control" asp-items="courses"></select>*@
             @Html.DropDownListFor(x => Model.CourseId, new SelectList(courses, "Value", "Text"), "---Select course---", htmlAttributes: new { @class = "form-control", @id = "Course" })
             <br />
 
             <label>Select lecture</label>
-            @*<select asp-for="LectureId" class="form-control" asp-items="lectures"></select>*@
             @Html.DropDownListFor(x => Model.LectureId, new SelectList(lectures, "Value", "Text"), "---Select lecture---", htmlAttributes: new { @class = "form-control", @id = "Lecture" })
             <br />
 
