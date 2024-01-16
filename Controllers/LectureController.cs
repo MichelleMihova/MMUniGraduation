@@ -214,7 +214,18 @@ namespace MMUniGraduation.Controllers
 
         public async Task<IActionResult> SetConstraints(EditCourseViewModel input)
         {
-            await _lectureService.EditLectureFile(input);
+            //await _lectureService.EditLectureFile(input);
+
+            if ((input.MinHWGrade != 0 && (input.MinHWGrade < 2 || input.MinHWGrade > 6)) ||
+                (input.MaxHWGrade != 0 && (input.MaxHWGrade < 2 || input.MaxHWGrade > 6)))
+            {
+                this.TempData["Message"] = "Constraints was not changed successfully! The Grade should be between 2 and 6!";
+            }
+            else
+            {
+                await _lectureService.EditLectureFile(input);
+                this.TempData["Message"] = "Constraints are added successfully!";
+            }
 
             return RedirectToAction("Edit", "Course", new { courseId = input.CourseId });
         }

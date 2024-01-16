@@ -62,6 +62,11 @@ namespace MMUniGraduation.Services
                         FileTitle = type
                     };
 
+                    if (type == "LECTURE")
+                    {
+                        lectureFile.MaxHWGrade = 6;
+                    }
+
                     if (lecture != null)
                     {
                         lecture.TextMaterials.Add(lectureFile);
@@ -342,12 +347,12 @@ namespace MMUniGraduation.Services
         {
             var lectureFile = _db.LectureFiles.FirstOrDefault(x => x.Id == input.LectureFileId);
 
-            if (lectureFile != null && input.MinHWGrade != 0)
+            if (lectureFile != null && input.MinHWGrade != 0 && input.MinHWGrade >= 2 && input.MinHWGrade <= 6)
             {
                 lectureFile.MinHWGrade = input.MinHWGrade;
             }
 
-            if (lectureFile != null && input.MaxHWGrade != 0)
+            if (lectureFile != null && input.MaxHWGrade != 0 && input.MinHWGrade >= 2 && input.MinHWGrade <= 6)
             {
                 lectureFile.MaxHWGrade = input.MaxHWGrade;
             }

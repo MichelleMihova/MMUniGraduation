@@ -41,7 +41,7 @@
             <hr />
             <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Index"><i class="fa fa-save"></i> View</a>
             <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Edit"><i class="fa fa-save"></i> Edit</a>
-            <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Delete"><i class="fa fa-save"></i> Delete</a>
+            <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Delete" onclick="if (!confirm('Are you sure you want to delete?')) { return false }"><i class="fa fa-save"></i> Delete</a>
         </div>
         <hr />
     }

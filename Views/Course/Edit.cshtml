@@ -4,11 +4,26 @@
     $('#exampleModal').modal('show')
 </script>
 
+@*@if (this.TempData.ContainsKey("Message"))
+    {
+        <div class="alert alert-heading alert-dismissible" style="color: darkred; font-weight: bold; text-align: center; border-block: solid; border-color: darkred;">
+            @this.TempData["Message"]
+        </div>
+    }*@
 @if (this.TempData.ContainsKey("Message"))
 {
-    <div class="alert alert-heading alert-dismissible" style="color: darkred; font-weight: bold; text-align: center; border-block: solid; border-color: darkred;">
-        @this.TempData["Message"]
-    </div>
+    if (this.TempData.Values.Contains("Constraints are added successfully!"))
+    {
+        <div class="alert alert-heading alert-dismissible" style="color: mediumseagreen; font-weight: bold; text-align: center; border-block: solid; border-color: mediumseagreen; ">
+            @this.TempData["Message"]
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-heading alert-dismissible" style="color: darkred; font-weight: bold; text-align: center; border-block: solid; border-color: darkred;">
+            @this.TempData["Message"]
+        </div>
+    }
 }
 
 <form asp-controller="Course" asp-action="Edit" enctype="multipart/form-data">
@@ -35,7 +50,7 @@
         @foreach (var file in Model.SkippingCourseMaterials)
         {
             @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
-            <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial">
+            <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial" onclick="if (!confirm('Are you sure you want to delete?')) { return false }">
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
             </a>
         }
@@ -66,7 +81,7 @@
                     <h5 class="mb-0">
                         <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne_@i" aria-expanded="false" aria-controls="collapseOne">
                             @lecture.Name
-                            <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureId="@lecture.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLecture">
+                            <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureId="@lecture.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLecture" onclick="if (!confirm('Are you sure you want to delete?')) { return false }">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
                             </a>
                         </button>
@@ -104,7 +119,7 @@
                                         {
                                             <ul>
                                                 @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
-                                                <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial">
+                                                <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial" onclick="if (!confirm('Are you sure you want to delete?')) { return false }">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
                                                 </a>
                                                 <a type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#exampleModal_@i">
@@ -131,11 +146,11 @@
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Select minimal homework grade to display lecture material:</label>
-                                                                        <input asp-for="MinHWGrade" form="ConstraintsForm" class="form-control" placeholder="Grade">
+                                                                        <input asp-for="MinHWGrade" form="ConstraintsForm" class="form-control" type="number" step="0.01" placeholder="Grade" />
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Select maximum homework grade to display lecture material:</label>
-                                                                        <input asp-for="MaxHWGrade" form="ConstraintsForm" class="form-control" placeholder="Grade">
+                                                                        <input asp-for="MaxHWGrade" form="ConstraintsForm" class="form-control" type="number" step="0.01" placeholder="Grade" />
                                                                     </div>
                                                                 </div>
                                                                 <input type="hidden" name="CourseId" value="@Model.Course.Id" />
@@ -168,7 +183,7 @@
                                         {
                                             <ul>
                                                 @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
-                                                <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial">
+                                                <a class="btn btn-outline-info" style="text-align:right; margin: 1em;" asp-route-lectureFileId="@file.Id" asp-route-courseId="@Model.Course.Id" asp-controller="Lecture" asp-action="DeleteLectureMaterial" onclick="if (!confirm('Are you sure you want to delete?')) { return false }">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M17 22H7a2 2 0 0 1-2-2V7H3V5h4V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h4v2h-2v13a2 2 0 0 1-2 2ZM7 7v13h10V7H7Zm2-3v1h6V4H9Zm6 14h-2V9h2v9Zm-4 0H9V9h2v9Z" /></svg>
                                                 </a>
                                             </ul>
