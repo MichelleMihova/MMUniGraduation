@@ -50,7 +50,7 @@
         <h4>Course information</h4>
 
         <label>Course name</label>
-        <input asp-for="Name" class="form-control" type="text" placeholder="Couse name">
+        <input asp-for="Name" class="form-control" type="text" placeholder="Couse name" required>
         <br />
 
         <label>Course program</label>
@@ -58,7 +58,7 @@
         <br />
 
         <label>Course description</label>
-        <textarea asp-for="Description" class="form-control" type="text" placeholder="Couse Description"></textarea>
+        <textarea asp-for="Description" class="form-control" type="text" placeholder="Couse Description" required></textarea>
 
         <br /><hr /><br />
 
@@ -93,7 +93,7 @@
             </div>
             <br />
             <label>Minimal grade to pass the course</label>
-            <input asp-for="MinimalGradeToPass" class="form-control" type="number" min="2" max="6" placeholder="Minimal grade" value="">
+            <input asp-for="MinimalGradeToPass" class="form-control" type="number" min="2" max="6" placeholder="Minimal grade" value="" required>
             <br />
         </div>
         <br />

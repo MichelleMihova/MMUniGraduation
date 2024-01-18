@@ -123,10 +123,10 @@ namespace MMUniGraduation.Controllers
                         currentCourse.SkippingAssignments = skippingAssignments;
                     }
 
-                    textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade
-                    && l.DateTimeToShow <= System.DateTime.Now && l.FileTitle == "LECTURE").ToList();
                     //textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade
-                    //&& l.MaxHWGrade >= avarageHWgrade && l.DateTimeToShow <= System.DateTime.Now && l.FileTitle == "LECTURE").ToList();
+                    //&& l.DateTimeToShow <= System.DateTime.Now && l.FileTitle == "LECTURE").ToList();
+                    textMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.MinHWGrade <= avarageHWgrade
+                    && l.MaxHWGrade >= avarageHWgrade && l.DateTimeToShow <= System.DateTime.Now && l.FileTitle == "LECTURE").ToList();
                     homeworkMaterial = _context.LectureFiles.Where(l => l.LectureId == lecture.Id && l.FileTitle == "HOMEWORK").ToList();
                 }
                 else
@@ -142,17 +142,22 @@ namespace MMUniGraduation.Controllers
             }
 
             var homework = new List<Homework>();
-            foreach (var lecture in currentCourse.Lectures)
+            if (student != null)
             {
-                if (student != null)
+                foreach (var lecture in currentCourse.Lectures)
                 {
+
                     homework = _context.Homeworks.Where(l => l.LectureId == lecture.Id && l.StudentId == student.UserId).ToList();
                     lecture.Homeworks = homework;
                 }
             }
 
             var lector = _context.Lectors.FirstOrDefault(x => x.UserId == currentCourse.CreatorId);
-            var photo = _context.Images.Where(x => x.LectorId == lector.Id).Select(x => x.Id + '.' + x.Extension).FirstOrDefault();
+            string photo = null;
+            if (lector != null)
+            {
+                photo = _context.Images.Where(x => x.LectorId == lector.Id).Select(x => x.Id + '.' + x.Extension).FirstOrDefault();
+            }
 
             var viewModel = new IndexCourseViewModel
             {
@@ -202,7 +207,7 @@ namespace MMUniGraduation.Controllers
             }
 
             var user = await _userManager.GetUserAsync(this.User);
-            var courseNames = _context.Courses.Select(x => x.Name);
+            var courseNames = _context.Courses.Where(x => x.StudyProgramId == input.StudyProgramId).Select(x => x.Name);
 
             if (courseNames.Contains(input.Name))
             {
@@ -537,7 +542,7 @@ namespace MMUniGraduation.Controllers
 
             await _courseService.DeleteCourse(courseId);
 
-            return RedirectToAction("Index", "Lector");
+            return RedirectToAction("EditCourses", "Lector");
         }
     }
 }

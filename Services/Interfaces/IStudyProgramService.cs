@@ -10,5 +10,6 @@ namespace MMUniGraduation.Services.Interfaces
         IEnumerable<T> GetRandomPrograms<T>(int count);
         IEnumerable<T> GetAllPrograms<T>();
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs();
+        public Task DeleteProgram(int programId);
     }
 }

@@ -24,19 +24,29 @@
 <br />
 <hr />
 <div class="container">
-    <div class="row" style="text-align:center">
-        <div class="col" style="text-align:left">
+    @if (Model.Lector != null)
+    {
+        <div class="row" style="text-align:center">
+            <div class="col" style="text-align:left">
+                <h6>Course info:</h6>
+                <p>@Model.Course.Description</p>
+            </div>
+            <div class="col" style="text-align:center">
+                <img src="~/img/@Model.Image" alt="Upload image" class="img-fluid rounded-circle shadow-lg" style="width: 180px;">
+            </div>
+            <div class="col" style="text-align:right">
+                <h6>@Model.Lector.FirstName @Model.Lector.LastName</h6>
+                <p>@Model.Lector.Bio</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div style="text-align:center">
             <h6>Course info:</h6>
             <p>@Model.Course.Description</p>
         </div>
-        <div class="col" style="text-align:center">
-            <img src="~/img/@Model.Image" alt="Upload image" class="img-fluid rounded-circle shadow-lg" style="width: 180px;">
-        </div>
-        <div class="col" style="text-align:right">
-            <h6>@Model.Lector.FirstName @Model.Lector.LastName</h6>
-            <p>@Model.Lector.Bio</p>
-        </div>
-    </div>
+    }
     <hr />
     <div class="row">
         <div class="col">
@@ -60,7 +70,7 @@
                 @foreach (var file in Model.Course.SkippingCourseMaterials)
                 {
                     @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
-                            (Model.StudentCourse.EndDateTimeForSkipping != null))
+                         (Model.StudentCourse.EndDateTimeForSkipping != null))
                     {
                         <ul>
                             @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
@@ -70,7 +80,7 @@
             </div>
             <div class="col">
                 @if (Model.Course.SkipCoursEndDate >= DateTime.Now && Model.StudentCourse.EndDateTimeForSkipping >= DateTime.Now &&
-    !Model.Course.SkippingAssignments.Any())
+ !Model.Course.SkippingAssignments.Any())
                 {
                     @using (Html.BeginForm("AddSkippingExamSolution", "Course", FormMethod.Post, new { enctype = "multipart/form-data" }))
                     {
@@ -141,7 +151,7 @@
                                         @foreach (var file in lecture.TextMaterials)
                                         {
                                             @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
-                            (Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
+                          (Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
                                             {
                                                 <ul>
                                                     @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })

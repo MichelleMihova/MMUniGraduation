@@ -90,5 +90,16 @@ namespace MMUniGraduation.Services
             await _db.StudyPrograms.AddAsync(studyProgram);
             await _db.SaveChangesAsync();
         }
+
+        public async Task DeleteProgram(int programId)
+        {
+            var program = _db.StudyPrograms.FirstOrDefault(x => x.Id == programId);
+            var image = _db.Images.FirstOrDefault(x => x.StudyProgramId == programId);
+
+            _db.Images.Remove(image);
+            _db.StudyPrograms.Remove(program);
+
+            await _db.SaveChangesAsync();
+        }
     }
 }

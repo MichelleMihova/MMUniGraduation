@@ -41,12 +41,15 @@ namespace MMUniGraduation.Controllers
             var courses = _context.Courses.Where(x => x.CreatorId == lector.UserId);
             var programCourses = new Dictionary<string, List<Course>>();
 
-            foreach (var item in courses)
+            if (courses.Any())
             {
-                if (!programCourses.Keys.Contains(item.Signature))
+                foreach (var item in courses)
                 {
-                    var coursesForProgram = _context.Courses.Where(x => x.CreatorId == lector.UserId && x.Signature == item.Signature).ToList();
-                    programCourses.Add(item.Signature, coursesForProgram);
+                    if (!programCourses.Keys.Contains(item.Signature))
+                    {
+                        var coursesForProgram = _context.Courses.Where(x => x.CreatorId == lector.UserId && x.Signature == item.Signature).ToList();
+                        programCourses.Add(item.Signature, coursesForProgram);
+                    }
                 }
             }
 
@@ -95,7 +98,8 @@ namespace MMUniGraduation.Controllers
 
             var viewModel = new AllCoursesViewModel
             {
-                AllCourses = _context.Courses.Where(x => x.CreatorId == user.Id).ToList()
+                AllCourses = _context.Courses.Where(x => x.CreatorId == user.Id).ToList(),
+                AllPrograms = _context.StudyPrograms.ToList()
             };
 
             return View(viewModel);

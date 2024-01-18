@@ -46,8 +46,8 @@
 <form asp-action="Create" asp-controller="Lecture" enctype="multipart/form-data">
     <div>
         <h4>Lecture information</h4>
-        <input asp-for="Name" class="form-control" type="text" placeholder="Lecture name"><br />
-        <textarea asp-for="Description" class="form-control" type="text" placeholder="Lecture Description"></textarea>
+        <input asp-for="Name" class="form-control" type="text" placeholder="Lecture name" required><br />
+        <textarea asp-for="Description" class="form-control" type="text" placeholder="Lecture Description" required></textarea>
 
         <br /><hr /><br />
         <h4>Lecture inheritance</h4>

@@ -16,11 +16,16 @@ namespace MMUniGraduation.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IStudyProgramService _studyProgramService;
         private readonly UserManager<ApplicationUser> _userManager;
-        public StudyProgramController(ApplicationDbContext context, IStudyProgramService studyProgramService, UserManager<ApplicationUser> userManager)
+        private readonly ICourseService _courseService;
+        private readonly ILectureService _lectureService;
+        public StudyProgramController(ApplicationDbContext context, IStudyProgramService studyProgramService, UserManager<ApplicationUser> userManager, 
+            ICourseService courseService, ILectureService lectureService)
         {
             _context = context;
             _studyProgramService = studyProgramService;
             _userManager = userManager;
+            _courseService = courseService;
+            _lectureService = lectureService;
         }
 
         public IActionResult Index()
@@ -52,11 +57,44 @@ namespace MMUniGraduation.Controllers
                 return View(model);
             }
 
+            if (model.Images == null)
+            {
+                this.TempData["Message"] = "The program has not been created yet! No image has been added!";
+                return View(model);
+            }
+
             await _studyProgramService.CreateAsync(model);
 
             this.TempData["Message"] = "Program created successfully!";
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int programId)
+        {
+            var courses = _context.Courses.Where(l => l.StudyProgramId == programId).ToArray();
+
+            foreach (var course in courses)
+            {
+                await _courseService.DeleteSkippingCourseMaterial(course.Id);
+                await _courseService.DeleteSkippingAssignment(course.Id);
+
+                var lectures = _context.Lectures.Where(l => l.CourseId == course.Id).ToArray();
+
+                foreach (var lecture in lectures)
+                {
+                    await _lectureService.DeleteLectureMaterial(lecture.Id);
+                    await _lectureService.DeleteHomework(lecture.Id);
+                    await _lectureService.DeleteLecture(lecture.Id);
+                }
+
+                await _courseService.DeleteCourse(course.Id);
+            }
+
+            await _studyProgramService.DeleteProgram(programId);
+
+            return RedirectToAction("EditCourses", "Lector");
         }
     }
 }
