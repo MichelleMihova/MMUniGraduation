@@ -70,7 +70,7 @@
                 @foreach (var file in Model.Course.SkippingCourseMaterials)
                 {
                     @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
-                         (Model.StudentCourse.EndDateTimeForSkipping != null))
+                        (Model.StudentCourse.EndDateTimeForSkipping != null))
                     {
                         <ul>
                             @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
@@ -80,7 +80,7 @@
             </div>
             <div class="col">
                 @if (Model.Course.SkipCoursEndDate >= DateTime.Now && Model.StudentCourse.EndDateTimeForSkipping >= DateTime.Now &&
- !Model.Course.SkippingAssignments.Any())
+!Model.Course.SkippingAssignments.Any())
                 {
                     @using (Html.BeginForm("AddSkippingExamSolution", "Course", FormMethod.Post, new { enctype = "multipart/form-data" }))
                     {
@@ -132,37 +132,46 @@
 
                             @if (User.IsInRole("Teacher") || User.IsInRole("Admin") || Model.Student.ShowVideoMaterials)
                             {
-                                <div class="embed-responsive embed-responsive-16by9">
-                                    <iframe class="embed-responsive-item" src="@lecture.VideoUrl" allowfullscreen></iframe>
-                                </div>
+                                if (lecture.IsExam == false)
+                                {
+                                    <div class="embed-responsive embed-responsive-16by9">
+                                        <iframe class="embed-responsive-item" src="@lecture.VideoUrl" allowfullscreen></iframe>
+                                    </div>
+                                }
                             }
                         </div>
                         <div class="container">
                             <div class="row">
                                 <div class="col">
+                                    @if (lecture.IsExam || lecture.IsRetakeExam)
+                                    {
                                     <ul>
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-                                                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
-                                            </svg>
-                                            <i class="bi bi-file-earmark-text-fill">Lecture materials:</i>
-                                        </li>
-
-                                        @foreach (var file in lecture.TextMaterials)
+                                        @if (lecture.TextMaterials.Any())
                                         {
-                                            @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
-                          (Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+                                                </svg>
+                                                <i class="bi bi-file-earmark-text-fill">Exam materials:</i>
+                                            </li>
+
+                                            @foreach (var file in lecture.TextMaterials)
                                             {
-                                                <ul>
-                                                    @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
-                                                </ul>
+                                                @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
+                         (Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
+                                                {
+                                                    <ul>
+                                                        @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
+                                                    </ul>
+                                                }
                                             }
                                         }
+
                                         <li>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
                                                 <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
                                             </svg>
-                                            <i class="bi bi-file-earmark-text-fill">Homework materials:</i>
+                                            <i class="bi bi-file-earmark-text-fill">Exam:</i>
                                         </li>
                                         @foreach (var file in Model.HWMaterials)
                                         {
@@ -171,6 +180,41 @@
                                             </ul>
                                         }
                                     </ul>
+                                    }
+                                    else
+                                    {
+                                        <ul>
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+                                                </svg>
+                                                <i class="bi bi-file-earmark-text-fill">Lecture materials:</i>
+                                            </li>
+
+                                            @foreach (var file in lecture.TextMaterials)
+                                            {
+                                                @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
+                           (Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
+                                                {
+                                                    <ul>
+                                                        @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
+                                                    </ul>
+                                                }
+                                            }
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+                                                </svg>
+                                                <i class="bi bi-file-earmark-text-fill">Homework materials:</i>
+                                            </li>
+                                            @foreach (var file in Model.HWMaterials)
+                                            {
+                                                <ul>
+                                                    @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
+                                                </ul>
+                                            }
+                                        </ul>
+                                    }
                                 </div>
                                 @if (User.IsInRole("Student"))
                                 {

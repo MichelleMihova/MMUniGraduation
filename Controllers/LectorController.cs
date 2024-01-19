@@ -47,7 +47,7 @@ namespace MMUniGraduation.Controllers
                 {
                     if (!programCourses.Keys.Contains(item.Signature))
                     {
-                        var coursesForProgram = _context.Courses.Where(x => x.CreatorId == lector.UserId && x.Signature == item.Signature).ToList();
+                        var coursesForProgram = _context.Courses.Where(x => x.CreatorId == lector.UserId && x.Signature == item.Signature).OrderBy(x => x.ParetntId).ToList();
                         programCourses.Add(item.Signature, coursesForProgram);
                     }
                 }

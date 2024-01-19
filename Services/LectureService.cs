@@ -102,11 +102,15 @@ namespace MMUniGraduation.Services
             {
                 var homeworkGrades = _db.Homeworks.Where(x => x.LectureId == assessmentLectureId && x.StudentId == student.UserId).Select(x => x.Grade).ToList();
                 decimal avGrade = 0;
-                foreach (var grade in homeworkGrades)
+                if (homeworkGrades.Any())
                 {
-                    avGrade += grade;
+                    foreach (var grade in homeworkGrades)
+                    {
+                        avGrade += grade;
+                    }
+                    avGrade /= homeworkGrades.Count();
                 }
-                avGrade /= homeworkGrades.Count();
+                
                 finalGrade += avGrade;
                 cnt++;
             }
@@ -163,7 +167,7 @@ namespace MMUniGraduation.Services
 
             if (input.ParetntLectureId != 0)
             {
-                SetNextLectureId(input, lecture);
+                await SetNextLectureId(input, lecture);
             }
 
             //Check all lectures that are enought to finish the course when lecture is final
@@ -180,7 +184,7 @@ namespace MMUniGraduation.Services
             }
         }
 
-        private async void SetNextLectureId(CreateLecture input, Lecture lecture)
+        private async Task SetNextLectureId(CreateLecture input, Lecture lecture)
         {
             var parentLecture = _db.Lectures.FirstOrDefault(x => x.Id == input.ParetntLectureId);
             parentLecture.NextLectureId = lecture.Id;
