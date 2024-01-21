@@ -17,11 +17,13 @@ namespace MMUniGraduation.Models.Create
         public string CreatorId { get; set; }
 
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
+        //[DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime CourseStartDate { get; set; }
 
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
+        //[DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime SkipCoursEndDate { get; set; }
 
         [NotMapped]

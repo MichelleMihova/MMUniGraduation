@@ -20,7 +20,7 @@ namespace MMUniGraduation.ViewModels
         public Student Student { get; set; }
         public Lector Lector { get; set; }
         public virtual ICollection<Lecture> Lectures { get; set; }
-        public virtual ICollection<LectureFile> HWMaterials { get; set; }
+        public virtual Dictionary<int, List<LectureFile>> HomeworkMaterials { get; set;}
         public virtual StudentCourses StudentCourse { get; set; }
     }
 }

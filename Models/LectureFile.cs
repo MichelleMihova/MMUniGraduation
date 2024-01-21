@@ -18,8 +18,9 @@ namespace MMUniGraduation.Models
         public decimal MaxHWGrade { get; set; }
 
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime DateTimeToShow { get; set; }
+        //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? DateTimeToShow { get; set; }
 
         public int? LectureId { get; set; }
         public virtual Lecture Lecture { get; set; }

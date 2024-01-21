@@ -32,8 +32,15 @@
             <h4>Course suggestions</h4>
             <p>@Model.NextCourseName</p>
         </div>
+        <hr />
     }
-    <hr />
+    else
+    {
+        <div style="text-align: center; padding-top: 1em; ">
+            <h4>Course starts soon..</h4>
+        </div>
+        <hr />
+    }
 }
 
 @foreach (var course in Model.AllCourses.OrderBy(x => x.ParetntId))

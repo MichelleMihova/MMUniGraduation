@@ -4,12 +4,6 @@
     $('#exampleModal').modal('show')
 </script>
 
-@*@if (this.TempData.ContainsKey("Message"))
-    {
-        <div class="alert alert-heading alert-dismissible" style="color: darkred; font-weight: bold; text-align: center; border-block: solid; border-color: darkred;">
-            @this.TempData["Message"]
-        </div>
-    }*@
 @if (this.TempData.ContainsKey("Message"))
 {
     if (this.TempData.Values.Contains("Constraints are added successfully!"))
@@ -34,9 +28,9 @@
         <textarea asp-for="CourseDescription" class="form-control" type="text" placeholder="@Model.Course.Description"></textarea>
     </div>
     <br />
-    <label for="party">Change @Model.Course.CourseStartDate date and time for start of the course:</label>
+    <label for="party">Starting course date: @Model.Course.CourseStartDate.ToString("dd/MM/yyyy HH:mm")</label>
     <input class="form-control" asp-for="CourseStartDate" type="datetime-local" />
-    <label>Change @Model.Course.SkipCoursEndDate date and time for end of the skipping course option:</label>
+    <label>End date of the skipping course option: @Model.Course.SkipCoursEndDate.ToString("dd/MM/yyyy HH:mm")</label>
     <input class="form-control" asp-for="SkipCoursEndDate" type="datetime-local" />
     <br />
     @if (Model.SkippingCourseMaterials.Any())
@@ -63,8 +57,9 @@
         </div>
     </div>
     <br />
-    <label>Change required grade for skipping course:</label>
-    <input asp-for="MinimalGradeToPass" class="form-control" type="number" min="2" max="6" placeholder="Required grade" value="">
+    <label>Change the required grade for passing the course:</label>
+    @*<input asp-for="MinimalGradeToPass" class="form-control" type="number" min="2" max="6" placeholder="Required grade" value="">*@
+    <input asp-for="MinimalGradeToPass" class="form-control" type="number" step="0.01" placeholder="Required grade" value="" />
     <br />
     <input type="hidden" name="CourseId" value="@Model.Course.Id" />
     <button class="btn btn-outline-secondary btn-outline-info" style="text-align:right; margin-bottom: 1em;">Upload</button>
@@ -93,7 +88,7 @@
                             <textarea asp-for="LectureDescription" class="form-control" type="text" placeholder="@lecture.Description"></textarea>
                         </div>
                         <div class="card-body">
-                            Date of performance: @lecture.DateTimeToShow
+                            Date of performance: @lecture.DateTimeToShow.ToString("dd/MM/yyyy HH:mm")
                             <input class="form-control" asp-for="DateTimeToShow" type="datetime-local" />
                         </div>
                         <div class="container">
@@ -138,23 +133,24 @@
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
-                                                            <form asp-controller="Lecture" asp-action="SetConstraints" enctype="multipart/form-data" id="ConstraintsForm">
+                                                            <form id="ConstraintsForm" asp-controller="Lecture" asp-action="SetConstraints" enctype="multipart/form-data" >
                                                                 <div class="modal-body">
                                                                     <div class="form-group">
                                                                         <label>Date & Time to show lecture material:</label>
                                                                         <input class="form-control" asp-for="DateTimeToShowFile" type="datetime-local" form="ConstraintsForm" />
+                                                                        @*<input class="form-control" asp-for="DateTimeToShowFile" asp-format="{0:yyyy-MM-dd}" type="datetime-local" form="ConstraintsForm" />*@
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Select minimal homework grade to display lecture material:</label>
-                                                                        <input asp-for="MinHWGrade" form="ConstraintsForm" class="form-control" type="number" step="0.01" placeholder="Grade" />
+                                                                        <input asp-for="MinHWGrade" class="form-control" type="number" step="0.01" placeholder="Grade" form="ConstraintsForm" />
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Select maximum homework grade to display lecture material:</label>
-                                                                        <input asp-for="MaxHWGrade" form="ConstraintsForm" class="form-control" type="number" step="0.01" placeholder="Grade" />
+                                                                        <input asp-for="MaxHWGrade" class="form-control" type="number" step="0.01" placeholder="Grade" form="ConstraintsForm" />
                                                                     </div>
                                                                 </div>
-                                                                <input type="hidden" name="CourseId" value="@Model.Course.Id" />
-                                                                <input type="hidden" name="LectureFileId" value="@file.Id" />
+                                                                <input type="hidden" name="CourseId" value="@Model.Course.Id" form="ConstraintsForm"/>
+                                                                <input type="hidden" name="LectureFileId" value="@file.Id" form="ConstraintsForm"/>
                                                                 <div class="modal-footer">
                                                                     <button type="submit" class="btn btn-primary" form="ConstraintsForm">Save changes</button>
                                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

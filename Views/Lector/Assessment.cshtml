@@ -115,7 +115,8 @@
                     </div>
                     <div class="col">
                         <form asp-controller="Lecture" asp-action="EditHomework" enctype="multipart/form-data">
-                            <p>Student ID: @file.StudentId</p>
+                            @*<p>Student ID: @file.StudentId</p>*@
+                            <p>Homework due date: @lecture.EndDateTimeForHW.ToString("dd/MM/yyyy HH:mm")</p>
                             <p>Student Name: @Model.Students.FirstOrDefault(x => x.UserId == file.StudentId).FirstName @Model.Students.FirstOrDefault(x => x.UserId == file.StudentId).LastName </p>
                             <label>Grade:</label>
                             <input asp-for="HomeworkGrade" type="text" class="form-control" placeholder="@file.Grade" value="@file.Grade"><br />

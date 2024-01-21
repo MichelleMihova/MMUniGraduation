@@ -27,8 +27,6 @@ namespace MMUniGraduation.Controllers
         private readonly IWebHostEnvironment _webHost;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        //private readonly string[] allowedExtensions = new[] { "doc", "docx", "txt", "pptx", "pptm", "pdf" };
-
         public CourseController(ICourseService courseService, IStudyProgramService studyProgramService,
             ILectureService lectureService, ApplicationDbContext context, IWebHostEnvironment webHost,
             UserManager<ApplicationUser> userManager)
@@ -83,6 +81,7 @@ namespace MMUniGraduation.Controllers
             var homeworkMaterial = new List<LectureFile>();
             var skippingMaterial = new List<LectureFile>();
             var skippingAssignments = new List<SkippingAssignment>();
+            var AllHomeworkMaterials = new Dictionary<int, List<LectureFile>>();
 
             foreach (var lecture in currentCourse.Lectures)
             {
@@ -139,6 +138,7 @@ namespace MMUniGraduation.Controllers
                 }
 
                 lecture.TextMaterials = textMaterial;
+                AllHomeworkMaterials.Add(lecture.Id, homeworkMaterial);
             }
 
             var homework = new List<Homework>();
@@ -165,7 +165,7 @@ namespace MMUniGraduation.Controllers
                 EndDateTime = EndDateTimeForSkipExam,
                 SkipCourse = goToExam,
                 Student = student,
-                HWMaterials = homeworkMaterial,
+                HomeworkMaterials = AllHomeworkMaterials,
                 StudentCourse = studentCurrentCourse,
                 Image = photo,
                 Lector = lector

@@ -184,9 +184,9 @@ namespace MMUniGraduation.Services
                     }
                     else
                     {
-                        if (_db.Courses.Any())
+                        if (_db.Courses.Where(x => x.StudyProgramId == programId).Any())
                         {
-                            Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                            Name = suggestionText + _db.Courses.FirstOrDefault(x => x.StudyProgramId == programId  && x.ParetntId == 0).Name.ToString();
                         }
                     }
                 }
@@ -194,7 +194,7 @@ namespace MMUniGraduation.Services
                 {
                     if (_db.Courses.FirstOrDefault(x => x.Id == currCourseId).NextCourseId != 0)
                     {
-                        Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == currCourseId).Name.ToString();
+                        Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == currCourseId && x.StudyProgramId == programId).Name.ToString();
                     }
                     else
                     {
@@ -204,9 +204,9 @@ namespace MMUniGraduation.Services
             }
             else
             {
-                if (_db.Courses.Any())
+                if (_db.Courses.Where(x => x.StudyProgramId == programId).Any())
                 {
-                    Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                    Name = suggestionText + _db.Courses.FirstOrDefault(x => x.StudyProgramId == programId && x.ParetntId == 0).Name.ToString();
                 }
             }
             return Name;
