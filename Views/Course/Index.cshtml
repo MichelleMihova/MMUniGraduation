@@ -64,7 +64,7 @@
         </div>
     </div>
     <br />
-    @if (Model.StudentCourse.EndDateTimeForSkipping != null && Model.StudentCourse.EndDateTimeForSkipping >= DateTime.Now && User.IsInRole("Student") || User.IsInRole("Teacher") || User.IsInRole("Admin"))
+    @if ((Model.StudentCourse.EndDateTimeForSkipping != null && Model.StudentCourse.EndDateTimeForSkipping >= DateTime.Now && User.IsInRole("Student")) || User.IsInRole("Teacher") || User.IsInRole("Admin"))
     {
         <div class="row">
             <div class="col">
@@ -83,10 +83,10 @@
                 @if (Model.Course.SkipCoursEndDate >= DateTime.Now && Model.StudentCourse.EndDateTimeForSkipping >= DateTime.Now &&
 !Model.Course.SkippingAssignments.Any())
                 {
-                    if (Model.EndDateTime != null)
+                    if (Model.StudentCourse.EndDateTimeForSkipping != null)
                     {
                         <p>You have 3 hours to submit the solution!</p>
-                        <p>Due date: @string.Format("{0:dd/MM/yyyy HH/mm}", Model.EndDateTime)</p>
+                        <p>Due date: @string.Format("{0:dd/MM/yyyy HH:mm}", Model.EndDateTime)</p>
                     }
 
                     @using (Html.BeginForm("AddSkippingExamSolution", "Course", FormMethod.Post, new { enctype = "multipart/form-data" }))

@@ -106,23 +106,23 @@ namespace MMUniGraduation.Services
                 {
                     foreach (var grade in homeworkGrades)
                     {
-                        if (grade == 0)
-                        {
-                            break;
-                        }
                         avGrade += grade;
                     }
                     avGrade /= homeworkGrades.Count();
                 }
                 else
                 {
+                    finalGrade = 0;
                     break;
                 }
                 
                 finalGrade += avGrade;
                 cnt++;
             }
-            finalGrade /= cnt;
+            if (cnt != 0)
+            {
+                finalGrade /= cnt;
+            }
 
             if (finalGrade < _db.Courses.FirstOrDefault(x => x.Id == courseId).MinimalGradeToPass)
             {
