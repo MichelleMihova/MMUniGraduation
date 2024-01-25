@@ -106,6 +106,10 @@ namespace MMUniGraduation.Services
                 {
                     foreach (var grade in homeworkGrades)
                     {
+                        if (grade == 0)
+                        {
+                            break;
+                        }
                         avGrade += grade;
                     }
                     avGrade /= homeworkGrades.Count();
@@ -365,8 +369,8 @@ namespace MMUniGraduation.Services
                 lectureFile.MaxHWGrade = input.MaxHWGrade;
             }
 
-            //if (lectureFile != null && input.DateTimeToShowFile != lectureFile.DateTimeToShow && input.DateTimeToShowFile != Convert.ToDateTime("1.1.0001 г. 0:00:00"))
-            if (lectureFile != null && input.DateTimeToShowFile != lectureFile.DateTimeToShow && input.DateTimeToShowFile != null)
+            if (lectureFile != null && input.DateTimeToShowFile != lectureFile.DateTimeToShow && input.DateTimeToShowFile != Convert.ToDateTime("1.1.0001 г. 0:00:00"))
+            //if (lectureFile != null && input.DateTimeToShowFile != lectureFile.DateTimeToShow && input.DateTimeToShowFile != null)
             {
                 lectureFile.DateTimeToShow = input.DateTimeToShowFile;
             }

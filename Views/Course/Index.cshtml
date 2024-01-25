@@ -2,7 +2,8 @@
 
 @if (this.TempData.ContainsKey("Message"))
 {
-    if (this.TempData.Values.Contains("Homework added successfully!") || this.TempData.Values.Contains("Skipping exam solution added successfully!"))
+    if (this.TempData.Values.Contains("Homework added successfully!") || this.TempData.Values.Contains("Skipping exam solution added successfully!")
+        || this.TempData.Values.Contains("Exam solution added successfully!"))
     {
         <div class="alert alert-heading alert-dismissible" style="color: mediumseagreen; font-weight: bold; text-align: center; border-block: solid; border-color: mediumseagreen; ">
             @this.TempData["Message"]
@@ -54,7 +55,7 @@
         </div>
         <div class="col">
             <div class="form-check" style="text-align:right;">
-                @if (Model.Course.SkipCoursEndDate >= DateTime.Now && User.IsInRole("Student") && Model.StudentCourse.EndDateTimeForSkipping == null && Model.Course.SkippingCourseMaterials.Any() == true)
+                @if (Model.Course.SkipCoursEndDate >= DateTime.Now && User.IsInRole("Student") && Model.StudentCourse.EndDateTimeForSkipping == null)
                 {
                     <a class="btn btn-outline-info" asp-route-courseId="@Model.Course.Id" asp-route-goToExam="true" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Start the exam</a>
                 }
@@ -70,7 +71,7 @@
                 @foreach (var file in Model.Course.SkippingCourseMaterials)
                 {
                     @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
-                   (Model.StudentCourse.EndDateTimeForSkipping != null))
+               (Model.StudentCourse.EndDateTimeForSkipping != null))
                     {
                         <ul>
                             @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })
@@ -120,7 +121,19 @@
                     <div class="card-header" id="accordion_@i">
                         <h5 class="mb-0">
                             <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne_@i" aria-expanded="false" aria-controls="collapseOne">
-                                @lecture.Name
+                                @if (lecture.IsExemption)
+                                {
+                                    <div class="row">
+                                        *
+                                        @lecture.Name
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    @lecture.Name
+                                }
+
                             </button>
                         </h5>
                     </div>
@@ -163,7 +176,7 @@
                                                 @foreach (var file in lecture.TextMaterials)
                                                 {
                                                     @if (User.IsInRole("Teacher") || User.IsInRole("Admin") ||
-                     (Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
+(Model.Student.ShowTextMaterials && file.DateTimeToShow <= DateTime.Now))
                                                     {
                                                         <ul>
                                                             @Html.ActionLink(file.FileName, "DownloadFile", new { fileName = file.Id + '.' + file.Extension, type = "lecture" })

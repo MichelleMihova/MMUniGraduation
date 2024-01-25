@@ -44,7 +44,7 @@ namespace MMUniGraduation.ViewModels
         [DataType(DataType.DateTime)]
         //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime? DateTimeToShowFile { get; set; }
+        public DateTime DateTimeToShowFile { get; set; }
 
         public Course Course { get; set; }
         public virtual ICollection<Lecture> Lectures { get; set; }
