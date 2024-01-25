@@ -54,7 +54,7 @@
         </div>
         <div class="col">
             <div class="form-check" style="text-align:right;">
-                @if (Model.Course.SkipCoursEndDate >= DateTime.Now && User.IsInRole("Student") && Model.StudentCourse.EndDateTimeForSkipping == null)
+                @if (Model.Course.SkipCoursEndDate >= DateTime.Now && User.IsInRole("Student") && Model.StudentCourse.EndDateTimeForSkipping == null && Model.Course.SkippingCourseMaterials.Any() == true)
                 {
                     <a class="btn btn-outline-info" asp-route-courseId="@Model.Course.Id" asp-route-goToExam="true" asp-controller="Course" asp-action="Index" style="text-decoration: none;">Start the exam</a>
                 }
@@ -137,7 +137,7 @@
 
                             @if (User.IsInRole("Teacher") || User.IsInRole("Admin") || Model.Student.ShowVideoMaterials)
                             {
-                                if (lecture.IsExam == false)
+                                if (lecture.IsExam == false && lecture.VideoUrl != null && lecture.IsRetakeExam == false)
                                 {
                                     <div class="embed-responsive embed-responsive-16by9">
                                         <iframe class="embed-responsive-item" src="@lecture.VideoUrl" allowfullscreen></iframe>

@@ -529,6 +529,14 @@ namespace MMUniGraduation.Controllers
         public async Task<IActionResult> Delete(int courseId)
         {
             var lectures = _context.Lectures.Where(l => l.CourseId == courseId).ToArray();
+            var currentCourseCount = _context.StudentCourses.Where(x => x.CourseId == courseId && x.IsPassed == false).Count();
+
+            if (currentCourseCount != 0 )
+            {
+                this.TempData["Message"] = "Course could not be deleted when we have assigned users to it!";
+
+                return RedirectToAction("EditCourses", "Lector");
+            }
 
             await _courseService.DeleteSkippingCourseMaterial(courseId);
             await _courseService.DeleteSkippingAssignment(courseId);

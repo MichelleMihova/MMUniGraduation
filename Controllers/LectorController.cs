@@ -211,6 +211,10 @@ namespace MMUniGraduation.Controllers
                     courses = _context.Courses.ToList();
                 }
             }
+            else
+            {
+                courses = _context.Courses.ToList();
+            }
 
             if (input.LectureId != 0)
             {

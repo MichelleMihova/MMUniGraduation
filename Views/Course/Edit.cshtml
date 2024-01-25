@@ -59,7 +59,7 @@
     <br />
     <label>Change the required grade for passing the course:</label>
     @*<input asp-for="MinimalGradeToPass" class="form-control" type="number" min="2" max="6" placeholder="Required grade" value="">*@
-    <input asp-for="MinimalGradeToPass" class="form-control" type="number" step="0.01" placeholder="Required grade" value="" />
+    <input asp-for="MinimalGradeToPass" class="form-control" type="number" step="0.01" placeholder="Required grade" value="@Model.Course.MinimalGradeToPass" />
     <br />
     <input type="hidden" name="CourseId" value="@Model.Course.Id" />
     <button class="btn btn-outline-secondary btn-outline-info" style="text-align:right; margin-bottom: 1em;">Upload</button>
@@ -142,11 +142,11 @@
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Select minimal homework grade to display lecture material:</label>
-                                                                        <input asp-for="MinHWGrade" class="form-control" type="number" step="0.01" placeholder="Grade" form="ConstraintsForm" />
+                                                                        <input asp-for="MinHWGrade" class="form-control" type="number" step="0.01" placeholder="Grade" value="@file.MinHWGrade" form="ConstraintsForm" />
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Select maximum homework grade to display lecture material:</label>
-                                                                        <input asp-for="MaxHWGrade" class="form-control" type="number" step="0.01" placeholder="Grade" form="ConstraintsForm" />
+                                                                        <input asp-for="MaxHWGrade" class="form-control" type="number" step="0.01" placeholder="Grade" value="@file.MaxHWGrade" form="ConstraintsForm" />
                                                                     </div>
                                                                 </div>
                                                                 <input type="hidden" name="CourseId" value="@Model.Course.Id" form="ConstraintsForm"/>

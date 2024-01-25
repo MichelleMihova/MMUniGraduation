@@ -27,6 +27,13 @@
         }
 </style>
 
+@if (this.TempData.ContainsKey("Message"))
+{
+    <div class="alert alert-heading alert-dismissible" style="color: darkred; font-weight: bold; text-align: center; border-block: solid; border-color: darkred;">
+        @this.TempData["Message"]
+    </div>
+}
+
 @if (@User.IsInRole("Admin"))
 {
     <h2 style="text-align: center; padding-top: 1em; ">Edit programs and courses</h2>

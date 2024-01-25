@@ -18,7 +18,7 @@ namespace MMUniGraduation.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ICourseService _courseService;
         private readonly ILectureService _lectureService;
-        public StudyProgramController(ApplicationDbContext context, IStudyProgramService studyProgramService, UserManager<ApplicationUser> userManager, 
+        public StudyProgramController(ApplicationDbContext context, IStudyProgramService studyProgramService, UserManager<ApplicationUser> userManager,
             ICourseService courseService, ILectureService lectureService)
         {
             _context = context;
@@ -74,6 +74,18 @@ namespace MMUniGraduation.Controllers
         public async Task<IActionResult> Delete(int programId)
         {
             var courses = _context.Courses.Where(l => l.StudyProgramId == programId).ToArray();
+
+            foreach (var course in courses)
+            {
+                var currentCourseCount = _context.StudentCourses.Where(x => x.CourseId == course.Id && x.IsPassed == false).Count();
+
+                if (currentCourseCount != 0)
+                {
+                    this.TempData["Message"] = "Program could not be deleted when we have assigned users to it's courses!";
+
+                    return RedirectToAction("EditCourses", "Lector");
+                }
+            }
 
             foreach (var course in courses)
             {
