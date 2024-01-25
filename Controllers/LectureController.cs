@@ -10,6 +10,7 @@ using MMUniGraduation.Models.Create;
 using MMUniGraduation.Services.Interfaces;
 using MMUniGraduation.ViewModels;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,6 +22,9 @@ namespace MMUniGraduation.Controllers
         private readonly ILectureService _lectureService;
         private readonly ICourseService _courseService;
         private readonly UserManager<ApplicationUser> _userManager;
+
+        //private readonly string[] allowedExtensions = new[] { "doc", "docx", "txt", "pptx", "pptm", "pdf" };
+
         public LectureController(ApplicationDbContext context, ILectureService lectureService, ICourseService courseService, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -38,6 +42,7 @@ namespace MMUniGraduation.Controllers
 
             return Json(new SelectList(dropdownData, "Value", "Text"));
         }
+
         [Authorize(Roles = "Admin, Teacher")]
         public IActionResult Create()
         {
@@ -49,6 +54,7 @@ namespace MMUniGraduation.Controllers
 
             return this.View(viewModel);
         }
+
         [Authorize(Roles = "Admin, Teacher")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateLecture input)
@@ -64,8 +70,47 @@ namespace MMUniGraduation.Controllers
             if (lectureNames.Contains(input.Name))
             {
                 this.TempData["Message"] = "The lecture has not been created yet! There is an existing lecture with the same name!";
+
+                input.Courses = _courseService.GetAllAsKeyValuePairs();
+                input.AllLectures = _lectureService.GetAllAsKeyValuePairs();
+
                 return View(input);
             }
+
+            if (input.Files != null)
+            {
+                foreach (var file in input.Files)
+                {
+                    var extensionMessage = _lectureService.CheckFileExtension(file);
+                    if (extensionMessage != null)
+                    {
+                        this.TempData["Message"] = extensionMessage;
+
+                        input.Courses = _courseService.GetAllAsKeyValuePairs();
+                        input.AllLectures = _lectureService.GetAllAsKeyValuePairs();
+
+                        return this.View(input);
+                    }
+                }
+            }
+
+            if (input.HWFiles != null)
+            {
+                foreach (var file in input.HWFiles)
+                {
+                    var extensionMessage = _lectureService.CheckFileExtension(file);
+                    if (extensionMessage != null)
+                    {
+                        this.TempData["Message"] = extensionMessage;
+
+                        input.Courses = _courseService.GetAllAsKeyValuePairs();
+                        input.AllLectures = _lectureService.GetAllAsKeyValuePairs();
+
+                        return this.View(input);
+                    }
+                }
+            }
+
             await _lectureService.CreateLectureAsync(input, user);
 
             this.TempData["Message"] = "Lecture created successfully!";
@@ -78,20 +123,34 @@ namespace MMUniGraduation.Controllers
             var user = await _userManager.GetUserAsync(this.User);
             var currLecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == lectureId);
 
+            var extensionMessage = _lectureService.CheckFileExtension(file);
+            if (extensionMessage != null)
+            {
+                this.TempData["Message"] = extensionMessage;
+
+                return RedirectToAction("Index", "Course", new { courseId = currLecture.CourseId });
+            }
+
             await _lectureService.AddExamSolutionToLecture(lectureId, file, user.Id);
 
             this.TempData["Message"] = "Exam solution added successfully!";
 
-
-            //return RedirectToAction("Index", "Home");
             return RedirectToAction("Index", "Course", new { courseId = currLecture.CourseId });
         }
-        
+
         public async Task<IActionResult> AddHomework(IFormFile file, int lectureId)
         {
             var user = await _userManager.GetUserAsync(this.User);
             var currLecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == lectureId);
 
+            var extensionMessage = _lectureService.CheckFileExtension(file);
+            if (extensionMessage != null)
+            {
+                this.TempData["Message"] = extensionMessage;
+
+                return RedirectToAction("Index", "Course", new { courseId = currLecture.CourseId });
+            }
+            
             await _lectureService.AddHomeworkToLecture(lectureId, file, user.Id);
 
             this.TempData["Message"] = "Homework added successfully!";
@@ -108,7 +167,6 @@ namespace MMUniGraduation.Controllers
             var lecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == hw.LectureId);
             var course = await _context.Courses.FirstOrDefaultAsync(x => x.Id == lecture.CourseId);
 
-            //if (hw.HomeworkTitle.ToUpper() == "EXAM" && hw.Grade >= lecture.RequiredGrade)
             if (hw.HomeworkTitle.ToUpper() == "EXAM" && hw.Grade >= course.MinimalGradeToPass)
             {
                 var studentCourse = _context.StudentCourses.FirstOrDefault(x => x.CourseId == lecture.CourseId && !x.IsPassed && x.StudentId == student.Id);
@@ -125,10 +183,6 @@ namespace MMUniGraduation.Controllers
         {
             await _lectureService.EditSkippingAssignment(input.HomeworkId, input.HomeworkGrade, input.HomeworkComment);
 
-            //var hw = await _context.Homeworks.FirstOrDefaultAsync(x => x.Id == input.HomeworkId);
-            //var student = await _context.Students.FirstOrDefaultAsync(x => x.UserId == hw.StudentId);
-            //var lecture = await _context.Lectures.FirstOrDefaultAsync(x => x.Id == hw.LectureId);
-
             return RedirectToAction("Assessment", "Lector");
         }
         public async Task<IActionResult> EditLecture(EditCourseViewModel input)
@@ -142,7 +196,7 @@ namespace MMUniGraduation.Controllers
             await _lectureService.DeleteLectureMaterial(lectureFileId);
             return RedirectToAction("Edit", "Course", new { courseId = courseId });
         }
-        
+
         public async Task<IActionResult> DeleteHomework(int lectureId, int courseId, string name)
         {
             await _lectureService.DeleteHomework(lectureId);
@@ -160,11 +214,20 @@ namespace MMUniGraduation.Controllers
 
         public async Task<IActionResult> SetConstraints(EditCourseViewModel input)
         {
-            //if homeworkGrade for currStudentId
-            await _lectureService.EditLectureFile(input);
+            //await _lectureService.EditLectureFile(input);
+
+            if ((input.MinHWGrade != 0 && (input.MinHWGrade < 2 || input.MinHWGrade > 6)) ||
+                (input.MaxHWGrade != 0 && (input.MaxHWGrade < 2 || input.MaxHWGrade > 6)))
+            {
+                this.TempData["Message"] = "Constraints was not changed successfully! The Grade should be between 2 and 6!";
+            }
+            else
+            {
+                await _lectureService.EditLectureFile(input);
+                this.TempData["Message"] = "Constraints are added successfully!";
+            }
 
             return RedirectToAction("Edit", "Course", new { courseId = input.CourseId });
         }
-            
     }
 }

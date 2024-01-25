@@ -51,6 +51,7 @@ namespace MMUniGraduation.Services
                 SetNextCourseId(input, course);
             }
         }
+
         public async Task AddSkippingExamSolutionToCourse(int courseId, IFormFile file, string userId)
         {
             var currCourse = _db.Courses.FirstOrDefault(x => x.Id == courseId);
@@ -79,12 +80,23 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         private async void SetNextCourseId(CreateCourse input, Course course)
         {
             var parentCourse = _db.Courses.FirstOrDefault(x => x.Id == input.ParetntId);
+
+            if (parentCourse.NextCourseId != 0)
+            {
+                course.NextCourseId = parentCourse.NextCourseId;
+
+                var nextCourse = _db.Courses.FirstOrDefault(x => x.Id == parentCourse.NextCourseId);
+                nextCourse.ParetntId = course.Id;
+            }
+
             parentCourse.NextCourseId = course.Id;
             await _db.SaveChangesAsync();
         }
+
         private async Task RemoveCourseInheritance(int courseId, Course currCourse)
         {
             var courses = _db.Courses.Where(x => x.ParetntId == courseId || x.NextCourseId == courseId);
@@ -102,6 +114,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs()
         {
             return this._db.Courses.Select(x => new
@@ -114,6 +127,7 @@ namespace MMUniGraduation.Services
                 .ToList()
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Signature + " "+ x.Name));
         }
+
         public IEnumerable<KeyValuePair<string, string>> GetAllAsKeyValuePairs(int programId)
         {
             return this._db.Courses.Where(x => x.StudyProgramId == programId).Select(x => new
@@ -126,6 +140,7 @@ namespace MMUniGraduation.Services
                 .ToList()
                 .Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Signature + " " + x.Name));
         }
+
         public string GetNextCourseSuggestion(Student user, int programId)
         {
             string Name = null;
@@ -146,7 +161,6 @@ namespace MMUniGraduation.Services
 
                     if (passedCourses.Any())
                     {
-                        //make it smarter!!!
                         int num = 0;
                         int maxNum = 0;
                         foreach (var item in passedCourses)
@@ -170,36 +184,34 @@ namespace MMUniGraduation.Services
                     }
                     else
                     {
-                        if (_db.Courses.Any())
+                        if (_db.Courses.Where(x => x.StudyProgramId == programId).Any())
                         {
-                            Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                            Name = suggestionText + _db.Courses.FirstOrDefault(x => x.StudyProgramId == programId  && x.ParetntId == 0).Name.ToString();
                         }
                     }
                 }
                 else
                 {
-                    //if we have curr course
                     if (_db.Courses.FirstOrDefault(x => x.Id == currCourseId).NextCourseId != 0)
                     {
-                        Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == currCourseId).Name.ToString();
+                        Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == currCourseId && x.StudyProgramId == programId).Name.ToString();
                     }
                     else
                     {
                         Name = "Congrats! You compleate the program!";
                     }
                 }
-                
             }
             else
             {
-                if (_db.Courses.Any())
+                if (_db.Courses.Where(x => x.StudyProgramId == programId).Any())
                 {
-                    Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
+                    Name = suggestionText + _db.Courses.FirstOrDefault(x => x.StudyProgramId == programId && x.ParetntId == 0).Name.ToString();
                 }
-                //Name = suggestionText + _db.Courses.FirstOrDefault(x => x.ParetntId == 0).Name.ToString();
             }
             return Name;
         }
+
         public async Task DeleteSkippingCourseMaterial(int courseId)
         {
             var lectureFiles = _db.LectureFiles.Where(x => x.CourseId == courseId).ToArray();
@@ -211,6 +223,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         public async Task DeleteSkippingAssignment(int courseId)
         {
             var skippingAssignments = _db.SkippingAssignments.Where(x => x.CourseId == courseId).ToArray();
@@ -222,6 +235,7 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
+
         public async Task DeleteCourse(int courseId)
         {
             var course = _db.Courses.FirstOrDefault(c => c.Id == courseId);
@@ -231,6 +245,5 @@ namespace MMUniGraduation.Services
 
             await _db.SaveChangesAsync();
         }
-
     }
 }

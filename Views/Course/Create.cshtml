@@ -50,30 +50,21 @@
         <h4>Course information</h4>
 
         <label>Course name</label>
-        <input asp-for="Name" class="form-control" type="text" placeholder="Couse name">
+        <input asp-for="Name" class="form-control" type="text" placeholder="Couse name" required>
         <br />
 
         <label>Course program</label>
-        @*<select id="programsDropdown" onchange="myFunction()" asp-for="StudyProgramId" class="form-control" asp-items="studyPrograms"></select>*@
         @Html.DropDownListFor(x => Model.StudyProgramId, new SelectList(studyPrograms, "Value", "Text"), "---Select Program---", htmlAttributes: new { @class = "form-control", id = "Program" })
-
-
-        @*@Html.DropDownListFor(x => Model.StudyProgramId, new SelectList(studyPrograms, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "Program" })*@
-        @*@Html.DropDownListFor(x => Model.ParetntId, new SelectList(courses, "Value", "Text"), htmlAttributes: new { @class = "form-control", @id = "Region" })*@
-
         <br />
 
         <label>Course description</label>
-        <textarea asp-for="Description" class="form-control" type="text" placeholder="Couse Description"></textarea>
+        <textarea asp-for="Description" class="form-control" type="text" placeholder="Couse Description" required></textarea>
 
         <br /><hr /><br />
 
         <h4>Course inheritance</h4>
         <div>
             <label>Select parent course</label>
-            @*<select id="coursesDropdown" asp-for="ParetntId" class="form-control" asp-items="courses">
-                    <option asp-for="ParetntId" value="0">No inheritance</option>
-                </select>*@
             @Html.DropDownListFor(x => Model.ParetntId, new SelectList(courses, "Value", "Text"), "---No course inheritance---", htmlAttributes: new { @class = "form-control", @id = "Course" })
 
         </div>
@@ -102,7 +93,7 @@
             </div>
             <br />
             <label>Minimal grade to pass the course</label>
-            <input asp-for="MinimalGradeToPass" class="form-control" type="number" min="2" max="6" placeholder="Minimal grade" value="">
+            <input asp-for="MinimalGradeToPass" class="form-control" type="number" min="2" max="6" placeholder="Minimal grade" value="" required>
             <br />
         </div>
         <br />

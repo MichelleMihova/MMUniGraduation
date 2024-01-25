@@ -9,7 +9,7 @@ namespace MMUniGraduation.Services.Interfaces
 {
     public interface ILectureService
     {
-        //public Task CreateAsync(string name, string description, string paretntLectureSignature, string nextLectureSignature, DateTime dateTimeToShow, DateTime endDateTimeForHW);
+        public string CheckFileExtension(IFormFile TextMaterial);
         public Task CreateLectureFile(Lecture lecture, IEnumerable<IFormFile> files, string type, Course course);
         public Task IsPassed(Lecture lecture, string studentId);
         public Task CreateLectureAsync(CreateLecture input, ApplicationUser user);

@@ -1,5 +1,4 @@
-﻿@*@model IEnumerable<MMUniGraduation.Models.Course>*@
-@model MMUniGraduation.ViewModels.AllCoursesViewModel
+﻿@model MMUniGraduation.ViewModels.AllCoursesViewModel
 
 @if (this.TempData.ContainsKey("Message"))
 {
@@ -33,23 +32,24 @@
             <h4>Course suggestions</h4>
             <p>@Model.NextCourseName</p>
         </div>
+        <hr />
     }
-    @*else
+    else
     {
         <div style="text-align: center; padding-top: 1em; ">
-            <h4>Course suggestions</h4>
-            <p>Congrats! You compleated all courses! </p>
+            <h4>Course starts soon..</h4>
         </div>
-    }*@
-    <hr />
+        <hr />
+    }
 }
 
-@foreach (var course in Model.AllCourses)
+@foreach (var course in Model.AllCourses.OrderBy(x => x.ParetntId))
 {
     <div class="row">
         <div class="col" asp-route-id="@course.Id">
             <h5>@course.Signature @course.Name</h5>
             <p class="p-desc">@course.Description</p>
+
             @if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
             {
                 @if (course.CourseStartDate <= DateTime.Now)

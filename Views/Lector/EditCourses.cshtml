@@ -1,6 +1,4 @@
 ﻿@model MMUniGraduation.ViewModels.AllCoursesViewModel
-@{
-}
 
 <style>
     .img-box {
@@ -29,34 +27,49 @@
         }
 </style>
 
-
-<h2 style="text-align: center; padding-top: 1em; ">Edit courses</h2>
-<!-- <h1 style="padding-top:25px; text-align:center;">@ViewData["Title"]</h1>   -->
-<!--<div style="text-align: center; padding-top: 1em;">
-    <h3>Filters</h3>
-
-    <div>-->
-        <!--
-        <label>Course program</label>
-        <select asp-for="StudyProgramId" class="form-control" asp-items="studyPrograms"></select>
-        <br />
-        -->
-        <!--@using (Html.BeginForm())
-        {
-            <p>
-                Find by name: @Html.TextBox("SearchString")
-                <input type="submit" value="Search"  class="btn btn-outline-info" />
-            </p>
-        }
-
-        <button type="button" class="btn btn-outline-info">search</button>
+@if (this.TempData.ContainsKey("Message"))
+{
+    <div class="alert alert-heading alert-dismissible" style="color: darkred; font-weight: bold; text-align: center; border-block: solid; border-color: darkred;">
+        @this.TempData["Message"]
     </div>
-</div>-->
+}
+
+@if (@User.IsInRole("Admin"))
+{
+    <h2 style="text-align: center; padding-top: 1em; ">Edit programs and courses</h2>
+}
+else
+{
+    <h2 style="text-align: center; padding-top: 1em; ">Edit courses</h2>
+}
 
 <br />
 <div class="container">
-    @*<h4 style="text-align: center; padding-top: 1em;">Courses</h4>*@
     <hr />
+    @if (@User.IsInRole("Admin"))
+    {
+        <h4 style="text-align: center; padding-top: 1em; ">Programs</h4>
+        <hr />
+        @foreach (var program in Model.AllPrograms)
+        {
+            <div class="row">
+                <div class="col">
+                    <p>Program: @program.Name</p>
+                </div>
+                <hr />
+                @*<a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@program.Id" asp-controller="Course" asp-action="Index"><i class="fa fa-save"></i> View</a>*@
+                @*<a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Edit"><i class="fa fa-save"></i> Edit</a>*@
+                <a class="btn btn-outline-info" style="text-align:right;" asp-route-programId="@program.Id" asp-controller="StudyProgram" asp-action="Delete" onclick="if (!confirm('Are you sure you want to delete?')) { return false }"><i class="fa fa-save"></i> Delete</a>
+            </div>
+            <hr />
+        }
+        @if (Model.AllCourses.Any())
+        {
+            <h4 style="text-align: center; padding-top: 1em; ">Courses</h4>
+            <hr />
+        }
+    }
+
     @foreach (var course in Model.AllCourses)
     {
         <div class="row">
@@ -66,9 +79,8 @@
             <hr />
             <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Index"><i class="fa fa-save"></i> View</a>
             <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Edit"><i class="fa fa-save"></i> Edit</a>
-            <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Delete"><i class="fa fa-save"></i> Delete</a>
+            <a class="btn btn-outline-info" style="text-align:right;" asp-route-courseId="@course.Id" asp-controller="Course" asp-action="Delete" onclick="if (!confirm('Are you sure you want to delete?')) { return false }"><i class="fa fa-save"></i> Delete</a>
         </div>
         <hr />
     }
 </div>
-

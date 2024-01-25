@@ -1,5 +1,3 @@
-using System;
-
 namespace MMUniGraduation.Models
 {
     public class ErrorViewModel

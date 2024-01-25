@@ -17,7 +17,7 @@ namespace MMUniGraduation.Controllers
         private readonly ICourseService _courseService;
         private readonly IStudentService _studentService;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IProfileExpression configuration;
+        private readonly IProfileExpression _configuration;
         public StudentController(ApplicationDbContext context, ICourseService courseService, IStudentService studentService, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -37,7 +37,7 @@ namespace MMUniGraduation.Controllers
 
             var passedCoursesGrade = new Dictionary<Course, decimal>();
             var curr = new List<Course>();
-            
+
             foreach (var item in passedStudentCourses)
             {
                 var course = _context.Courses.FirstOrDefault(x => x.Id == item.CourseId);
@@ -62,6 +62,7 @@ namespace MMUniGraduation.Controllers
 
             return View(viewModel);
         }
+
         public async Task<IActionResult> Edit()
         {
             var user = await _userManager.GetUserAsync(this.User);
@@ -77,13 +78,13 @@ namespace MMUniGraduation.Controllers
             };
             return View(viewModel);
         }
+
         [HttpPost]
         public async Task<IActionResult> Edit(EditStudentViewModel input)
         {
             await _studentService.EditStudent(input);
 
-            return RedirectToAction("Index","Student");
+            return RedirectToAction("Index", "Student");
         }
-
     }
 }
